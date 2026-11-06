@@ -1,0 +1,244 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 97%; /* #FAF8F5 Warm Ivory */
+    --foreground: 160 8% 13%; /* #1F2421 Charcoal */
+
+    --card: 40 30% 99%; /* #FDFBF8 Cream */
+    --card-foreground: 160 8% 13%;
+
+    --popover: 40 30% 99%;
+    --popover-foreground: 160 8% 13%;
+
+    --primary: 140 39% 18%; /* #1C3F26 Forest Green */
+    --primary-foreground: 40 33% 97%;
+
+    --secondary: 120 18% 59%; /* #87A987 Sage Green */
+    --secondary-foreground: 140 39% 18%;
+
+    --muted: 40 20% 92%; /* #ECE5DC Soft Beige */
+    --muted-foreground: 160 6% 40%;
+
+    --accent: 40 48% 56%; /* #C5A059 Muted Gold */
+    --accent-foreground: 160 8% 13%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 140 39% 18%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 140 45% 6%; /* #0B1910 Deep Forest Night */
+    --foreground: 40 25% 95%;
+
+    --card: 140 40% 9%;
+    --card-foreground: 40 25% 95%;
+
+    --popover: 140 40% 9%;
+    --popover-foreground: 40 25% 95%;
+
+    --primary: 120 25% 65%; /* Soft Sage */
+    --primary-foreground: 140 45% 6%;
+
+    --secondary: 140 30% 18%;
+    --secondary-foreground: 40 25% 95%;
+
+    --muted: 140 30% 14%;
+    --muted-foreground: 40 15% 65%;
+
+    --accent: 40 48% 56%; /* Muted Gold */
+    --accent-foreground: 140 45% 6%;
+
+    --destructive: 0 62% 39%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 140 25% 16%;
+    --input: 140 25% 16%;
+    --ring: 40 48% 56%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-gold-500/20 selection:text-forest-900;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.015em;
+  }
+  body, .font-sans {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Custom Ayurvedic & Premium Visual Utilities */
+.glassmorphism {
+  background: rgba(250, 248, 245, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(28, 45, 32, 0.06);
+}
+
+.glassmorphism-dark {
+  background: rgba(28, 35, 30, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(28, 45, 32, 0.08);
+  box-shadow: 0 4px 20px -4px rgba(28, 37, 30, 0.04);
+}
+
+.whisper-border {
+  border: 1px solid rgba(28, 45, 32, 0.07);
+}
+
+.gold-whisper-border {
+  border: 1px solid rgba(197, 168, 114, 0.25);
+}
+
+.soft-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(28, 45, 32, 0.06);
+  box-shadow: 0 4px 24px -2px rgba(28, 37, 30, 0.03);
+}
+
+.soft-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark-icon-circle {
+  background: #18231C;
+  color: #D8B980;
+  border: 1px solid rgba(197, 168, 114, 0.35);
+  box-shadow: 0 4px 16px -2px rgba(24, 35, 28, 0.25), 0 0 12px rgba(197, 168, 114, 0.15);
+  transition: all 0.3s ease;
+}
+.dark-icon-circle:hover {
+  border-color: rgba(197, 168, 114, 0.6);
+  box-shadow: 0 6px 20px -2px rgba(24, 35, 28, 0.35), 0 0 16px rgba(197, 168, 114, 0.25);
+  transform: scale(1.05);
+}
+
+.dark-highlight-pill {
+  background: #18231C;
+  color: #FAF8F5;
+  border: 1px solid rgba(197, 168, 114, 0.35);
+  box-shadow: 0 4px 16px -2px rgba(24, 35, 28, 0.15), 0 0 10px rgba(197, 168, 114, 0.12);
+  transition: all 0.3s ease;
+}
+.dark-highlight-pill:hover {
+  border-color: rgba(197, 168, 114, 0.6);
+  box-shadow: 0 6px 20px -2px rgba(24, 35, 28, 0.25), 0 0 16px rgba(197, 168, 114, 0.2);
+}
+
+.gold-border {
+  border: 1px solid rgba(197, 160, 89, 0.35);
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #B88E3E 0%, #D4AF37 50%, #A8833E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-shimmer {
+  background: linear-gradient(110deg, #C5A059 0%, #FAF8F5 25%, #C5A059 50%, #FAF8F5 75%, #C5A059 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-gold 4s linear infinite;
+}
+
+.emerald-gradient-text {
+  background: linear-gradient(135deg, #1C3F26 0%, #2E693D 50%, #15311E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.luxury-card-glow {
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.luxury-card-glow:hover {
+  transform: translateY(-3px);
+}
+.luxury-card-glow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(197, 168, 114, 0.3), transparent 50%, rgba(142, 167, 144, 0.25));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.luxury-card-glow:hover::after {
+  opacity: 1;
+}
+
+.image-zoom-container {
+  overflow: hidden;
+}
+.image-zoom-container img {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+}
+.image-zoom-container:hover img {
+  transform: scale(1.06);
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.2), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4EFEA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C7D4C7;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A4BBA4;
+}
