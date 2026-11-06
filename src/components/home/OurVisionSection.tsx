@@ -15,7 +15,7 @@ export function OurVisionSection() {
           <ScrollReveal direction="right" duration={0.8}>
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-[#EDE7DD] bg-[#F7F4EE] group">
               <Image
-                src="/shreevidhi_tradition.png"
+                src="/pictures/brand/shreevidhi_tradition.png"
                 alt="Shree Vidhi Ayurvedic Tradition in Varanasi"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

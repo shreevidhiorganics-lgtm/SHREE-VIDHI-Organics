@@ -80,7 +80,7 @@ export function BrandRangeSection() {
           <ScrollReveal direction="left" duration={0.8} delay={0.15}>
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-[#FAF8F5] p-4 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#EDE7DD] flex items-center justify-center group">
               <Image
-                src="/shreevidhi_brand_showcase.jpg"
+                src="/pictures/brand/shreevidhi_brand_showcase.jpg"
                 alt="Shree Vidhi Complete Product Lineup"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

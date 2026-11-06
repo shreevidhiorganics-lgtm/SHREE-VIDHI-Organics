@@ -29,7 +29,7 @@ export default function OurStoryPage() {
         {/* 2. Brand Showcase Banner Frame */}
         <div className="relative aspect-[16/9] sm:aspect-[21/9] rounded-3xl sm:rounded-[2.5rem] overflow-hidden border border-[#EDE7DD] shadow-[0_12px_40px_-8px_rgba(28,37,30,0.06)] bg-[#F8F5EE]">
           <Image
-            src="/shreevidhi_brand_showcase.jpg"
+            src="/pictures/brand/shreevidhi_brand_showcase.jpg"
             alt="Shree Vidhi Organics Complete Product Range"
             fill
             priority

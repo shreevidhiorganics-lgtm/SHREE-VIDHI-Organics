@@ -17,6 +17,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/products/:path*',
+        destination: '/pictures/products/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

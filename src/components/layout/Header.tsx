@@ -122,7 +122,7 @@ export function Header() {
         <Link href="/" className="flex items-center group shrink-0">
           <div className="relative h-10 sm:h-11 w-auto transition-transform duration-300 group-hover:scale-102">
             <Image
-              src="/shreevidhi_logo.png"
+              src="/pictures/brand/shreevidhi_logo.png"
               alt="Shree Vidhi Organics"
               height={44}
               width={210}

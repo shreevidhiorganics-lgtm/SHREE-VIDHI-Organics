@@ -30,7 +30,7 @@ const slides: HeroSlide[] = [
     secondaryCta: "Our Story",
     secondaryHref: "/our-story",
     featuredHerb: "Multani Mitti + Neem + Turmeric",
-    image: "/hero_banner_shreevidhi.png",
+    image: "/pictures/banners/hero_banner_shreevidhi.png",
   },
   {
     id: "hormones",
@@ -42,7 +42,7 @@ const slides: HeroSlide[] = [
     secondaryCta: "How It Works",
     secondaryHref: "#seed-cycling",
     featuredHerb: "Pumpkin & Flax (Phase 1) + Sesame & Sunflower (Phase 2)",
-    image: "/hero_banner_seed_cycling.png",
+    image: "/pictures/banners/hero_banner_seed_cycling.png",
   },
   {
     id: "ubtan",
@@ -54,7 +54,7 @@ const slides: HeroSlide[] = [
     secondaryCta: "See Customer Reviews",
     secondaryHref: "#customer-reviews",
     featuredHerb: "Pure Jangali Haldi & Natural Ubtan",
-    image: "/hero_banner_ubtan.png",
+    image: "/pictures/banners/hero_banner_ubtan.png",
   },
 ];
 

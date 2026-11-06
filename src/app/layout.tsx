@@ -68,7 +68,7 @@ export default function RootLayout({
     "@type": "Organization",
     name: "Shree Vidhi Organics",
     url: "https://shreevidhiorganics.com",
-    logo: "/shreevidhi_logo.avif",
+    logo: "/pictures/brand/shreevidhi_logo.avif",
     founder: {
       "@type": "Person",
       name: "Aditi Singh",

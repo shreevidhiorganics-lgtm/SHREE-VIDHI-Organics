@@ -17,7 +17,7 @@ export const categories: Category[] = [
     name: "Hair Care",
     slug: "hair-care",
     description: "Time-tested Ayurvedic herbs to strengthen roots, control hair fall, and restore natural shine.",
-    image: "/products/kapur-kachri.png",
+    image: "/pictures/products/kapur-kachri.png",
     isFeatured: true,
     productCount: 9,
   },
@@ -26,7 +26,7 @@ export const categories: Category[] = [
     name: "Skin Care",
     slug: "skin-care",
     description: "Pure botanical powders, wild turmeric, and gentle clays for healthy, glowing skin without harsh chemicals.",
-    image: "/products/chandan-powder.png",
+    image: "/pictures/products/chandan-powder.png",
     isFeatured: true,
     productCount: 8,
   },
@@ -35,7 +35,7 @@ export const categories: Category[] = [
     name: "Ubtan & Face Packs",
     slug: "ubtan-face-packs",
     description: "Traditional Ayurvedic facial packs crafted with hand-ground herbs, clays, and floral petals.",
-    image: "/products/natural-ubtan.png",
+    image: "/pictures/products/natural-ubtan.png",
     isFeatured: true,
     productCount: 6,
   },
@@ -44,7 +44,7 @@ export const categories: Category[] = [
     name: "Herbal Powders",
     slug: "herbal-powders",
     description: "100% single-origin natural herbs ground under slow temperature to preserve active bio-nutrients.",
-    image: "/products/beetroot-powder.png",
+    image: "/pictures/products/beetroot-powder.png",
     isFeatured: true,
     productCount: 8,
   },
@@ -53,7 +53,7 @@ export const categories: Category[] = [
     name: "Wellness & Superfoods",
     slug: "wellness",
     description: "Seed cycling kits and botanical wellness blends formulated to support hormonal balance, vitality, and inner wellbeing.",
-    image: "/products/seed-cycling-kit-hires.png",
+    image: "/pictures/products/seed-cycling-kit-hires.png",
     isFeatured: true,
     productCount: 3,
   },
@@ -62,7 +62,7 @@ export const categories: Category[] = [
     name: "Best Sellers",
     slug: "best-sellers",
     description: "Our most cherished Ayurvedic daily rituals, trusted by thousands across India.",
-    image: "/products/vedic-blend.png",
+    image: "/pictures/products/vedic-blend.png",
     isFeatured: true,
     productCount: 12,
   },
@@ -188,35 +188,35 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-ub-1",
-        "url": "/products/natural-ubtan.png",
+        "url": "/pictures/products/natural-ubtan.png",
         "alt": "Shree Vidhi Natural Ubtan Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-ub-2",
-        "url": "/products/natural-ubtan-back.png",
+        "url": "/pictures/products/natural-ubtan-back.png",
         "alt": "Shree Vidhi Natural Ubtan Powder Back Ingredient & Ritual Label",
         "isPrimary": false,
         "displayOrder": 2
       },
       {
         "id": "img-ub-3",
-        "url": "/products/natural-ubtan-benefits-infographic.jpg",
+        "url": "/pictures/products/natural-ubtan-benefits-infographic.jpg",
         "alt": "Natural Ubtan Key Benefits Infographic",
         "isPrimary": false,
         "displayOrder": 3
       },
       {
         "id": "img-ub-4",
-        "url": "/products/natural-ubtan-howtouse-infographic.jpg",
+        "url": "/pictures/products/natural-ubtan-howtouse-infographic.jpg",
         "alt": "How to Use Shree Vidhi Natural Ubtan Infographic",
         "isPrimary": false,
         "displayOrder": 4
       },
       {
         "id": "img-ub-5",
-        "url": "/products/natural-ubtan-why-infographic.png",
+        "url": "/pictures/products/natural-ubtan-why-infographic.png",
         "alt": "Why Choose Shree Vidhi Natural Ubtan",
         "isPrimary": false,
         "displayOrder": 5
@@ -271,28 +271,28 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-bt-1",
-        "url": "/products/beetroot-powder.png",
+        "url": "/pictures/products/beetroot-powder.png",
         "alt": "Shree Vidhi Pure Beetroot Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-bt-2",
-        "url": "/products/beetroot-powder-back.png",
+        "url": "/pictures/products/beetroot-powder-back.png",
         "alt": "Shree Vidhi Pure Beetroot Powder Back Ingredient & Usage Label",
         "isPrimary": false,
         "displayOrder": 2
       },
       {
         "id": "img-bt-3",
-        "url": "/products/beetroot-powder-why.jpg",
+        "url": "/pictures/products/beetroot-powder-why.jpg",
         "alt": "Why Choose Shree Vidhi Pure Beetroot Powder",
         "isPrimary": false,
         "displayOrder": 3
       },
       {
         "id": "img-bt-4",
-        "url": "/products/beetroot-powder-benefits.jpg",
+        "url": "/pictures/products/beetroot-powder-benefits.jpg",
         "alt": "Pure Beetroot Powder Antioxidant & Skin Benefits",
         "isPrimary": false,
         "displayOrder": 4
@@ -348,28 +348,28 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-sck-1",
-        "url": "/products/seed-cycling-kit-hires.png",
+        "url": "/pictures/products/seed-cycling-kit-hires.png",
         "alt": "Shree Vidhi Seed Cycling Kit Phase 1 & 2 Jars",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-sck-2",
-        "url": "/products/seed-cycling-kit-back.png",
+        "url": "/pictures/products/seed-cycling-kit-back.png",
         "alt": "Shree Vidhi Seed Cycling Kit Back Ingredient & Cycle Protocol Label",
         "isPrimary": false,
         "displayOrder": 2
       },
       {
         "id": "img-sck-3",
-        "url": "/products/seed-cycling-follicular.png",
+        "url": "/pictures/products/seed-cycling-follicular.png",
         "alt": "Shree Vidhi Seed Cycling Phase 1 (Days 1-14) Pumpkin & Flax Seeds",
         "isPrimary": false,
         "displayOrder": 3
       },
       {
         "id": "img-sck-4",
-        "url": "/products/seed-cycling-luteal.png",
+        "url": "/pictures/products/seed-cycling-luteal.png",
         "alt": "Shree Vidhi Seed Cycling Phase 2 (Days 15-30) Sesame & Sunflower Seeds",
         "isPrimary": false,
         "displayOrder": 4
@@ -424,28 +424,28 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-jh-1",
-        "url": "/products/jangali-haldi.png",
+        "url": "/pictures/products/jangali-haldi.png",
         "alt": "Shree Vidhi Jangali Haldi Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-jh-2",
-        "url": "/products/jangali-haldi-back.png",
+        "url": "/pictures/products/jangali-haldi-back.png",
         "alt": "Shree Vidhi Jangali Haldi Powder Back Ingredient & Ritual Label",
         "isPrimary": false,
         "displayOrder": 2
       },
       {
         "id": "img-jh-3",
-        "url": "/products/jangali-haldi-why.jpg",
+        "url": "/pictures/products/jangali-haldi-why.jpg",
         "alt": "Why Choose Shree Vidhi Jangali Haldi",
         "isPrimary": false,
         "displayOrder": 3
       },
       {
         "id": "img-jh-4",
-        "url": "/products/jangali-haldi-benefits.jpg",
+        "url": "/pictures/products/jangali-haldi-benefits.jpg",
         "alt": "Jangali Haldi Non-Staining Wild Kasturi Turmeric Benefits",
         "isPrimary": false,
         "displayOrder": 4
@@ -501,28 +501,28 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-kk-1",
-        "url": "/products/kapur-kachri.png",
+        "url": "/pictures/products/kapur-kachri.png",
         "alt": "Shree Vidhi Kapur Kachri Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-kk-2",
-        "url": "/products/kapur-kachri-back.png",
+        "url": "/pictures/products/kapur-kachri-back.png",
         "alt": "Shree Vidhi Kapur Kachri Powder Back Ingredient & Ritual Label",
         "isPrimary": false,
         "displayOrder": 2
       },
       {
         "id": "img-kk-3",
-        "url": "/products/kapur-kachri-why.jpg",
+        "url": "/pictures/products/kapur-kachri-why.jpg",
         "alt": "Why Choose Shree Vidhi Kapur Kachri Powder",
         "isPrimary": false,
         "displayOrder": 3
       },
       {
         "id": "img-kk-4",
-        "url": "/products/kapur-kachri-benefits.jpg",
+        "url": "/pictures/products/kapur-kachri-benefits.jpg",
         "alt": "Kapur Kachri Hair Growth & Root Density Benefits",
         "isPrimary": false,
         "displayOrder": 4
@@ -578,28 +578,28 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-mnt-1",
-        "url": "/products/multani-neem-turmeric.png",
+        "url": "/pictures/products/multani-neem-turmeric.png",
         "alt": "Shree Vidhi Multani Mitti Neem Turmeric Blend 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-mnt-2",
-        "url": "/products/multani-neem-turmeric-back.png",
+        "url": "/pictures/products/multani-neem-turmeric-back.png",
         "alt": "Shree Vidhi Multani Mitti Neem Turmeric Blend Back Ingredient & Ritual Label",
         "isPrimary": false,
         "displayOrder": 2
       },
       {
         "id": "img-mnt-3",
-        "url": "/products/multani-neem-turmeric-why.png",
+        "url": "/pictures/products/multani-neem-turmeric-why.png",
         "alt": "Why Choose Shree Vidhi Multani Mitti Neem Turmeric Blend",
         "isPrimary": false,
         "displayOrder": 3
       },
       {
         "id": "img-mnt-4",
-        "url": "/products/multani-neem-turmeric-benefits.jpg",
+        "url": "/pictures/products/multani-neem-turmeric-benefits.jpg",
         "alt": "Multani Mitti Neem Turmeric Synergistic Clarifying Benefits",
         "isPrimary": false,
         "displayOrder": 4
@@ -654,7 +654,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-vb-1",
-        "url": "/products/vedic-blend.png",
+        "url": "/pictures/products/vedic-blend.png",
         "alt": "Shree Vidhi Vedic Blend 15 Shaktishali Samagri Steel Jar",
         "isPrimary": true,
         "displayOrder": 1
@@ -709,7 +709,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-avg-1",
-        "url": "/products/aloe-vera-gel.png",
+        "url": "/pictures/products/aloe-vera-gel.png",
         "alt": "Shree Vidhi Pure Aloe Vera Gel 200ml Pump Bottle",
         "isPrimary": true,
         "displayOrder": 1
@@ -764,7 +764,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-skb-1",
-        "url": "/products/sarva-kesh-blend.png",
+        "url": "/pictures/products/sarva-kesh-blend.png",
         "alt": "Shree Vidhi Sarva Kesh Blend 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -819,7 +819,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-ars-1",
-        "url": "/products/amla-reetha-shikakai-blend.png",
+        "url": "/pictures/products/amla-reetha-shikakai-blend.png",
         "alt": "Shree Vidhi Amla Reetha Shikakai Blend 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -874,7 +874,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-nsb-1",
-        "url": "/products/natural-scrub-blend.png",
+        "url": "/pictures/products/natural-scrub-blend.png",
         "alt": "Shree Vidhi Natural Scrub Blend 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -929,7 +929,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-sh-1",
-        "url": "/products/shagun-haldi.png",
+        "url": "/pictures/products/shagun-haldi.png",
         "alt": "Shree Vidhi Shagun Haldi 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -984,7 +984,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-mm-1",
-        "url": "/products/multani-mitti.png",
+        "url": "/pictures/products/multani-mitti.png",
         "alt": "Shree Vidhi Pure Multani Mitti Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1039,7 +1039,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-cp-1",
-        "url": "/products/chandan-powder.png",
+        "url": "/pictures/products/chandan-powder.png",
         "alt": "Shree Vidhi Pure Chandan Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1094,7 +1094,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-np-1",
-        "url": "/products/neem-powder.png",
+        "url": "/pictures/products/neem-powder.png",
         "alt": "Shree Vidhi Pure Neem Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1149,7 +1149,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-tp-1",
-        "url": "/products/tulsi-powder.png",
+        "url": "/pictures/products/tulsi-powder.png",
         "alt": "Shree Vidhi Pure Tulsi Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1204,7 +1204,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-avp-1",
-        "url": "/products/aloe-vera-powder.png",
+        "url": "/pictures/products/aloe-vera-powder.png",
         "alt": "Shree Vidhi Pure Aloe Vera Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1259,7 +1259,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-mor-1",
-        "url": "/products/moringa-powder.png",
+        "url": "/pictures/products/moringa-powder.png",
         "alt": "Shree Vidhi Pure Moringa Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1314,7 +1314,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-aml-1",
-        "url": "/products/amla-powder.png",
+        "url": "/pictures/products/amla-powder.png",
         "alt": "Shree Vidhi Pure Amla Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1369,7 +1369,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-rth-1",
-        "url": "/products/reetha-powder.png",
+        "url": "/pictures/products/reetha-powder.png",
         "alt": "Shree Vidhi Pure Reetha Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1424,7 +1424,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-hib-1",
-        "url": "/products/hibiscus-powder.png",
+        "url": "/pictures/products/hibiscus-powder.png",
         "alt": "Shree Vidhi Pure Hibiscus Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1479,7 +1479,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-hen-1",
-        "url": "/products/henna-powder.png",
+        "url": "/pictures/products/henna-powder.png",
         "alt": "Shree Vidhi Pure Henna Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1534,7 +1534,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-rp-1",
-        "url": "/products/rose-powder.png",
+        "url": "/pictures/products/rose-powder.png",
         "alt": "Shree Vidhi Pure Rose Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1589,7 +1589,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-op-1",
-        "url": "/products/orange-peel-powder.png",
+        "url": "/pictures/products/orange-peel-powder.png",
         "alt": "Shree Vidhi Pure Orange Peel Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1644,14 +1644,14 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-mp-1",
-        "url": "/products/methi-powder.png",
+        "url": "/pictures/products/methi-powder.png",
         "alt": "Shree Vidhi Pure Methi Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-mp-2",
-        "url": "/products/methi-powder-why-infographic.png",
+        "url": "/pictures/products/methi-powder-why-infographic.png",
         "alt": "Why Choose Shree Vidhi Methi Powder",
         "isPrimary": false,
         "displayOrder": 2
@@ -1706,7 +1706,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-kc-1",
-        "url": "/products/kaolin-clay.png",
+        "url": "/pictures/products/kaolin-clay.png",
         "alt": "Shree Vidhi Kaolin Clay Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1761,7 +1761,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-fgc-1",
-        "url": "/products/french-green-clay.png",
+        "url": "/pictures/products/french-green-clay.png",
         "alt": "Shree Vidhi French Green Clay Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1816,7 +1816,7 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-ml-1",
-        "url": "/products/mulethi-powder.png",
+        "url": "/pictures/products/mulethi-powder.png",
         "alt": "Shree Vidhi Pure Mulethi Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
@@ -1871,21 +1871,21 @@ export const products: Product[] = [
     "images": [
       {
         "id": "img-sbt-1",
-        "url": "/products/seabuckthorn-pulp.png",
+        "url": "/pictures/products/seabuckthorn-pulp.png",
         "alt": "Shree Vidhi Sea Buckthorn Pulp 500ml Can",
         "isPrimary": true,
         "displayOrder": 1
       },
       {
         "id": "img-sbt-2",
-        "url": "/products/seabuckthorn-pulp-set.png",
+        "url": "/pictures/products/seabuckthorn-pulp-set.png",
         "alt": "Shree Vidhi Sea Buckthorn Pulp & Bottle Set",
         "isPrimary": false,
         "displayOrder": 2
       },
       {
         "id": "img-sbt-3",
-        "url": "/products/seabuckthorn-juice-showcase.png",
+        "url": "/pictures/products/seabuckthorn-juice-showcase.png",
         "alt": "Sea Buckthorn 100% Natural Juice Showcase",
         "isPrimary": false,
         "displayOrder": 3

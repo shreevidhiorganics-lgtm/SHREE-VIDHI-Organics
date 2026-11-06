@@ -82,7 +82,7 @@ export function Footer() {
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="flex items-center">
               <Image
-                src="/shreevidhi_logo.png"
+                src="/pictures/brand/shreevidhi_logo.png"
                 alt="Shree Vidhi Organics"
                 height={44}
                 width={205}

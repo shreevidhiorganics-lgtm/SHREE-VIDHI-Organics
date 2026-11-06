@@ -24,7 +24,7 @@ export function OurBlogsSection() {
             >
               <div className="relative aspect-[4/3] bg-[#FAF8F5] overflow-hidden flex items-center justify-center p-6">
                 <Image
-                  src="/blog-vedic-blend.png"
+                  src="/pictures/blog/blog-vedic-blend.png"
                   alt="Vedic blend blog post"
                   width={200}
                   height={240}

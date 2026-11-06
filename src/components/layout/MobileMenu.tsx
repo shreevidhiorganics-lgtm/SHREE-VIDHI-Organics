@@ -26,7 +26,7 @@ export function MobileMenu() {
         <div className="p-4 sm:p-5 border-b border-[#EDE7DD] flex items-center justify-between bg-white">
           <div className="flex items-center gap-2.5">
             <Image
-              src="/shreevidhi_logo.png"
+              src="/pictures/brand/shreevidhi_logo.png"
               alt="Shree Vidhi Organics"
               height={36}
               width={140}

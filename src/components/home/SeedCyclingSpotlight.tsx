@@ -37,7 +37,7 @@ export function SeedCyclingSpotlight() {
           <ScrollReveal direction="right" duration={0.8} className="lg:col-span-5">
             <div className="relative aspect-square sm:aspect-[4/3] lg:aspect-square rounded-3xl overflow-hidden bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-[#EDE7DD] flex items-center justify-center group">
               <Image
-                src="/products/seed-cycling-kit-hires.png"
+                src="/pictures/products/seed-cycling-kit-hires.png"
                 alt="Shree Vidhi Seed Cycling Kit Jars"
                 fill
                 sizes="(max-width: 1024px) 100vw, 45vw"
