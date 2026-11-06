@@ -8,6 +8,7 @@ import { BrandRangeSection } from "@/components/home/BrandRangeSection";
 import { CategoryCards } from "@/components/home/CategoryCards";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { OurVisionSection } from "@/components/home/OurVisionSection";
+import { OurBlogsSection } from "@/components/home/OurBlogsSection";
 import { HomeFAQ } from "@/components/home/HomeFAQ";
 import { dataStore } from "@/lib/db/data-store";
 
@@ -54,7 +55,10 @@ export default function HomePage() {
       {/* 9. Founder Story & Varanasi Women Empowerment */}
       <OurVisionSection />
 
-      {/* 10. Frequently Asked Questions Accordion */}
+      {/* 10. Ayurvedic Rituals & Knowledge Journal */}
+      <OurBlogsSection />
+
+      {/* 11. Frequently Asked Questions Accordion */}
       <HomeFAQ />
     </div>
   );
