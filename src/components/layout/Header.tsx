@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
+  Home,
   Search,
   User,
   Heart,
@@ -75,6 +76,7 @@ export function Header() {
 
   // Navigation Links
   const navLinks = [
+    { name: "Home", href: "/" },
     { name: "Shop", href: "/shop", hasMega: true },
     { name: "Hair Rituals", href: "/shop?category=hair-care", categorySlug: "hair-care" },
     { name: "Skin & Face", href: "/shop?category=skin-care", categorySlug: "skin-care" },
@@ -91,27 +93,39 @@ export function Header() {
           : "bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#EDE7DC] py-3.5 sm:py-4"
       }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 lg:gap-6">
-        {/* Mobile Hamburger & Mobile Search */}
-        <div className="flex items-center gap-1 lg:hidden">
+      <div className="container mx-auto px-2.5 xs:px-3 sm:px-6 flex items-center justify-between gap-1.5 xs:gap-2 sm:gap-4 lg:gap-6 max-w-full">
+        {/* Mobile Hamburger, Home Button & Mobile Search */}
+        <div className="flex items-center gap-0.5 sm:gap-1 lg:hidden shrink-0">
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault();
               openMobileMenu();
             }}
-            className="p-2 -ml-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all active:scale-95"
+            className="p-1.5 sm:p-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all active:scale-95"
             aria-label="Open mobile navigation menu"
           >
             <Menu className="w-5 h-5" />
           </button>
+          <Link
+            href="/"
+            className={`p-1.5 sm:p-2 rounded-full transition-all active:scale-95 border ${
+              pathname === "/"
+                ? "bg-[#18231C] text-[#D8B980] border-[#C5A872]/40 shadow-sm"
+                : "text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border-transparent"
+            }`}
+            aria-label="Go to home screen"
+            title="Home"
+          >
+            <Home className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+          </Link>
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault();
               openSearch();
             }}
-            className="p-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all active:scale-95"
+            className="p-1.5 sm:p-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all active:scale-95"
             aria-label="Open search modal"
           >
             <Search className="w-4 h-4" />
@@ -119,15 +133,15 @@ export function Header() {
         </div>
 
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center group shrink-0">
-          <div className="relative h-10 sm:h-11 w-auto transition-transform duration-300 group-hover:scale-102">
+        <Link href="/" className="flex items-center group shrink-0 min-w-0">
+          <div className="relative h-8 xs:h-9 sm:h-10 md:h-11 w-auto transition-transform duration-300 group-hover:scale-102 flex items-center">
             <Image
               src="/pictures/brand/shreevidhi_logo.png"
               alt="Shree Vidhi Organics"
               height={44}
               width={210}
               style={{ width: "auto" }}
-              className="h-9 sm:h-10 w-auto object-contain"
+              className="h-7 xs:h-8 sm:h-9 md:h-10 max-w-[115px] xs:max-w-[140px] sm:max-w-[180px] md:max-w-[210px] w-auto object-contain"
               priority
             />
           </div>
@@ -258,7 +272,7 @@ export function Header() {
                                 Wellness & Superfoods
                               </div>
                               <div className="text-[11px] text-muted-foreground font-light">
-                                Seed Cycling Kit (Phase 1 & 2)
+                                Pure Himalayan Sea Buckthorn
                               </div>
                             </div>
                             <ArrowRight className="w-3.5 h-3.5 text-[#C5A872] opacity-0 group-hover/item:opacity-100 transition-opacity" />
@@ -302,7 +316,7 @@ export function Header() {
         </nav>
 
         {/* Right Action Icons: Search, Account, Wishlist, Cart */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
+        <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2.5 shrink-0">
           {/* Desktop Search Trigger */}
           <button
             type="button"
@@ -322,10 +336,10 @@ export function Header() {
             </kbd>
           </button>
 
-          {/* User Account */}
+          {/* User Account (Desktop & Tablet) */}
           <Link
             href="/account"
-            className="p-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all shadow-sm active:scale-95"
+            className="hidden sm:flex p-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all shadow-sm active:scale-95"
             aria-label="My Account"
             title="My Account"
           >
@@ -335,37 +349,37 @@ export function Header() {
           {/* Wishlist */}
           <Link
             href="/wishlist"
-            className="p-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all shadow-sm relative active:scale-95"
+            className="p-1.5 sm:p-2 rounded-full text-forest-900 hover:bg-[#18231C] hover:text-[#D8B980] hover:border-[#C5A872]/40 border border-transparent transition-all shadow-sm relative active:scale-95"
             aria-label="Wishlist"
             title="Wishlist"
           >
             <Heart className="w-4 h-4" />
             {wishlistCount > 0 && (
-              <span className="absolute top-1 right-1 bg-[#18231C] text-[#D8B980] border border-[#C5A872]/40 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow-sm">
+              <span className="absolute top-0.5 right-0.5 bg-[#18231C] text-[#D8B980] border border-[#C5A872]/40 text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-sm">
                 {wishlistCount}
               </span>
             )}
           </Link>
 
-          {/* Cart Drawer Trigger */}
+          {/* Cart Drawer Trigger - Responsive Circle on Mobile, Pill on Tablet/Desktop */}
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault();
               openCartDrawer();
             }}
-            className="flex items-center gap-2 bg-[#1C3F26] hover:bg-[#15311E] text-white rounded-full py-1.5 px-3.5 sm:px-4 text-xs font-medium shadow-soothe hover:shadow-float active:scale-95 transition-all duration-300 border border-[#C5A872]/30 cursor-pointer"
+            className="flex items-center justify-center gap-1.5 sm:gap-2 bg-[#1C3F26] hover:bg-[#15311E] text-white rounded-full w-8 h-8 xs:w-9 xs:h-9 sm:w-auto sm:h-auto sm:py-1.5 sm:px-3.5 sm:text-xs font-medium shadow-soothe hover:shadow-float active:scale-95 transition-all duration-300 border border-[#C5A872]/30 cursor-pointer shrink-0"
             aria-label="Shopping Cart Bag"
           >
-            <div className="relative">
-              <ShoppingBag className="w-3.5 h-3.5 text-[#D8C7A3]" />
+            <div className="relative flex items-center justify-center">
+              <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#D8C7A3]" />
               {cartItemCount > 0 && (
                 <span className="absolute -top-1.5 -right-2 bg-[#C5A872] text-[#1C3F26] text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center shadow-sm">
                   {cartItemCount}
                 </span>
               )}
             </div>
-            <span className="hidden sm:inline tracking-wide">
+            <span className="hidden sm:inline tracking-wide font-medium">
               {cartItemCount > 0 ? `Bag (${cartItemCount})` : "Bag"}
             </span>
           </button>

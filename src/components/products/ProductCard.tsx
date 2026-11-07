@@ -18,7 +18,6 @@ interface ProductCardProps {
 function getCardTitle(name: string, slug: string): string {
   if (slug.includes("natural-ubtan")) return "Pure & Natural Ubtan Powder (100g)";
   if (slug.includes("beetroot-powder")) return "Pure & Natural Beetroot Powder (100g)";
-  if (slug.includes("seed-cycling")) return "Ayurvedic Seed Cycling Kit (Phase 1 & 2)";
   if (slug.includes("jangali-haldi")) return "Pure Wild Jangali Haldi Powder (50g)";
   if (slug.includes("kapur-kachri")) return "Kapur Kachri Hair Root Powder (50g)";
   if (slug.includes("multani-neem")) return "Multani Mitti Neem Turmeric Blend (100g)";
@@ -104,22 +103,29 @@ export function ProductCard({ product }: ProductCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Top Right: Golden Sale Badge matching store screenshot */}
-      {discountPercent > 0 && (
-        <span className="absolute top-3 right-3 z-20 bg-[#B88746] text-white text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shadow-sm pointer-events-none">
-          Sale
-        </span>
-      )}
+      {/* Top Right: Badges */}
+      <div className="absolute top-3 right-3 z-20 flex flex-col items-end gap-1">
+        {(product.isAddOn || product.slug.includes("sea-buckthorn")) && (
+          <span className="bg-[#1C3F26] text-[#D8B980] border border-[#C5A872]/40 text-[9px] font-bold tracking-wider px-2 py-0.5 rounded uppercase shadow-sm pointer-events-none">
+            Add-On
+          </span>
+        )}
+        {discountPercent > 0 && (
+          <span className="bg-[#B88746] text-white text-[10px] font-medium tracking-wide px-2 py-0.5 rounded shadow-sm pointer-events-none">
+            Sale
+          </span>
+        )}
+      </div>
 
       {/* Top Left: Wishlist Heart */}
       <motion.button
         animate={heartPulsing ? { scale: [1, 1.3, 0.9, 1] } : { scale: 1 }}
         transition={{ duration: 0.35 }}
         onClick={handleToggleWishlist}
-        className={`absolute top-3 left-3 z-20 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm backdrop-blur-md opacity-0 group-hover:opacity-100 ${
+        className={`absolute top-3 left-3 z-20 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm backdrop-blur-md ${
           isFavorited
             ? "opacity-100 bg-[#18231C] text-[#C5A872] border border-[#C5A872] shadow-sm"
-            : "bg-[#18231C]/80 text-[#D8B980] hover:bg-[#18231C] hover:text-white border border-[#C5A872]/30"
+            : "opacity-80 sm:opacity-0 sm:group-hover:opacity-100 bg-[#18231C]/80 text-[#D8B980] hover:bg-[#18231C] hover:text-white border border-[#C5A872]/30"
         }`}
         aria-label="Toggle wishlist"
       >

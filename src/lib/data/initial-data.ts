@@ -52,10 +52,10 @@ export const categories: Category[] = [
     id: "cat-wellness",
     name: "Wellness & Superfoods",
     slug: "wellness",
-    description: "Seed cycling kits and botanical wellness blends formulated to support hormonal balance, vitality, and inner wellbeing.",
-    image: "/pictures/products/seed-cycling-kit-hires.png",
+    description: "Pure Himalayan Sea Buckthorn pulp and botanical wellness blends formulated to support immunity, vitality, and cellular rejuvenation.",
+    image: "/pictures/products/seabuckthorn-pulp.png",
     isFeatured: true,
-    productCount: 3,
+    productCount: 2,
   },
   {
     id: "cat-bestsellers",
@@ -310,83 +310,6 @@ export const products: Product[] = [
       }
     ],
     "createdAt": "2026-01-05T10:00:00+05:30"
-  },
-  {
-    "id": "prod-seed-cycling-kit",
-    "name": "Shree Vidhi Seed Cycling Kit | Nurture your cycle naturally | Follicular & Luteal Phases (Pack of 2) - 300g each",
-    "slug": "shree-vidhi-seed-cycling-kit",
-    "sku": "SVO-SCK-01",
-    "categoryId": "cat-wellness",
-    "categoryName": "Wellness & Superfoods",
-    "shortDesc": "Nurture your cycle naturally. Phase 1 (Pumpkin & Flax seed blend) and Phase 2 (Sesame & Sunflower seed blend) — supports natural hormone balance through every phase of your cycle.",
-    "description": "A natural protocol to nurture your hormonal rhythm and support cycle harmony. Formulated from founder Aditi Singh's personal journey of overcoming chronic PCOD/PCOS with Ayurveda.\n\nThe Seed Cycling Kit delivers nutrient-dense seed blends tailored to the female monthly cycle in two distinct phases:\n\n**Phase 1 — Follicular Blend (Days 1–14):** Pumpkin and Flax seeds rich in zinc, lignans, and plant omega-3s to support healthy estrogen metabolism and ovulation.\n\n**Phase 2 — Luteal Blend (Days 15–28/30):** Sesame and Sunflower seeds rich in selenium and Vitamin E to support natural progesterone production and ease PMS.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. 100% natural, preservative-free.",
-    "keyBenefits": [
-      "Naturally nurtures hormonal balance and cycle regularity",
-      "Follicular phase (Pumpkin & Flax) supports healthy estrogen",
-      "Luteal phase (Sesame & Sunflower) supports natural progesterone",
-      "Rich in zinc, lignans, selenium, and essential fatty acids",
-      "100% pure cold-ground seeds — zero fillers or preservatives"
-    ],
-    "ingredientsText": "Follicular Phase: 100% Raw Pumpkin Seeds, Flax Seeds. Luteal Phase: 100% Raw Sesame Seeds, Sunflower Seeds.",
-    "howToUse": "**Follicular Phase (Days 1–14):** Consume 1–2 tablespoons (approx. 10–20g) daily from Day 1 of your period until ovulation (approx. Day 14).\n**Luteal Phase (Days 15–28/30):** Consume 1–2 tablespoons (approx. 10–20g) daily from post-ovulation until the first day of your next cycle.\n**Serving Suggestions:** Stir into morning smoothies, yogurt, oatmeal, or sprinkle over fresh salads.",
-    "whoItIsFor": "Women looking to naturally support hormone balance, manage PMS, irregular cycles, or mood swings.",
-    "storageInfo": "Store in a cool dry place. Keep jars tightly sealed.",
-    "shippingInfo": "Dispatched within 24 hours. Free express shipping on orders above ₹499.",
-    "returnInfo": "100% Satisfaction guarantee.",
-    "mrp": 1600,
-    "salePrice": 1299,
-    "stock": 60,
-    "lowStockAlert": 10,
-    "isFeatured": true,
-    "isBestseller": true,
-    "isNewArrival": true,
-    "rating": 4.9,
-    "reviewCount": 41,
-    "status": "PUBLISHED",
-    "metaTitle": "Seed Cycling Kit for Hormone Balance | Shree Vidhi Organics",
-    "metaDescription": "Shree Vidhi Seed Cycling Kit — Phase 1 (Pumpkin & Flax) and Phase 2 (Sesame & Sunflower) to naturally support hormonal balance. 300g each.",
-    "images": [
-      {
-        "id": "img-sck-1",
-        "url": "/pictures/products/seed-cycling-kit-hires.png",
-        "alt": "Shree Vidhi Seed Cycling Kit Phase 1 & 2 Jars",
-        "isPrimary": true,
-        "displayOrder": 1
-      },
-      {
-        "id": "img-sck-2",
-        "url": "/pictures/products/seed-cycling-kit-back.png",
-        "alt": "Shree Vidhi Seed Cycling Kit Back Ingredient & Cycle Protocol Label",
-        "isPrimary": false,
-        "displayOrder": 2
-      },
-      {
-        "id": "img-sck-3",
-        "url": "/pictures/products/seed-cycling-follicular.png",
-        "alt": "Shree Vidhi Seed Cycling Phase 1 (Days 1-14) Pumpkin & Flax Seeds",
-        "isPrimary": false,
-        "displayOrder": 3
-      },
-      {
-        "id": "img-sck-4",
-        "url": "/pictures/products/seed-cycling-luteal.png",
-        "alt": "Shree Vidhi Seed Cycling Phase 2 (Days 15-30) Sesame & Sunflower Seeds",
-        "isPrimary": false,
-        "displayOrder": 4
-      }
-    ],
-    "variants": [
-      {
-        "id": "var-sck-kit",
-        "productId": "prod-seed-cycling-kit",
-        "title": "Kit (300g × 2)",
-        "size": "300g × 2",
-        "mrp": 1600,
-        "price": 1299,
-        "stock": 60
-      }
-    ],
-    "createdAt": "2026-01-18T16:00:00+05:30"
   },
   {
     "id": "prod-jangali-haldi",
@@ -1863,6 +1786,7 @@ export const products: Product[] = [
     "isFeatured": true,
     "isBestseller": true,
     "isNewArrival": true,
+    "isAddOn": true,
     "rating": 4.96,
     "reviewCount": 62,
     "status": "PUBLISHED",

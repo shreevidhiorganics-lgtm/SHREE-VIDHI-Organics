@@ -118,7 +118,7 @@ export function MobileMenu() {
                     onClick={closeMobileMenu}
                     className="block py-1 hover:text-[#8C6D32]"
                   >
-                    Wellness & Seed Cycling
+                    Wellness & Superfoods
                   </Link>
                 </div>
               )}

@@ -90,6 +90,7 @@ export interface Product {
   isFeatured: boolean;
   isBestseller: boolean;
   isNewArrival: boolean;
+  isAddOn?: boolean;
   rating: number;
   reviewCount: number;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";

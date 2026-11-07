@@ -18,6 +18,7 @@ import {
 import { useCartStore } from "@/store/cart-store";
 import { useUIStore } from "@/store/ui-store";
 import { formatPrice } from "@/lib/utils";
+import { products as allCatalogProducts } from "@/lib/data/initial-data";
 
 const INDIAN_STATES = [
   "Uttar Pradesh",
@@ -47,8 +48,15 @@ const INDIAN_STATES = [
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, getSubtotal, getDiscount, getShippingFee, getTotal, coupon, clearCart } = useCartStore();
+  const { items, getSubtotal, getDiscount, getShippingFee, getTotal, coupon, clearCart, addItem } = useCartStore();
   const { addToast } = useUIStore();
+
+  const seaBuckthornProduct = allCatalogProducts.find(
+    (p) => p.id === "prod-seabuckthorn-pulp" || p.slug.includes("sea-buckthorn")
+  );
+  const hasAddOnInCart = items.some(
+    (i) => i.productId === "prod-seabuckthorn-pulp" || i.product?.slug?.includes("sea-buckthorn")
+  );
 
   const [step, setStep] = useState<1 | 2>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -582,6 +590,49 @@ export default function CheckoutPage() {
                 </div>
               ))}
             </div>
+
+            {/* 1-Click Sea Buckthorn Add-On Offer */}
+            {!hasAddOnInCart && seaBuckthornProduct && (
+              <div className="p-3.5 rounded-2xl bg-[#FAF6EE] border border-[#E8DEC7] flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="relative w-11 h-11 rounded-xl bg-white p-1 border border-[#EDE7DD] shrink-0 overflow-hidden flex items-center justify-center">
+                    <Image
+                      src="/pictures/products/seabuckthorn-pulp.png"
+                      alt="Sea Buckthorn Pulp Add-on"
+                      width={38}
+                      height={38}
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-[9px] font-bold text-[#8C6D32] uppercase tracking-wider flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5 text-[#C5A872]" /> Add-On
+                      </span>
+                      <span className="text-[9px] bg-[#1C3F26] text-[#D8B980] border border-[#C5A872]/40 px-1.5 py-0.2 rounded-full font-semibold">
+                        ₹899
+                      </span>
+                    </div>
+                    <div className="text-xs font-medium text-[#18231C] truncate">
+                      Sea Buckthorn Pulp (500ml)
+                    </div>
+                    <div className="text-[10px] text-[#6C766F] truncate">
+                      Himalayan Vitamin C Immunity Elixir
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    addItem(seaBuckthornProduct);
+                    addToast("Added Sea Buckthorn Pulp to your order!", "success");
+                  }}
+                  className="shrink-0 bg-[#1C3F26] hover:bg-[#14301D] text-[#FAF8F5] text-xs font-medium px-3 py-1.5 rounded-full border border-[#C5A872]/40 shadow-xs transition-all active:scale-95 cursor-pointer"
+                >
+                  + Add
+                </button>
+              </div>
+            )}
 
             {/* Calculations */}
             <div className="space-y-2.5 text-xs text-[#2F3832] pt-4 border-t border-[#F0ECE4]">

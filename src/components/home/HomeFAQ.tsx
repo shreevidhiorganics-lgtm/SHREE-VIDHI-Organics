@@ -7,15 +7,15 @@ import { ScrollReveal } from "@/components/common/ScrollReveal";
 const faqs = [
   {
     q: "How quickly will I see results?",
-    a: "Our botanical face packs and ubtans leave your skin visibly softer and cleaner right from the 1st wash, with tan removal and dark spots clearing in 2 to 3 weeks. For our Seed Cycling Kit, most women notice regularized cycles, reduced cramps, and improved energy within 1 to 2 complete menstrual cycles (4–8 weeks).",
+    a: "Our botanical face packs and ubtans leave your skin visibly softer and cleaner right from the 1st wash, with tan removal and dark spots clearing in 2 to 3 weeks. For our Himalayan Sea Buckthorn pulp and herbal hair powders, noticeable vitality and root strength appear within 2–4 weeks of regular use.",
   },
   {
     q: "Are Shree Vidhi products 100% natural and chemical-free?",
-    a: "Yes! Every formula is crafted with 100% pure herbs and edible-grade seeds. We never use parabens, sulfates, silicones, artificial colors, or chemical fillers. All products are AYUSH and FSSAI certified.",
+    a: "Yes! Every formula is crafted with 100% pure botanical herbs. We never use parabens, sulfates, silicones, artificial colors, or chemical fillers. All products are AYUSH and FSSAI certified.",
   },
   {
-    q: "How do I use the Seed Cycling Kit?",
-    a: "It's super easy! Take 1 tablespoon (10–15g) daily. Days 1 to 14 of your cycle: take Jar 1 (Pumpkin & Flax seed blend). Days 15 to 30: take Jar 2 (Sesame & Sunflower seed blend). Simply mix into curd, morning smoothies, oatmeal, or warm water.",
+    q: "How do I consume the Sea Buckthorn Pulp add-on?",
+    a: "Simply dilute 20–30ml of pure Himalayan Sea Buckthorn pulp in a glass of room-temperature or lukewarm water and drink in the morning on an empty stomach. You can also mix it into fresh juices or morning smoothies for a potent Vitamin C & Omega 7 boost.",
   },
   {
     q: "What are the shipping charges and delivery timelines?",

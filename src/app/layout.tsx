@@ -1,5 +1,14 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  viewportFit: "cover",
+  themeColor: "#FAF8F5",
+};
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -73,7 +82,7 @@ export default function RootLayout({
       "@type": "Person",
       name: "Aditi Singh",
     },
-    description: "Government-funded social enterprise in Varanasi founded by Aditi Singh. Authentic certified Ayurvedic Vidhi rituals, hair care, skincare, and seed cycling.",
+    description: "Government-funded social enterprise in Varanasi founded by Aditi Singh. Authentic certified Ayurvedic Vidhi rituals, hair care, skincare, and superfoods.",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+91-6393600430",
@@ -110,7 +119,7 @@ export default function RootLayout({
         <AmbientGlow />
         <AnnouncementBar />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 w-full max-w-full overflow-x-hidden">{children}</main>
         <Footer />
 
         {/* Global Modals & Notifications */}

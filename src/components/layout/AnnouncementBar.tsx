@@ -41,23 +41,23 @@ export function AnnouncementBar() {
   return (
     <aside
       aria-label="Store Announcements"
-      className="bg-[#F4F0E6] text-forest-950/80 border-b border-[#E7E2D5] text-[11px] py-2 px-4 transition-colors duration-500 font-medium"
+      className="bg-[#F4F0E6] text-forest-950/80 border-b border-[#E7E2D5] text-[11px] py-2 px-3 sm:px-4 transition-colors duration-500 font-medium overflow-hidden"
     >
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between gap-2 max-w-full">
         {/* Support Direct Line (Desktop) */}
-        <div className="hidden lg:flex items-center gap-2 text-forest-800/70 hover:text-forest-950 transition-colors">
+        <div className="hidden lg:flex items-center gap-2 text-forest-800/70 hover:text-forest-950 transition-colors shrink-0">
           <Phone className="w-3 h-3 text-[#A8884A]" />
           <span className="tracking-wide">Vedic Care: +91 6393600430 (Varanasi)</span>
         </div>
 
         {/* Center Rotating Message */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex items-center gap-2 animate-fadeIn transition-all">
+        <div className="flex-1 flex items-center justify-center min-w-0 overflow-hidden">
+          <div className="flex items-center gap-1.5 sm:gap-2 animate-fadeIn transition-all max-w-full overflow-hidden">
             <IconComponent className="w-3.5 h-3.5 text-[#A8884A] shrink-0" />
-            <span className="tracking-wide text-forest-900">{current.text}</span>
+            <span className="tracking-wide text-forest-900 text-[10px] sm:text-[11px] truncate">{current.text}</span>
             <Link
               href={current.href}
-              className="hidden sm:inline-flex items-center gap-0.5 text-[#8F7038] hover:text-[#5E4720] font-semibold underline underline-offset-4 ml-1 transition-colors"
+              className="hidden sm:inline-flex items-center gap-0.5 text-[#8F7038] hover:text-[#5E4720] font-semibold underline underline-offset-4 ml-1 transition-colors shrink-0"
             >
               {current.linkText}
               <ChevronRight className="w-2.5 h-2.5" />

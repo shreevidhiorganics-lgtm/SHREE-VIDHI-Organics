@@ -14,11 +14,13 @@ import {
   ArrowRight,
   Tag,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { useWishlistStore } from "@/store/wishlist-store";
 import { useUIStore } from "@/store/ui-store";
 import { formatPrice } from "@/lib/utils";
+import { products as allCatalogProducts } from "@/lib/data/initial-data";
 
 export function CartDrawer() {
   const { isCartDrawerOpen, closeCartDrawer } = useUIStore();
@@ -33,12 +35,30 @@ export function CartDrawer() {
     coupon,
     applyCoupon,
     removeCoupon,
+    addItem,
   } = useCartStore();
   const { addItem: addToWishlist } = useWishlistStore();
   const { addToast } = useUIStore();
 
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState("");
+
+  const seaBuckthornProduct = allCatalogProducts.find(
+    (p) => p.id === "prod-seabuckthorn-pulp" || p.slug.includes("sea-buckthorn")
+  );
+  const hasAddOnInCart = items.some(
+    (i) => i.productId === "prod-seabuckthorn-pulp" || i.product?.slug?.includes("sea-buckthorn")
+  );
+
+  const handleAddAddOn = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (seaBuckthornProduct) {
+      const res = addItem(seaBuckthornProduct);
+      if (res.success) {
+        addToast("Added Sea Buckthorn Pulp Add-On to your bag!", "success");
+      }
+    }
+  };
 
   if (!isCartDrawerOpen) return null;
 
@@ -277,6 +297,50 @@ export function CartDrawer() {
                 </div>
               </div>
             ))
+          )}
+
+          {/* Featured Sea Buckthorn Pulp Add-On Recommendation */}
+          {!hasAddOnInCart && seaBuckthornProduct && items.length > 0 && (
+            <div className="mx-2 mt-4 p-3 rounded-2xl bg-[#F6F2E9] border border-[#E5DCB8] shadow-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold text-[#8C6D32] uppercase tracking-wider flex items-center gap-1.5">
+                  <Sparkles className="w-3 h-3 text-[#C5A872]" />
+                  <span>Featured Wellness Add-On</span>
+                </span>
+                <span className="text-[9px] bg-[#1C3F26] text-[#D8B980] border border-[#C5A872]/40 font-semibold px-2 py-0.5 rounded-full">
+                  Save 40%
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="relative w-11 h-11 rounded-xl bg-white p-1 border border-[#EDE7DD] shrink-0 overflow-hidden flex items-center justify-center">
+                    <Image
+                      src="/pictures/products/seabuckthorn-pulp.png"
+                      alt="Sea Buckthorn Pulp Add-on"
+                      width={38}
+                      height={38}
+                      className="object-contain"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-serif font-bold text-forest-950 truncate">
+                      Sea Buckthorn Pulp (500ml)
+                    </h4>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="font-bold text-[#1C3F26]">{formatPrice(899)}</span>
+                      <span className="text-[10px] text-muted-foreground line-through">{formatPrice(1499)}</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAddAddOn}
+                  className="shrink-0 bg-[#1C3F26] hover:bg-[#14301D] text-white text-[11px] font-medium px-3.5 py-1.5 rounded-full border border-[#C5A872]/30 shadow-xs transition-all active:scale-95 cursor-pointer"
+                >
+                  + Add
+                </button>
+              </div>
+            </div>
           )}
         </div>
 

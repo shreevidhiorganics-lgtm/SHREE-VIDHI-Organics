@@ -8,11 +8,11 @@ const reviews = [
   {
     name: "Pooja Sharma",
     location: "Mumbai",
-    product: "Seed Cycling Kit",
+    product: "Sea Buckthorn Pulp (500ml)",
     rating: 5,
     date: "Verified Buyer • 2 weeks ago",
     comment:
-      "I had irregular cycles for over 6 months due to PCOS. After 2 months of following the Seed Cycling Kit daily in my morning curd, my period came right on schedule with almost zero cramps! Cannot recommend this enough.",
+      "Adding this Sea Buckthorn pulp to my morning warm water has been a game-changer! My energy levels are way up, and my skin has developed a natural dewy glow. The pure tart berry flavor proves there are zero added sugars.",
   },
   {
     name: "Sneha Mukherjee",

@@ -25,11 +25,11 @@ const mainCategories = [
   },
   {
     id: "wellness",
-    title: "Hormone Health & Seeds",
-    desc: "Natural 2-phase Seed Cycling Kit to support regular periods, ease PMS, and boost energy.",
-    image: "/pictures/products/seed-cycling-kit-hires.png",
-    href: "/product/shree-vidhi-seed-cycling-kit",
-    tag: "Best Seller",
+    title: "Wellness & Superfoods",
+    desc: "Pure wild Himalayan Sea Buckthorn pulp rich in Omega 7, Moringa, and traditional revitalizing tonics.",
+    image: "/pictures/products/seabuckthorn-pulp.png",
+    href: "/shop?category=wellness",
+    tag: "Add-On Special",
   },
 ];
 

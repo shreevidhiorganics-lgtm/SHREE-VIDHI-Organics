@@ -141,9 +141,9 @@ export default function OurStoryPage() {
 
             <div className="p-6 rounded-2xl bg-[#FAF8F5] border border-[#EDE7DD] space-y-3">
               <span className="text-[11px] font-semibold text-[#8C6D32] uppercase tracking-wider block">03 / Wellness Supplements</span>
-              <h4 className="font-serif text-lg text-[#18231C] font-semibold">Hormonal &amp; Cellular Vitality</h4>
+              <h4 className="font-serif text-lg text-[#18231C] font-semibold">Immunity &amp; Cellular Vitality</h4>
               <p className="text-xs text-[#5D6760] font-light leading-relaxed">
-                Vedic Seed Cycling Kit (Follicular &amp; Luteal phases), Himalayan Sea Buckthorn pulp, Beetroot superfood powder, and Moringa.
+                Himalayan Sea Buckthorn pulp, Beetroot superfood powder, Pure Moringa, and revitalizing herbal tonics.
               </p>
             </div>
           </div>
@@ -234,7 +234,7 @@ export default function OurStoryPage() {
             Experience Ancient Vidhi for Modern Wellness
           </h2>
           <p className="text-xs sm:text-sm text-[#A8B4AC] max-w-md mx-auto font-light leading-relaxed">
-            From hormonal balance with our Seed Cycling Kit to glowing bridal Ubtan, explore our certified, chemical-free rituals.
+            From wild Himalayan Sea Buckthorn pulp to glowing bridal Ubtan, explore our certified, chemical-free rituals.
           </p>
           <div className="pt-3">
             <Link

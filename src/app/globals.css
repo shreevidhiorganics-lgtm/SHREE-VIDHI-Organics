@@ -70,8 +70,11 @@
   * {
     @apply border-border;
   }
+  html {
+    @apply overflow-x-hidden max-w-full w-full;
+  }
   body {
-    @apply bg-background text-foreground antialiased selection:bg-gold-500/20 selection:text-forest-900;
+    @apply bg-background text-foreground antialiased selection:bg-gold-500/20 selection:text-forest-900 overflow-x-hidden max-w-full w-full;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 

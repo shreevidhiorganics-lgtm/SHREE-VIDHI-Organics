@@ -14,11 +14,13 @@ import {
   Tag,
   ShieldCheck,
   CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { useWishlistStore } from "@/store/wishlist-store";
 import { useUIStore } from "@/store/ui-store";
 import { formatPrice } from "@/lib/utils";
+import { products as allCatalogProducts } from "@/lib/data/initial-data";
 
 export default function CartPage() {
   const {
@@ -32,6 +34,7 @@ export default function CartPage() {
     coupon,
     applyCoupon,
     removeCoupon,
+    addItem,
   } = useCartStore();
 
   const { addItem: addToWishlist } = useWishlistStore();
@@ -39,6 +42,22 @@ export default function CartPage() {
 
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState("");
+
+  const seaBuckthornProduct = allCatalogProducts.find(
+    (p) => p.id === "prod-seabuckthorn-pulp" || p.slug.includes("sea-buckthorn")
+  );
+  const hasAddOnInCart = items.some(
+    (i) => i.productId === "prod-seabuckthorn-pulp" || i.product?.slug?.includes("sea-buckthorn")
+  );
+
+  const handleAddAddOn = () => {
+    if (seaBuckthornProduct) {
+      const res = addItem(seaBuckthornProduct);
+      if (res.success) {
+        addToast("Added Sea Buckthorn Pulp Add-On to your bag!", "success");
+      }
+    }
+  };
 
   const subtotal = getSubtotal();
   const discount = getDiscount();
@@ -255,6 +274,54 @@ export default function CartPage() {
                 </div>
               ))}
             </div>
+
+            {/* Featured Sea Buckthorn Pulp Add-On Recommendation */}
+            {!hasAddOnInCart && seaBuckthornProduct && (
+              <div className="pt-6 border-t border-gray-100">
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#FAF6EE] border border-[#E8DEC7] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="relative w-16 h-16 rounded-2xl bg-white p-1.5 border border-[#EDE7DD] shrink-0 overflow-hidden flex items-center justify-center">
+                      <Image
+                        src="/pictures/products/seabuckthorn-pulp.png"
+                        alt="Sea Buckthorn Pulp Add-on"
+                        width={56}
+                        height={56}
+                        className="object-contain"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="text-[10px] font-bold text-[#8C6D32] uppercase tracking-wider flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-[#C5A872]" />
+                          Wellness Add-On Special
+                        </span>
+                        <span className="text-[9px] bg-[#1C3F26] text-[#D8B980] border border-[#C5A872]/40 font-semibold px-2 py-0.5 rounded-full">
+                          Save 40%
+                        </span>
+                      </div>
+                      <h4 className="font-serif font-bold text-sm sm:text-base text-forest-950">
+                        Pure Himalayan Sea Buckthorn Pulp (500ml)
+                      </h4>
+                      <p className="text-xs text-forest-900/65 line-clamp-1">
+                        Immunity booster with rare Omega 7, 3, 6, 9 & 12x Vitamin C.
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="font-bold text-sm text-[#1C3F26]">{formatPrice(899)}</span>
+                        <span className="text-xs text-muted-foreground line-through">{formatPrice(1499)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddAddOn}
+                    className="bg-[#1C3F26] hover:bg-[#14301D] text-white text-xs font-semibold px-5 py-2.5 rounded-full border border-[#C5A872]/30 shadow-soothe transition-all active:scale-95 flex items-center justify-center gap-1.5 shrink-0 self-start sm:self-center cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-[#D8B980]" />
+                    <span>Add to Bag</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right: Order Summary Sidebar */}

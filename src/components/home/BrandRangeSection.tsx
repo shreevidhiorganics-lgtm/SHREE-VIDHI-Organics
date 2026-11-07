@@ -9,7 +9,7 @@ import { ScrollReveal } from "@/components/common/ScrollReveal";
 const benefits = [
   {
     title: "100% Pure & Natural",
-    desc: "Clean botanicals and edible-grade seeds. Zero preservatives, parabens, or artificial colors.",
+    desc: "Clean botanicals and wild herbs. Zero preservatives, parabens, or artificial colors.",
     icon: Leaf,
   },
   {
@@ -55,7 +55,7 @@ export function BrandRangeSection() {
               {[
                 "Face Care: Gentle herbal ubtan, clay packs, and pure wild turmeric from ₹99",
                 "Hair Care: Aromatic Kapur Kachri root powder for scalp detox & volume",
-                "Hormone Health: 2-phase Seed Cycling Kit for natural menstrual regularity",
+                "Superfood Add-Ons: Pure Himalayan Sea Buckthorn pulp rich in Omega 7 & Vitamin C",
                 "100% Transparency: Every ingredient listed, zero hidden additives or perfumes",
               ].map((bullet, idx) => (
                 <div key={idx} className="flex items-start gap-3">

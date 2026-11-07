@@ -3,7 +3,6 @@ import { HeroBanner } from "@/components/home/HeroBanner";
 import { QuickTrustBar } from "@/components/home/QuickTrustBar";
 import { ShopByConcern } from "@/components/home/ShopByConcern";
 import { FeaturedSection } from "@/components/home/FeaturedSection";
-import { SeedCyclingSpotlight } from "@/components/home/SeedCyclingSpotlight";
 import { BrandRangeSection } from "@/components/home/BrandRangeSection";
 import { CategoryCards } from "@/components/home/CategoryCards";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
@@ -35,15 +34,12 @@ export default function HomePage() {
         description="Pure, chemical-free everyday care loved by thousands across India. Handcrafted in Varanasi with 100% natural herbs."
         products={allProducts}
         viewAllHref="/shop"
-        viewAllText="Explore All 29 Products"
+        viewAllText="Explore All 28 Products"
         bgColor="white"
         limit={12}
       />
 
-      {/* 5. 2-Step Seed Cycling Spotlight with Direct Add-to-Bag */}
-      <SeedCyclingSpotlight />
-
-      {/* 6. Why Choose Us / Brand Value Proposition */}
+      {/* 5. Why Choose Us / Brand Value Proposition */}
       <BrandRangeSection />
 
       {/* 7. Shop by Category (Face Care, Hair Care, Hormone Health) */}

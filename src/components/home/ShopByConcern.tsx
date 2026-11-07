@@ -7,12 +7,12 @@ import { ScrollReveal } from "@/components/common/ScrollReveal";
 
 const concerns = [
   {
-    title: "Hormone Balance & PCOS",
-    badge: "Doctor Recommended",
+    title: "Immunity & Radiant Vitality",
+    badge: "Superfood Add-On",
     icon: Flower2,
-    desc: "Natural 2-phase seed rotation to support regular periods, ease cramps & restore calm.",
-    products: "Seed Cycling Kit",
-    href: "/product/shree-vidhi-seed-cycling-kit",
+    desc: "Wild Himalayan Sea Buckthorn rich in rare Omega 7, Vitamin C & antioxidants for cellular rejuvenation.",
+    products: "Sea Buckthorn Pulp & Moringa",
+    href: "/product/shree-vidhi-sea-buckthorn-pulp-500ml",
     color: "from-amber-50 to-orange-50/50",
     iconBg: "bg-amber-100/70 text-amber-800",
     accent: "text-amber-800",

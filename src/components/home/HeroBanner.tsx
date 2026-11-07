@@ -33,16 +33,16 @@ const slides: HeroSlide[] = [
     image: "/pictures/banners/hero_banner_shreevidhi.png",
   },
   {
-    id: "hormones",
-    badge: "FOUNDER'S FORMULATION • HORMONE BALANCE",
-    title: "Balance Your Hormones,\nNaturally.",
-    description: "Created by founder Aditi Singh after healing her chronic PCOS. Our 2-phase Seed Cycling Kit helps regulate cycles, reduce cramps, and restore calm.",
-    primaryCta: "Shop Seed Cycling Kit",
-    primaryHref: "/product/shree-vidhi-seed-cycling-kit",
-    secondaryCta: "How It Works",
-    secondaryHref: "#seed-cycling",
-    featuredHerb: "Pumpkin & Flax (Phase 1) + Sesame & Sunflower (Phase 2)",
-    image: "/pictures/banners/hero_banner_seed_cycling.png",
+    id: "haircare",
+    badge: "ANCIENT ROOT RITUAL • ZERO CHEMICALS",
+    title: "Dense, Strong Hair\nFrom The Roots.",
+    description: "Formulated with wild Himalayan Kapur Kachri rhizome, Sarva Kesh blend, and triple-milled Amla Reetha Shikakai. Stimulates micro-circulation and arrests excessive hair fall.",
+    primaryCta: "Shop Hair Care",
+    primaryHref: "/shop?category=hair-care",
+    secondaryCta: "Explore Ingredients",
+    secondaryHref: "/ingredients",
+    featuredHerb: "Pure Kapur Kachri & Sarva Kesh Blend",
+    image: "/pictures/banners/hero_banner_shreevidhi.png",
   },
   {
     id: "ubtan",
@@ -106,10 +106,10 @@ export function HeroBanner() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-[#18231C] border border-[#C5A872]/40 rounded-full py-1.5 px-3.5 shadow-sm"
+            className="inline-flex items-center gap-2 bg-[#18231C] border border-[#C5A872]/40 rounded-full py-1.5 px-3 sm:px-3.5 shadow-sm max-w-full"
           >
-            <span className="w-2 h-2 rounded-full bg-[#C5A872] animate-pulse" />
-            <span className="text-[10px] font-semibold tracking-[0.2em] text-[#FAF8F5] uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#C5A872] animate-pulse shrink-0" />
+            <span className="text-[9px] sm:text-[10px] font-semibold tracking-wider sm:tracking-[0.18em] text-[#FAF8F5] uppercase truncate">
               {slide.badge}
             </span>
           </motion.div>
