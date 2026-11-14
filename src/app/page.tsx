@@ -1,6 +1,6 @@
 import React from "react";
 import { HeroBanner } from "@/components/home/HeroBanner";
-import { QuickTrustBar } from "@/components/home/QuickTrustBar";
+
 import { SeaBuckthornSpotlight } from "@/components/home/SeaBuckthornSpotlight";
 import { FeaturedSection } from "@/components/home/FeaturedSection";
 import { ShopByConcern } from "@/components/home/ShopByConcern";
@@ -26,10 +26,9 @@ export default function HomePage() {
       <HeroBanner />
 
       {/* 2. Quick Trust Bar */}
-      <QuickTrustBar />
 
-      {/* 3. Individual Display / Spotlight of Sea Buckthorn Pulp */}
-      <SeaBuckthornSpotlight product={seaBuckthornProduct} />
+
+
 
       {/* 4. Complete Catalog: All Ayurvedic Products Listed */}
       <FeaturedSection
@@ -42,6 +41,9 @@ export default function HomePage() {
         bgColor="white"
         limit={allProducts.length}
       />
+
+      {/* 3. Individual Display / Spotlight of Sea Buckthorn Pulp */}
+      <SeaBuckthornSpotlight product={seaBuckthornProduct} />
 
       {/* 5. Interactive Shop by Concern */}
       <ShopByConcern />

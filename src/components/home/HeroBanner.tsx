@@ -168,8 +168,7 @@ export function HeroBanner() {
                   <Star key={i} className="w-3.5 h-3.5 fill-current text-amber-500" />
                 ))}
               </div>
-              <span className="font-semibold text-forest-950">4.9 / 5</span>
-              <span className="text-forest-800/60 font-light">(2,400+ reviews)</span>
+
             </div>
             <div className="hidden sm:flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#1C3F26]" />
@@ -179,26 +178,7 @@ export function HeroBanner() {
         </div>
       </div>
 
-      {/* Slide Switcher Controls */}
-      <div className="absolute bottom-6 right-4 sm:right-8 z-20 flex items-center gap-2 bg-[#18231C]/90 backdrop-blur-md border border-[#2D3E32] p-1.5 rounded-full shadow-lg">
-        {slides.map((s, idx) => {
-          const isActive = idx === currentSlide;
-          return (
-            <button
-              key={s.id}
-              onClick={() => setCurrentSlide(idx)}
-              className={`px-3 py-1.5 rounded-full text-xs transition-all duration-300 font-medium ${
-                isActive
-                  ? "bg-[#25372B] text-white border border-[#C5A872]/50 shadow-sm"
-                  : "text-[#A8B4AC] hover:text-white"
-              }`}
-              aria-label={`Go to slide ${idx + 1}`}
-            >
-              0{idx + 1}
-            </button>
-          );
-        })}
-      </div>
+
     </section>
   );
 }

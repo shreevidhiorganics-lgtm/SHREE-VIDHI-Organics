@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getPayUConfig, verifyPayUResponseHash, PayUCallbackParams } from "@/lib/payu";
+import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
+import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,6 +69,7 @@ export async function POST(req: NextRequest) {
     // 2. Handle Payment Outcome
     if (isSuccess) {
       if (orderId) {
+        const order = dataStore.getOrderById(orderId);
         dataStore.updateOrderPaymentDetails(orderId, {
           status: "CONFIRMED",
           paymentStatus: "PAID",
@@ -74,6 +77,13 @@ export async function POST(req: NextRequest) {
           payuTxnId: callbackParams.txnid,
           payuMihpayid: callbackParams.mihpayid,
         });
+
+        if (order) {
+          Promise.allSettled([
+            sendOrderConfirmationSMS(order.shippingAddress.phone, order.orderNumber, order.total),
+            sendOrderConfirmationEmail(order),
+          ]).catch(() => {});
+        }
       }
 
       return NextResponse.redirect(

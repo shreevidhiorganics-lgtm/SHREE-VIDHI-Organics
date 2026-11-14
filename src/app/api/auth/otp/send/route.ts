@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { sendOtpSMS } from "@/lib/notifications/sms";
 import "@/lib/db/server-sync";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
@@ -52,8 +55,9 @@ export async function POST(req: NextRequest) {
 
     const result = dataStore.sendOtp(cleanPhone);
 
-    // OWASP A09 Server Logging & A07 Protection:
-    // Never leak OTP in production JSON responses. Log server-side for audit trail.
+    // Dispatch real SMS via Fast2SMS (with safe mock fallback if key not yet provided)
+    await sendOtpSMS(cleanPhone, result.otp);
+
     console.log(`[AUTH] Verification code dispatched to +91 ${cleanPhone}.`);
 
     const responseBody: Record<string, any> = {

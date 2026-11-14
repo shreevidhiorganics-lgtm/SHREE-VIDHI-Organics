@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getCurrentUser } from "@/lib/auth/auth";
+import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
+import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
 import "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
@@ -59,10 +61,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const createdOrder = result.order;
+
+    // Asynchronously dispatch Order Confirmation SMS and Email
+    Promise.allSettled([
+      sendOrderConfirmationSMS(
+        createdOrder.shippingAddress.phone,
+        createdOrder.orderNumber,
+        createdOrder.total
+      ),
+      sendOrderConfirmationEmail(createdOrder),
+    ]).catch((err) => console.error("[Order Notification] Dispatch error:", err));
+
     return NextResponse.json({
       success: true,
-      order: result.order,
-      orderNumber: result.order.orderNumber,
+      order: createdOrder,
+      orderNumber: createdOrder.orderNumber,
     });
   } catch (error: any) {
     return NextResponse.json(
