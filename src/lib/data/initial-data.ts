@@ -3,7 +3,7 @@ import { Category, Ingredient, Product, FAQ, Blog, Banner, SiteSettings, Coupon 
 export const siteSettings: SiteSettings = {
   announcementText: "🌿 Government-Funded Social Enterprise in Varanasi • 100% Certified Ayurvedic Vidhi • Free Express Shipping above ₹499",
   freeShippingThreshold: 499,
-  supportPhone: "+91 6393600430, +91 7752905694",
+  supportPhone: "",
   supportEmail: "shreevidhiorganics@gmail.com",
   supportAddress: "N15/170 A Badi Gaibi Chauraha, Birdopur, Varanasi, Uttar Pradesh - 221010, India",
   instagramUrl: "https://instagram.com/shreevidhiorganics",
@@ -160,7 +160,7 @@ export const products: Product[] = [
     "categoryId": "cat-facepacks",
     "categoryName": "Ubtan & Face Packs",
     "shortDesc": "100% pure & natural Ubtan powder — face pack for acne, dull skin & dark spots. Naturally brightens, exfoliates, and restores skin glow.",
-    "description": "This potent Ayurvedic blend of Multani Mitti, Turmeric, Gram Flour, Barley Powder, Rice, and Masur Dal offers a complete solution for radiant, glowing skin.\n\nMultani Mitti (Fuller's Earth) deeply cleanses and tightens pores, while Gram Flour and Rice act as gentle exfoliators to lift dead cells and blackheads. Turmeric provides anti-inflammatory and antiseptic properties to brighten skin tone and soothe blemishes, while Barley Powder and Masur Dal nourish and rejuvenate.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "This potent Ayurvedic blend of Multani Mitti, Turmeric, Gram Flour, Barley Powder, Rice, and Masur Dal offers a complete solution for radiant, glowing skin.\n\nMultani Mitti (Fuller's Earth) deeply cleanses and tightens pores, while Gram Flour and Rice act as gentle exfoliators to lift dead cells and blackheads. Turmeric provides anti-inflammatory and antiseptic properties to brighten skin tone and soothe blemishes, while Barley Powder and Masur Dal nourish and rejuvenate.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Exfoliates, brightens, and nourishes skin deeply",
       "Fights acne breakouts, dark spots, and uneven texture",
@@ -243,7 +243,7 @@ export const products: Product[] = [
     "categoryId": "cat-powders",
     "categoryName": "Herbal Powders",
     "shortDesc": "100% pure & natural beetroot powder for reddish, glowing skin. Natural blush, lip tint, and face pack — all in one.",
-    "description": "A powerful source of antioxidants, vitamins, and minerals gently dehydrated at low temperatures to lock in active betalain pigments, Vitamin C, and potassium.\n\nUsed externally, Beetroot Powder provides a natural rosy flush to lips and cheeks, and improves skin and hair health by enhancing micro-circulation. Internally, it acts as an antioxidant superfood that supports detoxification and vitality.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "A powerful source of antioxidants, vitamins, and minerals gently dehydrated at low temperatures to lock in active betalain pigments, Vitamin C, and potassium.\n\nUsed externally, Beetroot Powder provides a natural rosy flush to lips and cheeks, and improves skin and hair health by enhancing micro-circulation. Internally, it acts as an antioxidant superfood that supports detoxification and vitality.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Imparts a natural rosy-pink flush to skin",
       "High betalain antioxidants combat oxidative damage",
@@ -319,7 +319,7 @@ export const products: Product[] = [
     "categoryId": "cat-skin",
     "categoryName": "Skin Care",
     "shortDesc": "Pure wild Jangali Haldi (Kasturi Turmeric) powder for face and skin — non-staining, aromatic, and deeply purifying.",
-    "description": "Unlike regular kitchen turmeric, authentic **Jangali Haldi** (Wild Kasturi Turmeric / *Curcuma aromatica*) is specifically cultivated for cosmetic skincare and does not stain the skin.\n\nIt possesses potent anti-inflammatory and antioxidant properties that help in brightening skin complexion, fading dark spots and acne marks, and refining skin texture with an earthy, cooling herbal aroma.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "Unlike regular kitchen turmeric, authentic **Jangali Haldi** (Wild Kasturi Turmeric / *Curcuma aromatica*) is specifically cultivated for cosmetic skincare and does not stain the skin.\n\nIt possesses potent anti-inflammatory and antioxidant properties that help in brightening skin complexion, fading dark spots and acne marks, and refining skin texture with an earthy, cooling herbal aroma.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Non-staining wild turmeric — safe for daily face use",
       "Fades dark spots, sun tan, and post-acne marks",
@@ -395,7 +395,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "Revered Ayurvedic Kapur Kachri powder — supports hair growth, reduces fall, and strengthens roots with a refreshing herbal aroma.",
-    "description": "A celebrated Ayurvedic herb (*Hedychium spicatum*) prized for centuries to nourish scalp health, promote healthy hair growth, and strengthen roots.\n\nIt improves hair texture, imparts natural softness and luster, and soothes flakiness and dandruff, leaving a therapeutic, aromatic herbal fragrance without any artificial scents.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "A celebrated Ayurvedic herb (*Hedychium spicatum*) prized for centuries to nourish scalp health, promote healthy hair growth, and strengthen roots.\n\nIt improves hair texture, imparts natural softness and luster, and soothes flakiness and dandruff, leaving a therapeutic, aromatic herbal fragrance without any artificial scents.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Promotes healthy hair growth and root vitality",
       "Reduces hair fall, breakage, and split ends",
@@ -472,7 +472,7 @@ export const products: Product[] = [
     "categoryId": "cat-facepacks",
     "categoryName": "Ubtan & Face Packs",
     "shortDesc": "Pure Multani Mitti, Neem & Turmeric blend — a traditional face and body cleansing powder that deeply purifies, brightens, and controls oiliness.",
-    "description": "A traditional Ayurvedic blend of Multani Mitti, Neem, and Turmeric — an all-in-one clarifying solution for radiant, blemish-free skin.\n\nMultani Mitti (Fuller's Earth) deeply cleanses the pores and absorbs excess sebum. Neem, revered for its antibacterial power, purifies the skin and helps soothe breakouts. Turmeric brightens the complexion with antioxidant care and promotes an even skin tone.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "A traditional Ayurvedic blend of Multani Mitti, Neem, and Turmeric — an all-in-one clarifying solution for radiant, blemish-free skin.\n\nMultani Mitti (Fuller's Earth) deeply cleanses the pores and absorbs excess sebum. Neem, revered for its antibacterial power, purifies the skin and helps soothe breakouts. Turmeric brightens the complexion with antioxidant care and promotes an even skin tone.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Deep pore cleansing with Multani Mitti",
       "Controls oiliness and reduces acne with Neem",
@@ -549,7 +549,7 @@ export const products: Product[] = [
     "categoryId": "cat-facepacks",
     "categoryName": "Ubtan & Face Packs",
     "shortDesc": "Handcrafted with 15 sacred Ayurvedic botanicals including Kapur Kachri, Chandan, Mulethi, and Wild Turmeric for daily deep cleansing and radiant glow.",
-    "description": "This mixture of Kapur Kachri, Multani Mitti, Barley Powder, Chandan Powder, Red Lentils Powder, Gram Flour, Aloe Vera Powder, Wild Turmeric, Mulethi Powder, Neem Powder, Tulsi Powder, Rose Powder, Beetroot Powder, Orange Peel Powder, and Brown Rice Powder mixed with curd contains ingredients known for extraordinary skin rejuvenation.\n\n**Key Clinical Benefits:**\n- **Acne:** The antimicrobial and anti-inflammatory properties of Neem, Tulsi, and Wild Turmeric help calm breakouts.\n- **Oily Skin:** Multani Mitti and Gram Flour absorb excess sebum without stripping moisture.\n- **Dull Skin:** Gentle botanical exfoliators brighten complexion and lift stubborn tan.\n- **Hyperpigmentation:** Chandan, Mulethi, and Orange Peel powder help fade dark spots.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "This mixture of Kapur Kachri, Multani Mitti, Barley Powder, Chandan Powder, Red Lentils Powder, Gram Flour, Aloe Vera Powder, Wild Turmeric, Mulethi Powder, Neem Powder, Tulsi Powder, Rose Powder, Beetroot Powder, Orange Peel Powder, and Brown Rice Powder mixed with curd contains ingredients known for extraordinary skin rejuvenation.\n\n**Key Clinical Benefits:**\n- **Acne:** The antimicrobial and anti-inflammatory properties of Neem, Tulsi, and Wild Turmeric help calm breakouts.\n- **Oily Skin:** Multani Mitti and Gram Flour absorb excess sebum without stripping moisture.\n- **Dull Skin:** Gentle botanical exfoliators brighten complexion and lift stubborn tan.\n- **Hyperpigmentation:** Chandan, Mulethi, and Orange Peel powder help fade dark spots.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "15 Sacred Ayurvedic ingredients in one luxurious blend",
       "Cleanses as a daily face wash or intensive weekly mask",
@@ -581,6 +581,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Vedic Blend 15 Shaktishali Samagri Steel Jar",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-vedic-blend-back",
+        "url": "/pictures/products/vedic-blend-back.png",
+        "alt": "Shree Vidhi Vedic Blend 15 Shaktishali Samagri Back Ingredient & Usage Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -604,7 +611,7 @@ export const products: Product[] = [
     "categoryId": "cat-skin",
     "categoryName": "Skin Care",
     "shortDesc": "Pure soothing aloe vera gel. Hydrates parched skin, calms sunburn and razor irritation, and acts as a lightweight leave-in hair conditioner.",
-    "description": "Aloe vera juice deeply hydrates, smooths, and promotes epidermal healing. Formulated with a balanced pH to ensure silky texture and rapid skin absorption without greasy residue.\n\n**Government Certified:** AYUSH Lic. No. 890-AYU • FSSAI Lic. No. 12223024000403. Net Quantity: 200 ML.",
+    "description": "Aloe vera juice deeply hydrates, smooths, and promotes epidermal healing. Formulated with a balanced pH to ensure silky texture and rapid skin absorption without greasy residue.\n\n**Purity Guarantee:** 100% Pure Botanical Formulation • Net Quantity: 200 ML.",
     "keyBenefits": [
       "Deep soothing hydration for face, body, and scalp",
       "Calms sunburn, rashes, and shaving irritation instantly",
@@ -636,6 +643,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Aloe Vera Gel 200ml Pump Bottle",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-aloe-vera-gel-back",
+        "url": "/pictures/products/aloe-vera-gel-back.png",
+        "alt": "Shree Vidhi Pure Aloe Vera Gel Back Formulation & Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -659,7 +673,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "All-in-one cleanser, conditioner, and growth enhancer powered by Henna, Neem, Reetha, Shikakai, Amla, Kapur Kachri, Methi, and Hibiscus.",
-    "description": "A master blend of 8 sacred hair-care herbs. Henna and Hibiscus impart natural conditioning, shine, and soft bounce. Amla, Reetha, and Shikakai gently purify the scalp while building follicular density. Kapur Kachri and Methi stimulate micro-circulation to drastically cut down hair fall.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "A master blend of 8 sacred hair-care herbs. Henna and Hibiscus impart natural conditioning, shine, and soft bounce. Amla, Reetha, and Shikakai gently purify the scalp while building follicular density. Kapur Kachri and Methi stimulate micro-circulation to drastically cut down hair fall.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Complete 8-in-1 Ayurvedic hair nutrition and scalp detox",
       "Reduces hair breakage, split ends, and thinning",
@@ -691,6 +705,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Sarva Kesh Blend 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-sarva-kesh-blend-back",
+        "url": "/pictures/products/sarva-kesh-blend-back.png",
+        "alt": "Shree Vidhi Sarva Kesh Blend Back Ingredient & Scalp Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -714,7 +735,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "The timeless Ayurvedic trio of Amla, Reetha, and Shikakai to gently cleanse scalp, eliminate dandruff, and impart natural bounce.",
-    "description": "The classical herbal hair cleanser. Reetha creates a gentle botanical foam that purifies the scalp, Shikakai softens and untangles strands while preserving natural lipid moisture, and Amla infuses roots with natural Vitamin C to stop premature greying.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "The classical herbal hair cleanser. Reetha creates a gentle botanical foam that purifies the scalp, Shikakai softens and untangles strands while preserving natural lipid moisture, and Amla infuses roots with natural Vitamin C to stop premature greying.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "100% natural chemical-free alternative to sulfate shampoos",
       "Cleanses grease and buildup without drying the scalp",
@@ -746,6 +767,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Amla Reetha Shikakai Blend 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-amla-reetha-shikakai-back",
+        "url": "/pictures/products/amla-reetha-shikakai-blend-back.png",
+        "alt": "Shree Vidhi Amla Reetha Shikakai Blend Back Formulation & Wash Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -769,7 +797,7 @@ export const products: Product[] = [
     "categoryId": "cat-facepacks",
     "categoryName": "Ubtan & Face Packs",
     "shortDesc": "Traditional botanical scrub blend with pulses, grains, and herbs to unclog pores, lift dead cells, and smooth rough skin texture.",
-    "description": "Coarsely milled whole grains and healing Ayurvedic botanicals work gently to buff away dead stratum corneum cells, stubborn blackheads, and environmental tan without micro-tears. Leaves skin velvety soft and breathing free.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Coarsely milled whole grains and healing Ayurvedic botanicals work gently to buff away dead stratum corneum cells, stubborn blackheads, and environmental tan without micro-tears. Leaves skin velvety soft and breathing free.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Gentle non-abrasive natural exfoliation for face and body",
       "Clears stubborn blackheads and clears clogged pores",
@@ -801,6 +829,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Natural Scrub Blend 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-natural-scrub-blend-back",
+        "url": "/pictures/products/natural-scrub-blend-back.png",
+        "alt": "Shree Vidhi Natural Scrub Blend Back Formulation & Exfoliation Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -824,7 +859,7 @@ export const products: Product[] = [
     "categoryId": "cat-skin",
     "categoryName": "Skin Care",
     "shortDesc": "Auspicious celebratory turmeric and sandalwood blend handcrafted for bridal ceremonies, festivities, and deep luminous radiance.",
-    "description": "Prepared according to sacred Vedic tradition, Shagun Haldi combines golden ceremonial turmeric with cooling sandalwood and fragrant floral herbs. It purifies the aura, blesses the skin with an ethereal golden glow, and soothes wedding-day stress.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Prepared according to sacred Vedic tradition, Shagun Haldi combines golden ceremonial turmeric with cooling sandalwood and fragrant floral herbs. It purifies the aura, blesses the skin with an ethereal golden glow, and soothes wedding-day stress.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Sacred celebratory blend for brides, grooms, and festivities",
       "Creates a luminous, long-lasting golden bridal glow",
@@ -856,6 +891,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Shagun Haldi 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-shagun-haldi-back",
+        "url": "/pictures/products/shagun-haldi-back.png",
+        "alt": "Shree Vidhi Shagun Haldi Back Formulation & Bridal Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -879,7 +921,7 @@ export const products: Product[] = [
     "categoryId": "cat-facepacks",
     "categoryName": "Ubtan & Face Packs",
     "shortDesc": "Pure micro-fine Fuller's Earth powder. Draws out deep impurities, absorbs grease, and cools summer heat.",
-    "description": "Authentic Indian clay rich in magnesium chloride. Deeply unclogs sebum pores, dries active acne, and tightens sagging skin.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Authentic Indian clay rich in magnesium chloride. Deeply unclogs sebum pores, dries active acne, and tightens sagging skin.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Absorbs excess oil and eliminates grease shine",
       "Draws out blackheads, pollutants, and sebum plugs",
@@ -911,6 +953,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Multani Mitti Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-multani-mitti-back",
+        "url": "/pictures/products/multani-mitti-back.png",
+        "alt": "Shree Vidhi Pure Multani Mitti Back Mineral Composition & Mask Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -934,7 +983,7 @@ export const products: Product[] = [
     "categoryId": "cat-skin",
     "categoryName": "Skin Care",
     "shortDesc": "Cooling, fragrant authentic sandalwood powder. Calms redness, soothes sunburn, and brightens complexion with divine aroma.",
-    "description": "Revered across centuries for its Pitta-pacifying cooling energy, Chandan powder relieves prickly heat, calms inflamed blemishes, and imparts an ethereal, velvety matte finish.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Revered across centuries for its Pitta-pacifying cooling energy, Chandan powder relieves prickly heat, calms inflamed blemishes, and imparts an ethereal, velvety matte finish.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Calms acute skin inflammation, acne redness, and sunburn",
       "Fades dark blemishes and balances uneven skin tone",
@@ -966,6 +1015,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Chandan Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-chandan-powder-back",
+        "url": "/pictures/products/chandan-powder-back.png",
+        "alt": "Shree Vidhi Pure Chandan Powder Back Formulation & Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -989,7 +1045,7 @@ export const products: Product[] = [
     "categoryId": "cat-powders",
     "categoryName": "Herbal Powders",
     "shortDesc": "Potent organic neem leaf powder to purify oily and acne-prone skin and relieve stubborn scalp flakiness and dandruff.",
-    "description": "Derived from shade-dried organic Azadirachta indica leaves, Neem powder possesses powerful nimbidin and azadirachtin compounds that disinfect active pimples, purify blood, and soothe scalp itching.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Derived from shade-dried organic Azadirachta indica leaves, Neem powder possesses powerful nimbidin and azadirachtin compounds that disinfect active pimples, purify blood, and soothe scalp itching.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Fights stubborn acne bacteria and dries cystic pimples",
       "Eliminates dandruff fungi and scalp irritation",
@@ -1021,6 +1077,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Neem Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-neem-powder-back",
+        "url": "/pictures/products/neem-powder-back.png",
+        "alt": "Shree Vidhi Pure Neem Leaf Powder Back Bio-Action & Usage Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1044,7 +1107,7 @@ export const products: Product[] = [
     "categoryId": "cat-powders",
     "categoryName": "Herbal Powders",
     "shortDesc": "Sacred holy basil rich in eugenol and antioxidants. Protects against free radicals and cleanses skin deeply.",
-    "description": "Known as the Queen of Herbs, Tulsi (*Ocimum sanctum*) is cherished for its detoxifying, anti-aging, and skin-clearing powers. It relieves environmental oxidative stress and balances natural sebum.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Known as the Queen of Herbs, Tulsi (*Ocimum sanctum*) is cherished for its detoxifying, anti-aging, and skin-clearing powers. It relieves environmental oxidative stress and balances natural sebum.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Rich in eugenol and flavonoids to combat oxidative aging",
       "Cleanses deep impurities and reduces blackheads",
@@ -1076,6 +1139,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Tulsi Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-tulsi-powder-back",
+        "url": "/pictures/products/tulsi-powder-back.png",
+        "alt": "Shree Vidhi Pure Tulsi Leaf Powder Back Bio-Action & Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1099,7 +1169,7 @@ export const products: Product[] = [
     "categoryId": "cat-powders",
     "categoryName": "Herbal Powders",
     "shortDesc": "Concentrated dehydrated aloe vera for intensely hydrating face packs and restorative hair spa masks.",
-    "description": "Pure botanical Aloe Vera powder preserves essential polysaccharides and enzymes that rehydrate parched skin and revitalize brittle hair fibers.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Pure botanical Aloe Vera powder preserves essential polysaccharides and enzymes that rehydrate parched skin and revitalize brittle hair fibers.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Infuses deep moisture into thirsty skin cells",
       "Smoothes cuticles and detangles dry hair",
@@ -1131,6 +1201,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Aloe Vera Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-aloe-vera-powder-back",
+        "url": "/pictures/products/aloe-vera-powder-back.png",
+        "alt": "Shree Vidhi Pure Aloe Vera Powder Back Bio-Action & Usage Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1154,7 +1231,7 @@ export const products: Product[] = [
     "categoryId": "cat-wellness",
     "categoryName": "Wellness & Superfoods",
     "shortDesc": "Nutrient-dense superfood packed with plant protein, iron, calcium, and antioxidants for daily vitality, immunity, and skin radiance.",
-    "description": "Known as the Miracle Tree, Moringa (*Moringa oleifera*) contains 7x more Vitamin C than oranges and 4x more calcium than milk. It revitalizes body energy, purifies toxins, and promotes lustrous hair and clear skin.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261. Shelf Life: 3 Years.",
+    "description": "Known as the Miracle Tree, Moringa (*Moringa oleifera*) contains 7x more Vitamin C than oranges and 4x more calcium than milk. It revitalizes body energy, purifies toxins, and promotes lustrous hair and clear skin.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Over 90 essential bio-nutrients and 46 active antioxidants",
       "Boosts natural immune defense and combats chronic fatigue",
@@ -1186,6 +1263,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Moringa Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-moringa-powder-back",
+        "url": "/pictures/products/moringa-powder-back.png",
+        "alt": "Shree Vidhi Pure Moringa Leaf Powder Back Bio-Nutrient & Usage Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1209,7 +1293,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "Richest natural source of Vitamin C. Strengthens hair follicles from roots, halts premature greying, and boosts collagen.",
-    "description": "Shade-dried and pulverized wild Indian Gooseberries (*Phyllanthus emblica*). Delivers concentrated polyphenols and tannins that halt hair thinning, strengthen keratin roots, and condition hair with brilliant luster.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Shade-dried and pulverized wild Indian Gooseberries (*Phyllanthus emblica*). Delivers concentrated polyphenols and tannins that halt hair thinning, strengthen keratin roots, and condition hair with brilliant luster.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Stimulates hair roots and delays premature greying",
       "High natural Vitamin C stimulates scalp collagen",
@@ -1241,6 +1325,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Amla Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-amla-powder-back",
+        "url": "/pictures/products/amla-powder-back.png",
+        "alt": "Shree Vidhi Pure Amla Powder Back Bio-Action & Hair Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1264,7 +1355,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "Natural botanical foaming cleanser with mild saponins that wash scalp clean without stripping natural protective oils.",
-    "description": "Authentic dried soapnuts (*Sapindus mukorossi*). Reetha produces a delicate natural lather that washes away excess scalp sebum, dandruff flakes, and styling residues without artificial chemical foaming agents.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Authentic dried soapnuts (*Sapindus mukorossi*). Reetha produces a delicate natural lather that washes away excess scalp sebum, dandruff flakes, and styling residues without artificial chemical foaming agents.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Natural herbal soaping agent — zero sulfates",
       "Balances oily scalps and controls dandruff",
@@ -1296,6 +1387,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Reetha Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-reetha-powder-back",
+        "url": "/pictures/products/reetha-powder-back.png",
+        "alt": "Shree Vidhi Pure Reetha Powder Back Botanical Saponin & Cleanser Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1319,7 +1417,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "Made from shade-dried red hibiscus petals. Deeply conditions strands, stimulates root volume, and adds lustrous mirror shine.",
-    "description": "Known in Sanskrit as *Japapushpa*, Hibiscus petals are packed with natural mucilage, amino acids, and alpha-hydroxy acids that lock in hydration, condition coarse texture, and nourish dormant hair follicles.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Known in Sanskrit as *Japapushpa*, Hibiscus petals are packed with natural mucilage, amino acids, and alpha-hydroxy acids that lock in hydration, condition coarse texture, and nourish dormant hair follicles.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Deep herbal conditioning — leaves hair glossy and mirror-smooth",
       "Natural mucilage prevents moisture loss and tames frizz",
@@ -1351,6 +1449,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Hibiscus Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-hibiscus-powder-back",
+        "url": "/pictures/products/hibiscus-powder-back.png",
+        "alt": "Shree Vidhi Pure Hibiscus Petal Powder Back Botanical Action & Mask Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1374,7 +1479,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "Authentic triple-sifted micro-fine henna sourced directly from Sojat, Rajasthan. Deep herbal conditioning and rich reddish-brown tint.",
-    "description": "Grown in the mineral-rich soils of Sojat, Rajasthan, renowned worldwide for high natural lawsone dye content. Provides rich earthy color coverage for grey hair while cooling the scalp and sealing hair cuticles with protective gloss.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Grown in the mineral-rich soils of Sojat, Rajasthan, renowned worldwide for high natural lawsone dye content. Provides rich earthy color coverage for grey hair while cooling the scalp and sealing hair cuticles with protective gloss.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "High natural lawsone dye content from authentic Sojat farms",
       "Naturally covers greys without harsh chemical PPD or ammonia",
@@ -1406,6 +1511,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Henna Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-henna-powder-back",
+        "url": "/pictures/products/henna-powder-back.png",
+        "alt": "Shree Vidhi 100% Pure Sojat Henna Powder Back Dyeing & Conditioning Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1429,7 +1541,7 @@ export const products: Product[] = [
     "categoryId": "cat-skin",
     "categoryName": "Skin Care",
     "shortDesc": "Aromatic dried rose petals ground into fine cosmetic powder. Enhances skin elasticity, balances pH, and imparts a soft rosy glow.",
-    "description": "Milled from Indian Damask roses (*Rosa damascena*). Rich in Vitamin C and natural floral oils that tone sagging pores, quench dry skin, and soothe irritation with a divine natural scent.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Milled from Indian Damask roses (*Rosa damascena*). Rich in Vitamin C and natural floral oils that tone sagging pores, quench dry skin, and soothe irritation with a divine natural scent.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Hydrates and tightens pores naturally",
       "Restores skin's natural acidic pH balance",
@@ -1461,6 +1573,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Rose Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-rose-powder-back",
+        "url": "/pictures/products/rose-powder-back.png",
+        "alt": "Shree Vidhi Pure Desi Rose Petal Powder Back Floral Action & Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1484,7 +1603,7 @@ export const products: Product[] = [
     "categoryId": "cat-skin",
     "categoryName": "Skin Care",
     "shortDesc": "Natural citric acid and Vitamin C powerhouse. Gently scrubs away stubborn sun tan, lightens acne blemishes, and unclogs pores.",
-    "description": "Sun-dried orange peels (*Citrus aurantium*) rich in natural alpha-hydroxy acids, hesperidin, and Vitamin C. Gently removes dead skin cells, clears dark tan lines, and clarifies oily pores.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Sun-dried orange peels (*Citrus aurantium*) rich in natural alpha-hydroxy acids, hesperidin, and Vitamin C. Gently removes dead skin cells, clears dark tan lines, and clarifies oily pores.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Fades stubborn sun tan, dark spots, and acne pigmentation",
       "High natural Vitamin C stimulates collagen and brightening",
@@ -1516,6 +1635,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Orange Peel Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-orange-peel-powder-back",
+        "url": "/pictures/products/orange-peel-powder-back.png",
+        "alt": "Shree Vidhi Pure Orange Peel Powder Back Vitamin C & De-Tan Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1539,7 +1665,7 @@ export const products: Product[] = [
     "categoryId": "cat-hair",
     "categoryName": "Hair Care",
     "shortDesc": "High in nicotinic acid and protein. Deeply hydrates brittle hair, detangles knots, and visibly curtails severe hair fall.",
-    "description": "Ground from finest whole fenugreek seeds (*Trigonella foenum-graecum*). Packed with lecithin, protein, and potassium that repair broken keratin bonds, soothe itchy dry scalp, and promote robust follicle regrowth.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Ground from finest whole fenugreek seeds (*Trigonella foenum-graecum*). Packed with lecithin, protein, and potassium that repair broken keratin bonds, soothe itchy dry scalp, and promote robust follicle regrowth.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Reduces chronic hair fall and repairs damaged hair fibers",
       "High natural mucilage detangles knots and softens dry ends",
@@ -1573,6 +1699,13 @@ export const products: Product[] = [
         "displayOrder": 1
       },
       {
+        "id": "img-methi-powder-back",
+        "url": "/pictures/products/methi-powder-back.png",
+        "alt": "Shree Vidhi Pure Methi Powder Back Nicotinic Acid & Scalp Ritual Label",
+        "isPrimary": false,
+        "displayOrder": 2
+      },
+      {
         "id": "img-mp-2",
         "url": "/pictures/products/methi-powder-why-infographic.png",
         "alt": "Why Choose Shree Vidhi Methi Powder",
@@ -1601,7 +1734,7 @@ export const products: Product[] = [
     "categoryId": "cat-facepacks",
     "categoryName": "Ubtan & Face Packs",
     "shortDesc": "The gentlest cosmetic clay. Delicately cleanses and detoxifies sensitive, dry, and delicate skin without tightness or irritation.",
-    "description": "A pure white silicate mineral clay with a neutral pH. Unlike heavier clays, Kaolin absorbs impurities and softens skin without causing dryness, making it suitable even for extremely delicate and reactive skin.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "A pure white silicate mineral clay with a neutral pH. Unlike heavier clays, Kaolin absorbs impurities and softens skin without causing dryness, making it suitable even for extremely delicate and reactive skin.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Gentlest cosmetic clay — perfect for dry and sensitive skin types",
       "Cleanses pores without stripping the epidermal moisture barrier",
@@ -1633,6 +1766,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Kaolin Clay Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-kaolin-clay-back",
+        "url": "/pictures/products/kaolin-clay-back.png",
+        "alt": "Shree Vidhi Pure Kaolin White Clay Back Mineral Silicate & Gentle Detox Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1656,7 +1796,7 @@ export const products: Product[] = [
     "categoryId": "cat-facepacks",
     "categoryName": "Ubtan & Face Packs",
     "shortDesc": "Rich in montmorillonite minerals. Extracts deep impurities, shrinks visible pores, and controls stubborn acne.",
-    "description": "Mined from volcanic earth deposits, French Green Clay is loaded with active iron oxides, kelp, and silica. Its ionic charge draws out deep subcutaneous toxins, reduces cystic congestion, and restores cellular micro-circulation.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Mined from volcanic earth deposits, French Green Clay is loaded with active iron oxides, kelp, and silica. Its ionic charge draws out deep subcutaneous toxins, reduces cystic congestion, and restores cellular micro-circulation.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Powerful pore-cleansing action draws out deep subcutaneous toxins",
       "Absorbs heavy excess oil and clears stubborn acne congestion",
@@ -1688,6 +1828,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi French Green Clay Powder 100g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-french-green-clay-back",
+        "url": "/pictures/products/french-green-clay-back.png",
+        "alt": "Shree Vidhi Pure French Green Clay Back Marine Mineral & Detox Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1711,7 +1858,7 @@ export const products: Product[] = [
     "categoryId": "cat-skin",
     "categoryName": "Skin Care",
     "shortDesc": "Known for natural glabridin, a potent Ayurvedic skin-brightener that fades stubborn dark spots, pigmentation, and tanning.",
-    "description": "Pulverized sweet licorice roots (*Glycyrrhiza glabra*). Contains active glabridin and liquiritin, which naturally inhibit tyrosinase enzyme activity to brighten sun spots, melasma marks, and post-acne blemishes without skin thinning.\n\n**Government Certified:** AYUSH Lic. No. RJ-1032-AYU • Shelf Life: 3 Years.",
+    "description": "Pulverized sweet licorice roots (*Glycyrrhiza glabra*). Contains active glabridin and liquiritin, which naturally inhibit tyrosinase enzyme activity to brighten sun spots, melasma marks, and post-acne blemishes without skin thinning.\n\n**Purity Guarantee:** 100% Pure Classical Herbal Formulation • Shelf Life: 3 Years.",
     "keyBenefits": [
       "Natural glabridin clinically brightens hyperpigmentation",
       "Fades stubborn sun spots, acne scars, and dark patches",
@@ -1743,6 +1890,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Pure Mulethi Powder 50g front pouch",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-mulethi-powder-back",
+        "url": "/pictures/products/mulethi-powder-back.png",
+        "alt": "Shree Vidhi Pure Mulethi Powder Back Glabridin & Hyperpigmentation Label",
+        "isPrimary": false,
+        "displayOrder": 2
       }
     ],
     "variants": [
@@ -1766,7 +1920,7 @@ export const products: Product[] = [
     "categoryId": "cat-wellness",
     "categoryName": "Wellness & Superfoods",
     "shortDesc": "Himalayan golden superberry juice rich in rare Omega 3, 6, 7 & 9, Vitamin C, and antioxidants for immunity, skin glow, and vitality.",
-    "description": "Derived from wild-harvested Himalayan sea buckthorn berries (*Hippophae rhamnoides*). A veritable nutritional powerhouse packed with 190+ bioactive compounds, rare Omega-7 fatty acids that nourish mucous membranes and skin elasticity, and 12x more Vitamin C than oranges.\n\n**Government Certified:** FSSAI Lic. No. 12225999000643 • Shelf Life: 18 Months. Net Volume: 500 ML.",
+    "description": "Derived from wild-harvested Himalayan sea buckthorn berries (*Hippophae rhamnoides*). A veritable nutritional powerhouse packed with 190+ bioactive compounds, rare Omega-7 fatty acids that nourish mucous membranes and skin elasticity, and 12x more Vitamin C than oranges.\n\n**Purity Guarantee:** 100% Pure Himalayan Superfood Pulp • Shelf Life: 18 Months. Net Volume: 500 ML.",
     "keyBenefits": [
       "Rich in rare Omega-7, 3, 6, 9 for cell membrane regeneration",
       "Immense Vitamin C & E content for radiant skin glow",
@@ -1799,6 +1953,13 @@ export const products: Product[] = [
         "alt": "Shree Vidhi Sea Buckthorn Pulp 500ml Can",
         "isPrimary": true,
         "displayOrder": 1
+      },
+      {
+        "id": "img-seabuckthorn-pulp-back",
+        "url": "/pictures/products/seabuckthorn-pulp-back.png",
+        "alt": "Shree Vidhi 100% Pure Himalayan Sea Buckthorn Pulp Back Omega-7 & Vitality Label",
+        "isPrimary": false,
+        "displayOrder": 2
       },
       {
         "id": "img-sbt-2",

@@ -23,8 +23,8 @@ const benefits = [
     icon: HeartHandshake,
   },
   {
-    title: "AYUSH & FSSAI Certified",
-    desc: "Full government licensing and laboratory testing to ensure top purity and consumer safety.",
+    title: "Vedic Purity & Testing",
+    desc: "Rigorous laboratory testing to ensure top purity, authentic potency, and consumer safety.",
     icon: ShieldCheck,
   },
 ];

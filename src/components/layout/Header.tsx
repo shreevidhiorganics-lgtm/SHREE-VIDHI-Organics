@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Sparkles,
   ArrowRight,
+  LayoutDashboard,
 } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { useWishlistStore } from "@/store/wishlist-store";
@@ -31,6 +32,7 @@ export function Header() {
   }, [pathname]);
 
   const [mounted, setMounted] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [shopMenuOpen, setShopMenuOpen] = useState(false);
   const shopMenuRef = useRef<HTMLDivElement>(null);
@@ -43,6 +45,29 @@ export function Header() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Fetch admin session exclusively for shreevidhiorganics@gmail.com
+  useEffect(() => {
+    let active = true;
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!active) return;
+        setIsAdmin(
+          Boolean(
+            data?.authenticated &&
+            data?.user?.email?.toLowerCase() === "shreevidhiorganics@gmail.com"
+          )
+        );
+      })
+      .catch(() => {
+        if (active) setIsAdmin(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [pathname]);
 
   const cartItemCount = mounted ? rawCartCount : 0;
   const wishlistCount = mounted ? wishlistItems.length : 0;
@@ -315,8 +340,20 @@ export function Header() {
           })}
         </nav>
 
-        {/* Right Action Icons: Search, Account, Wishlist, Cart */}
+        {/* Right Action Icons: Search, Dashboard (Admin Only), Account, Wishlist, Cart */}
         <div className="flex items-center gap-1 xs:gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Admin Dashboard Pill - Exclusively visible when authenticated as shreevidhiorganics@gmail.com */}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-1.5 bg-[#18231C] text-[#D8B980] border border-[#C5A872]/60 hover:bg-[#25372B] hover:text-[#FAF8F5] px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm transition-all active:scale-95 shrink-0"
+              title="Admin Dashboard"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5 text-[#C5A872]" />
+              <span className="hidden xs:inline">Dashboard</span>
+            </Link>
+          )}
+
           {/* Desktop Search Trigger */}
           <button
             type="button"

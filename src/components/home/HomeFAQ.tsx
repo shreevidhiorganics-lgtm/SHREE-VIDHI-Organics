@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: "Are Shree Vidhi products 100% natural and chemical-free?",
-    a: "Yes! Every formula is crafted with 100% pure botanical herbs. We never use parabens, sulfates, silicones, artificial colors, or chemical fillers. All products are AYUSH and FSSAI certified.",
+    a: "Yes! Every formula is crafted with 100% pure botanical herbs. We never use parabens, sulfates, silicones, artificial colors, or chemical fillers. All products are rigorously tested for safety and authentic potency.",
   },
   {
     q: "How do I consume the Sea Buckthorn Pulp add-on?",

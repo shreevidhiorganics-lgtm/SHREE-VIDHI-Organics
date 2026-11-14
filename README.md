@@ -115,5 +115,5 @@ npm start
 
 ## 📜 License & Compliance
 
-All botanical formulations comply with AYUSH standards, FSSAI regulations, and GMP manufacturing protocols.  
+All botanical formulations comply with classical Ayurvedic standards and GMP manufacturing protocols.  
 © 2026 Shree Vidhi Organics. Handcrafted in Varanasi, India.

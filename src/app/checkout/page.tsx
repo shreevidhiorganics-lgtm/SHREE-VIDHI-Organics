@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -64,17 +64,41 @@ export default function CheckoutPage() {
 
   // Contact & Address State
   const [formData, setFormData] = useState({
-    fullName: "Pooja Verma",
-    email: "pooja.verma@example.com",
-    phone: "9876543210",
-    houseFlat: "Flat 402, Ganga Heights",
-    street: "Assi Ghat Road",
-    landmark: "Near Sankat Mochan Temple",
-    city: "Varanasi",
+    fullName: "",
+    email: "",
+    phone: "",
+    houseFlat: "",
+    street: "",
+    landmark: "",
+    city: "",
     state: "Uttar Pradesh",
-    pinCode: "221005",
+    pinCode: "",
     paymentMethod: "PAYU" as "PAYU" | "COD",
   });
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          const u = data.user;
+          const a = u.address;
+          setFormData((prev) => ({
+            ...prev,
+            fullName: u.name || prev.fullName,
+            email: u.email || prev.email,
+            phone: u.phone ? u.phone.replace("+91 ", "") : prev.phone,
+            houseFlat: a?.houseFlat || prev.houseFlat,
+            street: a?.street || prev.street,
+            landmark: a?.landmark || prev.landmark,
+            city: a?.city || prev.city,
+            state: a?.state || prev.state,
+            pinCode: a?.pinCode || prev.pinCode,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const subtotal = getSubtotal();
   const discount = getDiscount();

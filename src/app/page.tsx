@@ -1,8 +1,9 @@
 import React from "react";
 import { HeroBanner } from "@/components/home/HeroBanner";
 import { QuickTrustBar } from "@/components/home/QuickTrustBar";
-import { ShopByConcern } from "@/components/home/ShopByConcern";
+import { SeaBuckthornSpotlight } from "@/components/home/SeaBuckthornSpotlight";
 import { FeaturedSection } from "@/components/home/FeaturedSection";
+import { ShopByConcern } from "@/components/home/ShopByConcern";
 import { BrandRangeSection } from "@/components/home/BrandRangeSection";
 import { CategoryCards } from "@/components/home/CategoryCards";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
@@ -15,19 +16,22 @@ export const revalidate = 60; // ISR cache revalidation
 
 export default function HomePage() {
   const allProducts = dataStore.getProducts();
+  const seaBuckthornProduct = allProducts.find(
+    (p) => p.id === "prod-seabuckthorn-pulp" || p.slug.includes("sea-buckthorn")
+  );
 
   return (
     <div className="flex flex-col">
-      {/* 1. Catchy & Minimalist Hero Carousel */}
+      {/* 1. Catchy & Minimalist Hero Section with Fixed Background */}
       <HeroBanner />
 
-      {/* 2. Quick Trust Bar (Free Delivery, 100% Pure, Certified Safe, Varanasi Heritage) */}
+      {/* 2. Quick Trust Bar */}
       <QuickTrustBar />
 
-      {/* 3. Interactive Shop by Concern (PCOS, Tan & Glow, Hair Fall, Acne) */}
-      <ShopByConcern />
+      {/* 3. Individual Display / Spotlight of Sea Buckthorn Pulp */}
+      <SeaBuckthornSpotlight product={seaBuckthornProduct} />
 
-      {/* 4. Complete Ayurvedic Collection & Best Sellers */}
+      {/* 4. Complete Catalog: All Ayurvedic Products Listed */}
       <FeaturedSection
         eyebrow="AUTHENTIC VARANASI HERBS"
         title="Our Ayurvedic Collection"
@@ -36,13 +40,16 @@ export default function HomePage() {
         viewAllHref="/shop"
         viewAllText="Explore All 28 Products"
         bgColor="white"
-        limit={12}
+        limit={allProducts.length}
       />
 
-      {/* 5. Why Choose Us / Brand Value Proposition */}
+      {/* 5. Interactive Shop by Concern */}
+      <ShopByConcern />
+
+      {/* 6. Why Choose Us / Brand Value Proposition */}
       <BrandRangeSection />
 
-      {/* 7. Shop by Category (Face Care, Hair Care, Hormone Health) */}
+      {/* 7. Shop by Category */}
       <CategoryCards />
 
       {/* 8. Real Customer Reviews & Verified Social Proof */}

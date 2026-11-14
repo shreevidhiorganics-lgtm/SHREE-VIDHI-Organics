@@ -31,7 +31,7 @@ export function formatDate(dateStr: string): string {
       month: "short",
       year: "numeric",
     });
-  } catch {
+  } catch (_err) {
     return dateStr;
   }
 }

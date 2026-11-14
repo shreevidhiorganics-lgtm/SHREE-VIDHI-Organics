@@ -46,8 +46,8 @@ export function AnnouncementBar() {
       <div className="container mx-auto flex items-center justify-between gap-2 max-w-full">
         {/* Support Direct Line (Desktop) */}
         <div className="hidden lg:flex items-center gap-2 text-forest-800/70 hover:text-forest-950 transition-colors shrink-0">
-          <Phone className="w-3 h-3 text-[#A8884A]" />
-          <span className="tracking-wide">Vedic Care: +91 6393600430 (Varanasi)</span>
+          <Sparkles className="w-3 h-3 text-[#A8884A]" />
+          <span className="tracking-wide">Handcrafted in Varanasi • Small Batch Purity</span>
         </div>
 
         {/* Center Rotating Message */}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -18,10 +18,10 @@ import {
   Plus,
   Sparkles,
 } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { useWishlistStore } from "@/store/wishlist-store";
 import { useUIStore } from "@/store/ui-store";
 import { formatPrice, formatDate } from "@/lib/utils";
+import { Address, Order } from "@/types";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -32,12 +32,39 @@ export default function AccountPage() {
 
   // Customer state
   const [profile, setProfile] = useState({
-    name: "Pooja Verma",
-    email: "pooja.verma@example.com",
-    phone: "+91 9876543210",
+    name: "Seeker",
+    email: "customer@shreevidhiorganics.com",
+    phone: "",
   });
+  const [savedAddress, setSavedAddress] = useState<Address | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
 
-  const orders = dataStore.getOrders("usr-cust-1");
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setProfile({
+            name: data.user.name || "Seeker",
+            email: data.user.email || "",
+            phone: data.user.phone || "",
+          });
+          if (data.user.address) {
+            setSavedAddress(data.user.address);
+          }
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/orders")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.orders && Array.isArray(data.orders)) {
+          setOrders(data.orders);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -205,27 +232,42 @@ export default function AccountPage() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white/90 p-6 rounded-3xl border border-[#7D9980] shadow-[0_4px_24px_-4px_rgba(28,37,30,0.03)] space-y-3 relative">
-                <div className="flex items-center justify-between">
-                  <span className="bg-[#EBF1EB] text-[#2D5A38] border border-[#D5E3D5] text-[10px] font-medium px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                    Primary Default Address
-                  </span>
-                  <button className="text-xs text-[#8C6D32] hover:underline font-normal flex items-center gap-1">
-                    <Edit2 className="w-3 h-3" />
-                    <span>Edit</span>
-                  </button>
-                </div>
+            {savedAddress ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white/90 p-6 rounded-3xl border border-[#7D9980] shadow-[0_4px_24px_-4px_rgba(28,37,30,0.03)] space-y-3 relative">
+                  <div className="flex items-center justify-between">
+                    <span className="bg-[#EBF1EB] text-[#2D5A38] border border-[#D5E3D5] text-[10px] font-medium px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      Primary Delivery Address
+                    </span>
+                    <button
+                      onClick={() => addToast("Address editor ready.", "info")}
+                      className="text-xs text-[#8C6D32] hover:underline font-normal flex items-center gap-1"
+                    >
+                      <Edit2 className="w-3 h-3" />
+                      <span>Edit</span>
+                    </button>
+                  </div>
 
-                <div className="space-y-1 text-xs text-[#4A544E] font-light">
-                  <strong className="text-sm font-medium text-[#18231C] block">Pooja Verma</strong>
-                  <p>Flat 402, Ganga Heights, Assi Ghat Road</p>
-                  <p>Near Sankat Mochan Temple</p>
-                  <p>Varanasi, Uttar Pradesh - 221005</p>
-                  <p className="pt-1 text-[#6C766F] font-mono">Mobile: +91 9876543210</p>
+                  <div className="space-y-1 text-xs text-[#4A544E] font-light">
+                    <strong className="text-sm font-medium text-[#18231C] block">
+                      {savedAddress.fullName || profile.name}
+                    </strong>
+                    <p>{savedAddress.houseFlat}, {savedAddress.street}</p>
+                    {savedAddress.landmark && <p>Near: {savedAddress.landmark}</p>}
+                    <p>{savedAddress.city}, {savedAddress.state} - {savedAddress.pinCode}</p>
+                    <p className="pt-1 text-[#6C766F] font-mono">Mobile: {savedAddress.phone || profile.phone}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-white/90 p-10 rounded-3xl border border-[#EDE7DD] text-center space-y-3">
+                <MapPin className="w-10 h-10 text-[#8C6D32] mx-auto opacity-60" />
+                <p className="text-sm font-normal text-[#18231C]">No saved delivery addresses yet.</p>
+                <p className="text-xs text-[#6C766F] font-light max-w-sm mx-auto">
+                  Your delivery address will be saved here automatically when you sign in or complete a checkout order.
+                </p>
+              </div>
+            )}
           </div>
         )}
 

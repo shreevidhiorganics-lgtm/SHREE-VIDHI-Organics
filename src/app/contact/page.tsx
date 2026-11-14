@@ -61,21 +61,6 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-[#D8B980] shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-[#FAF8F5] font-medium block mb-0.5">Phone & WhatsApp:</strong>
-                  <div className="space-y-0.5">
-                    <a href="tel:+916393600430" className="hover:text-[#D8B980] font-light transition-colors block">
-                      +91 6393600430
-                    </a>
-                    <a href="tel:+917752905694" className="hover:text-[#D8B980] font-light transition-colors block">
-                      +91 7752905694
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
                 <Mail className="w-4 h-4 text-[#D8B980] shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-[#FAF8F5] font-medium block mb-0.5">Electronic Mail:</strong>
@@ -95,7 +80,7 @@ export default function ContactPage() {
             </div>
 
             <div className="p-4 bg-[#1F2C23] rounded-2xl border border-[#2D3E32] text-xs text-[#A8B4AC] font-light leading-relaxed">
-              💬 <strong className="text-[#FAF8F5] font-medium">Direct WhatsApp Line:</strong> Have an immediate inquiry regarding your custom ritual? Message us directly at +91 6393600430.
+              💬 <strong className="text-[#FAF8F5] font-medium">Customer Support:</strong> Have an inquiry regarding your custom ritual? Submit the form or write to our team directly.
             </div>
           </div>
 

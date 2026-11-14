@@ -16,7 +16,7 @@ const trustItems = [
   },
   {
     icon: ShieldCheck,
-    title: "AYUSH & FSSAI Certified",
+    title: "Classical Purity",
     subtitle: "100% safe & lab-tested",
   },
   {

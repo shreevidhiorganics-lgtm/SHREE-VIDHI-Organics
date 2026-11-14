@@ -203,24 +203,20 @@ export default function OurStoryPage() {
           </div>
         </div>
 
-        {/* 7. Official Regulatory & License Credentials */}
+        {/* 7. Brand Integrity & Sanctuary Heritage */}
         <div className="p-8 sm:p-10 rounded-3xl bg-[#FAF8F5] border border-[#E0D7C8] space-y-4 text-xs text-[#5D6760] font-light">
           <div className="flex items-center gap-2 text-forest-950 font-serif font-bold text-sm">
             <ShieldCheck className="w-4 h-4 text-[#1C3F26]" />
-            <span>Government Registrations &amp; Licensing Credentials</span>
+            <span>Brand Integrity &amp; Varanasi Sanctuary</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
             <div>
               <strong className="text-forest-950 font-medium block">Marketed By:</strong>
               <span>Shree Vidhi Organics, N15/170 A Badi Gaibi Chauraha, Birdopur, Varanasi, Uttar Pradesh 221010</span>
             </div>
             <div>
-              <strong className="text-forest-950 font-medium block">AYUSH &amp; FSSAI Licenses:</strong>
-              <span>License No. RJ-1032-AYU • FSSAI Lic. No. 12221036000261 / 12223024000403</span>
-            </div>
-            <div>
-              <strong className="text-forest-950 font-medium block">Direct Contact:</strong>
-              <span>+91 6393600430, +91 7752905694 • shreevidhiorganics@gmail.com</span>
+              <strong className="text-forest-950 font-medium block">Electronic Correspondence:</strong>
+              <span>shreevidhiorganics@gmail.com</span>
             </div>
           </div>
         </div>
@@ -234,7 +230,7 @@ export default function OurStoryPage() {
             Experience Ancient Vidhi for Modern Wellness
           </h2>
           <p className="text-xs sm:text-sm text-[#A8B4AC] max-w-md mx-auto font-light leading-relaxed">
-            From wild Himalayan Sea Buckthorn pulp to glowing bridal Ubtan, explore our certified, chemical-free rituals.
+            From wild Himalayan Sea Buckthorn pulp to glowing bridal Ubtan, explore our pure, chemical-free rituals.
           </p>
           <div className="pt-3">
             <Link

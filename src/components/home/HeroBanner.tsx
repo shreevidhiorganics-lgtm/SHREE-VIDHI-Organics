@@ -72,26 +72,17 @@ export function HeroBanner() {
 
   return (
     <section className="relative w-full min-h-[580px] sm:min-h-[640px] lg:min-h-[720px] bg-[#FAF8F5] text-forest-950 overflow-hidden flex items-center border-b border-[#EDE7DC]">
-      {/* Background Image Carousel with smooth cross-dissolve */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentSlide}
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 z-0"
-        >
-          <Image
-            src={slide.image}
-            alt={slide.title}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </motion.div>
-      </AnimatePresence>
+      {/* Fixed Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/pictures/banners/hero_banner_shreevidhi.png"
+          alt="Shree Vidhi Organics Pure Ayurveda"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+      </div>
 
       {/* Atmospheric Soft Light Gradients for clean text readability */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F5] via-[#FAF8F5]/85 to-transparent z-[1] w-full md:w-3/5 lg:w-1/2" />
@@ -182,7 +173,7 @@ export function HeroBanner() {
             </div>
             <div className="hidden sm:flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-[#1C3F26]" />
-              <span>AYUSH Certified Formula</span>
+              <span>Authentic Classical Formula</span>
             </div>
           </div>
         </div>

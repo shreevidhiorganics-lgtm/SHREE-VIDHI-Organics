@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Search,
@@ -13,18 +13,19 @@ import {
   AlertCircle,
   ExternalLink,
   Sparkles,
+  Loader2,
+  ShieldCheck,
 } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
-import { Order, OrderStatus } from "@/types";
+import { Order, OrderStatus, TrackingResult } from "@/types";
 import { formatPrice, formatDate } from "@/lib/utils";
 
 const TIMELINE_STEPS: { status: OrderStatus; label: string; desc: string }[] = [
   { status: "PLACED", label: "Order Received", desc: "Order recorded and verified by our Varanasi team" },
-  { status: "CONFIRMED", label: "Ritual Confirmed", desc: "Formulation batch allocated from apothecary" },
-  { status: "PROCESSING", label: "Handcrafted & Compounded", desc: "Herbs freshly ground & sealed in small batches" },
-  { status: "PACKED", label: "Mindfully Packed", desc: "Sustainable protective packaging secured" },
-  { status: "SHIPPED", label: "Dispatched from Varanasi", desc: "Handed over to our expedited logistics partner" },
-  { status: "OUT_FOR_DELIVERY", label: "Out for Doorstep Delivery", desc: "In transit with regional delivery associate" },
+  { status: "CONFIRMED", label: "Herb Allocation Confirmed", desc: "Batch allocated from botanical storage" },
+  { status: "PROCESSING", label: "Handcrafted Compounding", desc: "Herbs freshly compounded & sealed in small batches" },
+  { status: "PACKED", label: "Quality Sealed", desc: "Protective packaging secured for dispatch" },
+  { status: "SHIPPED", label: "Dispatched via Shiprocket", desc: "Handed over to express courier associate" },
+  { status: "OUT_FOR_DELIVERY", label: "Out for Doorstep Delivery", desc: "In transit with regional delivery partner" },
   { status: "DELIVERED", label: "Sacred Delivery Complete", desc: "Received at your home sanctuary" },
 ];
 
@@ -33,29 +34,51 @@ function TrackOrderContent() {
   const initialOrderNumber = searchParams.get("orderNumber") || "";
 
   const [orderQuery, setOrderQuery] = useState(initialOrderNumber);
-  const [searchedOrder, setSearchedOrder] = useState<Order | null>(() => {
-    if (initialOrderNumber) {
-      return dataStore.getOrderById(initialOrderNumber);
-    }
-    return dataStore.getOrderById("SVO-2026-8812"); // default loaded demo
-  });
+  const [searchedOrder, setSearchedOrder] = useState<Order | null>(null);
+  const [trackingResult, setTrackingResult] = useState<TrackingResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!orderQuery.trim()) {
-      setError("Please enter an order number.");
+  const performTrack = async (query: string) => {
+    const clean = query.trim();
+    if (!clean) {
+      setError("Please enter an order number or AWB code.");
       return;
     }
 
-    const order = dataStore.getOrderById(orderQuery.trim());
-    if (order) {
-      setSearchedOrder(order);
-    } else {
-      setError(`No order found matching "${orderQuery}". Try "SVO-2026-8812" or "SVO-2026-9045".`);
+    setIsLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch(`/api/shipping/track?orderNumber=${encodeURIComponent(clean)}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setError(data.error || `No shipment record found for "${clean}". Please verify your order number.`);
+        setSearchedOrder(null);
+        setTrackingResult(null);
+      } else {
+        setSearchedOrder(data.order);
+        setTrackingResult(data.tracking);
+      }
+    } catch {
+      setError("Unable to connect to live tracking server. Please verify your connection.");
+      setSearchedOrder(null);
+      setTrackingResult(null);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (initialOrderNumber) {
+      performTrack(initialOrderNumber);
+    }
+  }, [initialOrderNumber]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    performTrack(orderQuery);
   };
 
   const getStepIndex = (status: OrderStatus): number => {
@@ -63,7 +86,7 @@ function TrackOrderContent() {
     return idx >= 0 ? idx : 0;
   };
 
-  const currentStepIdx = searchedOrder ? getStepIndex(searchedOrder.status) : 0;
+  const currentStepIdx = trackingResult ? getStepIndex(trackingResult.status) : 0;
 
   return (
     <div className="bg-[#FAF8F5] min-h-screen py-10 sm:py-16">
@@ -72,13 +95,13 @@ function TrackOrderContent() {
         <div className="text-center space-y-3 max-w-xl mx-auto">
           <div className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.25em] text-[#FAF8F5] bg-[#18231C] px-4 py-1.5 rounded-full border border-[#C5A872]/40 shadow-[0_4px_16px_-2px_rgba(24,35,28,0.2),0_0_12px_rgba(197,168,114,0.12)]">
             <Sparkles className="w-3.5 h-3.5 text-[#D8B980]" />
-            <span>Varanasi Dispatch Tracking</span>
+            <span>Shiprocket Live Dispatch Tracking</span>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl font-normal text-[#18231C]">
             Track Your Sacred Order
           </h1>
           <p className="text-xs sm:text-sm text-[#4A544E] leading-relaxed font-light">
-            Follow the journey of your Ayurvedic herbal preparations from our Varanasi facility to your sanctuary.
+            Real-time live express logistics tracking for your Ayurvedic herbal preparations from our Varanasi center to your doorstep.
           </p>
         </div>
 
@@ -89,7 +112,7 @@ function TrackOrderContent() {
               <Search className="w-4 h-4 text-[#8C6D32] absolute left-4 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Enter Order ID (e.g. SVO-2026-8812)"
+                placeholder="Enter Order ID (e.g. SVO-2026-XXXX) or AWB Tracking Number"
                 value={orderQuery}
                 onChange={(e) => setOrderQuery(e.target.value)}
                 className="w-full bg-[#FAF8F5] border border-[#EDE7DD] rounded-full pl-11 pr-4 py-3 text-xs sm:text-sm uppercase placeholder:normal-case font-mono text-[#18231C] placeholder:text-[#A3ADA5] focus:outline-none focus:border-[#7D9980] focus:ring-1 focus:ring-[#7D9980]/30 transition-all"
@@ -97,9 +120,17 @@ function TrackOrderContent() {
             </div>
             <button
               type="submit"
-              className="bg-[#1C3F26] hover:bg-[#16331F] text-[#FAF8F5] font-medium py-3 px-8 rounded-full text-xs sm:text-sm shadow-[0_8px_20px_-4px_rgba(28,63,38,0.25)] transition-all"
+              disabled={isLoading}
+              className="bg-[#1C3F26] hover:bg-[#16331F] disabled:opacity-60 text-[#FAF8F5] font-medium py-3 px-8 rounded-full text-xs sm:text-sm shadow-[0_8px_20px_-4px_rgba(28,63,38,0.25)] transition-all flex items-center justify-center gap-2"
             >
-              Track Ritual
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin text-[#D8B980]" />
+                  <span>Tracking...</span>
+                </>
+              ) : (
+                <span>Track Ritual</span>
+              )}
             </button>
           </form>
 
@@ -111,8 +142,21 @@ function TrackOrderContent() {
           )}
         </div>
 
+        {/* Prompt when no order is searched */}
+        {!searchedOrder && !isLoading && !error && (
+          <div className="bg-white/80 p-10 rounded-3xl border border-[#EDE7DD] text-center space-y-2">
+            <Package className="w-9 h-9 text-[#8C6D32] mx-auto opacity-70" />
+            <h3 className="font-serif font-normal text-lg text-[#18231C]">
+              Live Express Logistics Network
+            </h3>
+            <p className="text-xs text-[#6C766F] font-light max-w-sm mx-auto">
+              Powered by Shiprocket multi-carrier network (Blue Dart, Delhivery, DTDC). Enter your order number or AWB code above to view live scan events.
+            </p>
+          </div>
+        )}
+
         {/* Order Details & Timeline Card */}
-        {searchedOrder && (
+        {searchedOrder && trackingResult && (
           <div className="bg-white/90 p-6 sm:p-10 rounded-3xl border border-[#EDE7DD] shadow-[0_4px_24px_-4px_rgba(28,37,30,0.03)] space-y-8 animate-fadeIn">
             {/* Top Info Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#F0ECE4]">
@@ -121,15 +165,65 @@ function TrackOrderContent() {
                 <span className="font-mono text-xl font-medium text-[#18231C]">
                   {searchedOrder.orderNumber}
                 </span>
+                <span className="text-xs text-[#7D9980] block font-medium mt-0.5">
+                  {trackingResult.currentStatusText}
+                </span>
               </div>
 
               <div className="flex flex-wrap items-center gap-3 text-xs">
                 <div className="bg-[#EBF1EB] text-[#2D5A38] font-medium px-3.5 py-1 rounded-full border border-[#D5E3D5]">
-                  Status: {searchedOrder.status.replace(/_/g, " ")}
+                  Status: {trackingResult.status.replace(/_/g, " ")}
                 </div>
-                <div className="text-[#6C766F] font-light flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-[#8C6D32]" />
-                  <span>Placed: {formatDate(searchedOrder.createdAt)}</span>
+                {trackingResult.estimatedDelivery && (
+                  <div className="bg-[#F7F3E9] text-[#8C6D32] font-medium px-3.5 py-1 rounded-full border border-[#EDE5D3] flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
+                    <span>Est. Delivery: {trackingResult.estimatedDelivery}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Courier & AWB Banner */}
+            <div className="p-4 bg-[#FAF8F5] rounded-2xl border border-[#EDE7DD] text-xs text-[#4A544E] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <Truck className="w-5 h-5 text-[#7D9980] shrink-0" />
+                <div>
+                  <span className="text-[#18231C] font-medium block">
+                    Courier Partner: <strong className="font-sans font-semibold text-[#1C3F26]">{trackingResult.courierName}</strong>
+                  </span>
+                  <span className="text-[11px] text-[#6C766F] font-mono">
+                    AWB: {trackingResult.trackingNumber}
+                  </span>
+                </div>
+              </div>
+
+              {trackingResult.trackingUrl && (
+                <a
+                  href={trackingResult.trackingUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[#1C3F26] font-medium hover:underline text-xs"
+                >
+                  <span>Track on Shiprocket</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              )}
+            </div>
+
+            {/* Route Summary */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-white border border-[#EDE7DD] text-xs">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#8C6D32] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider text-[#8C6D32] block font-medium">Origin</span>
+                  <span className="text-[#18231C] font-light">{trackingResult.origin}</span>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#2D5A38] shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-[10px] uppercase tracking-wider text-[#2D5A38] block font-medium">Destination</span>
+                  <span className="text-[#18231C] font-light">{trackingResult.destination}</span>
                 </div>
               </div>
             </div>
@@ -147,7 +241,7 @@ function TrackOrderContent() {
 
                   return (
                     <div key={step.status} className="relative flex items-start gap-4">
-                      {/* Step Circle - Dark & Highlighted */}
+                      {/* Step Circle */}
                       <div
                         className={`absolute -left-7 sm:-left-9 w-6 sm:w-8 h-6 sm:h-8 rounded-full flex items-center justify-center transition-all ${
                           isCompleted
@@ -177,7 +271,7 @@ function TrackOrderContent() {
                           </h4>
                           {isCurrent && (
                             <span className="bg-[#F7F3E9] text-[#8C6D32] border border-[#EDE5D3] text-[9px] font-medium px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-                              In Progress
+                              Current Status
                             </span>
                           )}
                         </div>
@@ -189,30 +283,27 @@ function TrackOrderContent() {
               </div>
             </div>
 
-            {/* Courier & Tracking Details */}
-            {searchedOrder.trackingNumber && (
-              <div className="p-4 bg-[#FAF8F5] rounded-2xl border border-[#EDE7DD] text-xs text-[#4A544E] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <Truck className="w-5 h-5 text-[#7D9980] shrink-0" />
-                  <div>
-                    <span>Courier Tracking: <strong className="text-[#18231C] font-mono">{searchedOrder.trackingNumber}</strong></span>
-                    <span className="text-[11px] text-[#6C766F] font-light block">
-                      Partner: Delhivery / BlueDart Express Logistics
-                    </span>
-                  </div>
+            {/* Live Checkpoint Scans */}
+            {trackingResult.scans && trackingResult.scans.length > 0 && (
+              <div className="space-y-3 pt-6 border-t border-[#F0ECE4]">
+                <h4 className="font-serif font-normal text-base text-[#18231C] flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#8C6D32]" />
+                  <span>Verified Carrier Checkpoint Scans</span>
+                </h4>
+                <div className="bg-[#FAF8F5] p-4 rounded-2xl border border-[#EDE7DD] space-y-3">
+                  {trackingResult.scans.map((scan, i) => (
+                    <div key={i} className="flex items-start justify-between text-xs pb-2 border-b border-[#EDE7DD] last:border-0 last:pb-0">
+                      <div>
+                        <span className="font-medium text-[#18231C] block">{scan.activity}</span>
+                        <span className="text-[11px] text-[#6C766F] font-light flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-3 h-3 text-[#8C6D32]" />
+                          <span>{scan.location}</span>
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-[#8C6D32] font-mono shrink-0 pl-2">{scan.date}</span>
+                    </div>
+                  ))}
                 </div>
-
-                {searchedOrder.trackingUrl && (
-                  <a
-                    href={searchedOrder.trackingUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[#1C3F26] font-medium hover:underline"
-                  >
-                    <span>Track on Partner Site</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                )}
               </div>
             )}
 

@@ -8,6 +8,7 @@ export interface User {
   phone?: string;
   avatar?: string;
   createdAt: string;
+  address?: Address;
 }
 
 export interface Address {
@@ -161,12 +162,36 @@ export interface Order {
   items: OrderItem[];
   trackingNumber?: string;
   trackingUrl?: string;
+  courierName?: string;
+  shiprocketOrderId?: number | string;
+  shiprocketShipmentId?: number | string;
+  estimatedDelivery?: string;
   payuTxnId?: string;
   payuMihpayid?: string;
   payuStatus?: string;
   notes?: string;
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface TrackingScan {
+  date: string;
+  activity: string;
+  location: string;
+}
+
+export interface TrackingResult {
+  orderNumber: string;
+  trackingNumber: string;
+  courierName: string;
+  status: OrderStatus;
+  currentStatusText: string;
+  trackingUrl: string;
+  origin: string;
+  destination: string;
+  estimatedDelivery?: string;
+  scans: TrackingScan[];
+  itemsCount: number;
 }
 
 export interface Coupon {

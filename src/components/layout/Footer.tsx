@@ -101,10 +101,6 @@ export function Footer() {
                 <span>N15/170 A Badi Gaibi Chauraha, Birdopur, Varanasi, Uttar Pradesh - 221010, India</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="w-3.5 h-3.5 text-[#C5A872] shrink-0" />
-                <span>+91 6393600430, +91 7752905694 (Mon–Sat, 10 AM – 7 PM IST)</span>
-              </div>
-              <div className="flex items-center gap-2.5">
                 <Mail className="w-3.5 h-3.5 text-[#C5A872] shrink-0" />
                 <span>shreevidhiorganics@gmail.com</span>
               </div>
@@ -273,7 +269,7 @@ export function Footer() {
               © {new Date().getFullYear()} Shree Vidhi Organics. Handcrafted in Varanasi, Uttar Pradesh, India.
             </p>
             <p className="text-[11px] text-[#A8884A] mt-0.5">
-              Government-Funded Social Enterprise • AYUSH Lic. RJ-1032-AYU • FSSAI Lic. 12221036000261
+              Government-Funded Social Enterprise • Handcrafted Classical Ayurvedic Formulations
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -287,10 +283,6 @@ export function Footer() {
             <span>·</span>
             <Link href="/shipping-policy" className="hover:text-[#D8C7A3] transition-colors">
               Shipping
-            </Link>
-            <span>·</span>
-            <Link href="/admin" className="text-[#C5A872]/80 hover:text-[#C5A872] transition-colors font-medium">
-              Admin Portal
             </Link>
           </div>
         </div>

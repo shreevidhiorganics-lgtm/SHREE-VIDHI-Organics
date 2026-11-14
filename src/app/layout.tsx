@@ -85,8 +85,8 @@ export default function RootLayout({
     description: "Government-funded social enterprise in Varanasi founded by Aditi Singh. Authentic certified Ayurvedic Vidhi rituals, hair care, skincare, and superfoods.",
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+91-6393600430",
       contactType: "customer service",
+      email: "shreevidhiorganics@gmail.com",
       areaServed: "IN",
       availableLanguage: ["en", "hi"],
     },

@@ -37,7 +37,7 @@ export default function ReturnPolicyPage() {
               2. Damaged or Tampered Shipments
             </h2>
             <p>
-              If your shipment arrives damaged, leaked, or with a broken seal, please notify our team within <strong className="font-medium text-[#18231C]">48 hours</strong> of receipt along with unboxing photos or video at <a href="mailto:shreevidhiorganics@gmail.com" className="text-[#18231C] underline font-medium">shreevidhiorganics@gmail.com</a> or WhatsApp <a href="tel:+916393600430" className="text-[#18231C] underline font-medium">+91 6393600430</a>. We will dispatch an immediate replacement free of charge.
+              If your shipment arrives damaged, leaked, or with a broken seal, please notify our team within <strong className="font-medium text-[#18231C]">48 hours</strong> of receipt along with unboxing photos or video at <a href="mailto:shreevidhiorganics@gmail.com" className="text-[#18231C] underline font-medium">shreevidhiorganics@gmail.com</a>. We will dispatch an immediate replacement free of charge.
             </p>
           </section>
 

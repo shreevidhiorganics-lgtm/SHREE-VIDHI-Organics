@@ -1,14 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { X, ChevronRight, Phone, Mail, MapPin, User, Heart, Sparkles } from "lucide-react";
+import { X, ChevronRight, Phone, Mail, MapPin, User, Heart, Sparkles, LayoutDashboard } from "lucide-react";
 import { useUIStore } from "@/store/ui-store";
 
 export function MobileMenu() {
   const { isMobileMenuOpen, closeMobileMenu } = useUIStore();
   const [shopOpen, setShopOpen] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      let active = true;
+      fetch("/api/auth/me")
+        .then((res) => res.json())
+        .then((data) => {
+          if (!active) return;
+          setIsAdmin(
+            Boolean(
+              data?.authenticated &&
+              data?.user?.email?.toLowerCase() === "shreevidhiorganics@gmail.com"
+            )
+          );
+        })
+        .catch(() => {
+          if (active) setIsAdmin(false);
+        });
+
+      return () => {
+        active = false;
+      };
+    }
+  }, [isMobileMenuOpen]);
 
   if (!isMobileMenuOpen) return null;
 
@@ -182,6 +207,23 @@ export function MobileMenu() {
             </Link>
           </div>
 
+          {/* Admin Dashboard Pill (Only for shreevidhiorganics@gmail.com) */}
+          {isAdmin && (
+            <div className="pt-2">
+              <Link
+                href="/admin"
+                onClick={closeMobileMenu}
+                className="flex items-center justify-between p-3 rounded-2xl bg-[#18231C] text-[#D8B980] border border-[#C5A872]/50 text-xs font-semibold shadow-sm hover:bg-[#25372B] transition-all"
+              >
+                <div className="flex items-center gap-2.5">
+                  <LayoutDashboard className="w-4 h-4 text-[#C5A872]" />
+                  <span>Admin Dashboard</span>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-[#C5A872]" />
+              </Link>
+            </div>
+          )}
+
           {/* Quick Account Links */}
           <div className="pt-2">
             <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
@@ -210,10 +252,6 @@ export function MobileMenu() {
 
         {/* Contact info footer in drawer */}
         <div className="p-4 bg-[#F5F1E9] border-t border-[#EDE7DD] text-xs text-forest-900/70 space-y-1.5 font-light">
-          <div className="flex items-center gap-2">
-            <Phone className="w-3.5 h-3.5 text-[#8C6D32]" />
-            <span>+91 6393600430</span>
-          </div>
           <div className="flex items-center gap-2">
             <Mail className="w-3.5 h-3.5 text-[#8C6D32]" />
             <span>care@shreevidhiorganics.com</span>

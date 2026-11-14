@@ -136,49 +136,57 @@ export default function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {orders.slice(0, 5).map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50/50">
-                    <td className="py-3 font-mono font-bold text-forest-950">
-                      {order.orderNumber}
-                    </td>
-                    <td className="py-3">
-                      <span className="font-semibold text-forest-950 block">
-                        {order.shippingAddress.fullName}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        {order.shippingAddress.city}, {order.shippingAddress.state}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
-                        className="bg-forest-50 border border-forest-200 text-forest-900 rounded-lg px-2 py-1 text-[11px] font-semibold cursor-pointer"
-                      >
-                        <option value="PLACED">PLACED</option>
-                        <option value="CONFIRMED">CONFIRMED</option>
-                        <option value="PROCESSING">PROCESSING</option>
-                        <option value="PACKED">PACKED</option>
-                        <option value="SHIPPED">SHIPPED</option>
-                        <option value="OUT_FOR_DELIVERY">OUT FOR DELIVERY</option>
-                        <option value="DELIVERED">DELIVERED</option>
-                        <option value="CANCELLED">CANCELLED</option>
-                      </select>
-                    </td>
-                    <td className="py-3 font-bold text-forest-950">
-                      {formatPrice(order.total)}
-                    </td>
-                    <td className="py-3">
-                      <Link
-                        href={`/track-order?orderNumber=${order.orderNumber}`}
-                        className="text-forest-700 hover:underline font-semibold"
-                        target="_blank"
-                      >
-                        Track
-                      </Link>
+                {orders.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-muted-foreground text-xs font-light">
+                      No customer orders yet.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  orders.slice(0, 5).map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-50/50">
+                      <td className="py-3 font-mono font-bold text-forest-950">
+                        {order.orderNumber}
+                      </td>
+                      <td className="py-3">
+                        <span className="font-semibold text-forest-950 block">
+                          {order.shippingAddress.fullName}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {order.shippingAddress.city}, {order.shippingAddress.state}
+                        </span>
+                      </td>
+                      <td className="py-3">
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
+                          className="bg-forest-50 border border-forest-200 text-forest-900 rounded-lg px-2 py-1 text-[11px] font-semibold cursor-pointer"
+                        >
+                          <option value="PLACED">PLACED</option>
+                          <option value="CONFIRMED">CONFIRMED</option>
+                          <option value="PROCESSING">PROCESSING</option>
+                          <option value="PACKED">PACKED</option>
+                          <option value="SHIPPED">SHIPPED</option>
+                          <option value="OUT_FOR_DELIVERY">OUT FOR DELIVERY</option>
+                          <option value="DELIVERED">DELIVERED</option>
+                          <option value="CANCELLED">CANCELLED</option>
+                        </select>
+                      </td>
+                      <td className="py-3 font-bold text-forest-950">
+                        {formatPrice(order.total)}
+                      </td>
+                      <td className="py-3">
+                        <Link
+                          href={`/track-order?orderNumber=${order.orderNumber}`}
+                          className="text-forest-700 hover:underline font-semibold"
+                          target="_blank"
+                        >
+                          Track
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

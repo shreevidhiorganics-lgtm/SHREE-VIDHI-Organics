@@ -11,7 +11,7 @@ function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const clearCart = useCartStore((state) => state.clearCart);
 
-  const orderNumber = searchParams.get("orderNumber") || searchParams.get("orderId") || "SVO-2026-8812";
+  const orderNumber = searchParams.get("orderNumber") || searchParams.get("orderId") || "";
   const status = searchParams.get("status") || "success";
   const txnid = searchParams.get("txnid");
   const payuid = searchParams.get("payuid");

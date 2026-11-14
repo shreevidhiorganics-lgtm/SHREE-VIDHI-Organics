@@ -87,7 +87,7 @@ export function OurVisionSection() {
               </Link>
               <div className="flex items-center gap-2 text-xs text-forest-900/70 font-light">
                 <Award className="w-4 h-4 text-[#8C6D32]" />
-                <span>AYUSH Lic. RJ-1032-AYU • FSSAI Certified</span>
+                <span>100% Pure Botanical Purity</span>
               </div>
             </div>
           </ScrollReveal>
