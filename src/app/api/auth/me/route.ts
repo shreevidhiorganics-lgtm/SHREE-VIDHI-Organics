@@ -13,9 +13,19 @@ export async function GET(_req: NextRequest) {
 
     const fullUser = dataStore.getUserById(session.userId);
 
+    // OWASP A02: Information Exposure Defense - Return strictly safe user profile attributes
+    const safeUser = {
+      id: fullUser?.id || session.userId,
+      name: fullUser?.name || session.name,
+      email: fullUser?.email || session.email,
+      role: fullUser?.role || session.role,
+      phone: fullUser?.phone || session.phone,
+      address: fullUser?.address || session.address,
+    };
+
     return NextResponse.json({
       authenticated: true,
-      user: fullUser || session,
+      user: safeUser,
     });
   } catch (_error: any) {
     return NextResponse.json({ authenticated: false, user: null });

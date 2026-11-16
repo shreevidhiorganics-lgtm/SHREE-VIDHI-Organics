@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import confetti from "canvas-confetti";
-import { CheckCircle2, AlertCircle, PackageCheck, Truck, ArrowRight, Home, Sparkles, RefreshCw, PhoneCall } from "lucide-react";
+import { CheckCircle2, AlertCircle, PackageCheck, Truck, ArrowRight, Home, Sparkles, RefreshCw, PhoneCall, FileText } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 
 function OrderConfirmationContent() {
@@ -157,21 +157,33 @@ function OrderConfirmationContent() {
               </>
             ) : (
               <>
-                <Link
-                  href={`/track-order?orderNumber=${encodeURIComponent(orderNumber)}`}
-                  className="flex-1 inline-flex items-center justify-center gap-2 bg-[#1C3F26] hover:bg-[#16331F] text-[#FAF8F5] font-medium py-3.5 px-6 rounded-full shadow-[0_8px_20px_-4px_rgba(28,63,38,0.25)] text-xs sm:text-sm transition-all"
-                >
-                  <PackageCheck className="w-4 h-4 text-[#D8B980]" />
-                  <span>Track Order Status</span>
-                </Link>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href={`/track-order?orderNumber=${encodeURIComponent(orderNumber)}`}
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-[#1C3F26] hover:bg-[#16331F] text-[#FAF8F5] font-medium py-3.5 px-6 rounded-full shadow-[0_8px_20px_-4px_rgba(28,63,38,0.25)] text-xs sm:text-sm transition-all"
+                  >
+                    <PackageCheck className="w-4 h-4 text-[#D8B980]" />
+                    <span>Track Order Status</span>
+                  </Link>
 
-                <Link
-                  href="/shop"
-                  className="flex-1 inline-flex items-center justify-center gap-2 bg-white/80 hover:bg-[#FAF8F5] border border-[#EDE7DD] text-[#18231C] font-medium py-3.5 px-6 rounded-full text-xs sm:text-sm transition-all"
+                  <Link
+                    href="/shop"
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-white/80 hover:bg-[#FAF8F5] border border-[#EDE7DD] text-[#18231C] font-medium py-3.5 px-6 rounded-full text-xs sm:text-sm transition-all"
+                  >
+                    <Home className="w-4 h-4 text-[#8C6D32]" />
+                    <span>Continue Exploring</span>
+                  </Link>
+                </div>
+
+                <a
+                  href={`/api/orders/${encodeURIComponent(orderNumber)}/invoice`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-medium py-3 px-6 rounded-full text-xs transition-all border border-stone-300 mt-2"
                 >
-                  <Home className="w-4 h-4 text-[#8C6D32]" />
-                  <span>Continue Exploring</span>
-                </Link>
+                  <FileText className="w-4 h-4 text-emerald-800" />
+                  <span>View & Print Official GST Tax Invoice</span>
+                </a>
               </>
             )}
           </div>

@@ -14,7 +14,15 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const result = await checkPincodeServiceability(pincode, cod);
+    const cleanPincode = pincode.replace(/\D/g, "").slice(0, 6);
+    if (cleanPincode.length !== 6) {
+      return NextResponse.json(
+        { error: "Please provide a valid 6-digit Indian PIN code." },
+        { status: 400 }
+      );
+    }
+
+    const result = await checkPincodeServiceability(cleanPincode, cod);
     return NextResponse.json(result);
   } catch (error: any) {
     return NextResponse.json(

@@ -19,6 +19,11 @@ import { MobileMenu } from "@/components/layout/MobileMenu";
 import { ToastContainer } from "@/components/common/ToastContainer";
 import { ScrollProgressBar } from "@/components/common/ScrollProgressBar";
 import { AmbientGlow } from "@/components/common/AmbientGlow";
+import AIAssistantWidget from "@/components/common/AIAssistantWidget";
+import WhatsAppButton from "@/components/common/WhatsAppButton";
+import ExitIntentModal from "@/components/common/ExitIntentModal";
+import CookieConsentBanner from "@/components/marketing/CookieConsentBanner";
+import MarketingScripts from "@/components/marketing/MarketingScripts";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://shreevidhiorganics.com"),
@@ -128,6 +133,13 @@ export default function RootLayout({
         <QuickViewModal />
         <MobileMenu />
         <ToastContainer />
+
+        {/* 2026 Advanced Features: AI Assistant, WhatsApp, Marketing & Exit-Intent */}
+        <AIAssistantWidget />
+        <WhatsAppButton />
+        <ExitIntentModal />
+        <CookieConsentBanner />
+        <MarketingScripts />
       </body>
     </html>
   );

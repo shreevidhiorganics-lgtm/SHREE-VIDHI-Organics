@@ -3,6 +3,7 @@ import { dataStore } from "@/lib/db/data-store";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
 import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
+import { sendOrderConfirmationWhatsApp } from "@/lib/notifications/whatsapp";
 import "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     const createdOrder = result.order;
 
-    // Asynchronously dispatch Order Confirmation SMS and Email
+    // Asynchronously dispatch Order Confirmation SMS, Email, and WhatsApp
     Promise.allSettled([
       sendOrderConfirmationSMS(
         createdOrder.shippingAddress.phone,
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
         createdOrder.total
       ),
       sendOrderConfirmationEmail(createdOrder),
+      sendOrderConfirmationWhatsApp(createdOrder),
     ]).catch((err) => console.error("[Order Notification] Dispatch error:", err));
 
     return NextResponse.json({

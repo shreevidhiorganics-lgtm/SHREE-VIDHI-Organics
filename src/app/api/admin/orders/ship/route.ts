@@ -4,6 +4,7 @@ import { dataStore } from "@/lib/db/data-store";
 import { createShiprocketOrder } from "@/lib/shipping/shiprocket";
 import { sendOrderDispatchedSMS } from "@/lib/notifications/sms";
 import { sendShippingDispatchedEmail } from "@/lib/notifications/email";
+import { sendOrderDispatchedWhatsApp } from "@/lib/notifications/whatsapp";
 import "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     dataStore.updateOrderStatus(order.id, "SHIPPED", undefined, order.trackingNumber);
 
-    // Asynchronously dispatch Dispatch SMS & Email notifications to customer
+    // Asynchronously dispatch Dispatch SMS, Email & WhatsApp notifications to customer
     Promise.allSettled([
       sendOrderDispatchedSMS(
         order.shippingAddress.phone,
@@ -53,6 +54,11 @@ export async function POST(req: NextRequest) {
         order.trackingUrl
       ),
       sendShippingDispatchedEmail(order),
+      sendOrderDispatchedWhatsApp(
+        order,
+        order.trackingNumber || shipResult.awbCode || "",
+        order.trackingUrl || ""
+      ),
     ]).catch((err) => console.error("[Dispatch Notification] Error sending alerts:", err));
 
     return NextResponse.json({

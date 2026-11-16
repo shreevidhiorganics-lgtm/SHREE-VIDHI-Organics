@@ -9,6 +9,20 @@ import "@/lib/db/server-sync";
  */
 export async function POST(req: NextRequest) {
   try {
+    // OWASP A07: Webhook Signature / Secret Verification
+    const configuredSecret = process.env.SHIPROCKET_WEBHOOK_SECRET?.trim();
+    if (configuredSecret) {
+      const incomingSecret =
+        req.headers.get("x-api-key") ||
+        req.headers.get("x-shiprocket-token") ||
+        req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+
+      if (!incomingSecret || incomingSecret !== configuredSecret) {
+        console.warn("[SECURITY] Blocked unauthenticated Shiprocket webhook request.");
+        return NextResponse.json({ error: "Invalid webhook secret." }, { status: 401 });
+      }
+    }
+
     const body = await req.json();
 
     const orderNumber = body.order_id || body.channel_order_id;

@@ -17,6 +17,7 @@ import {
   LogOut,
   ShieldCheck,
   Loader2,
+  TrendingUp,
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -86,6 +87,7 @@ export default function AdminLayout({
 
   const navItems = [
     { name: "Overview", href: "/admin", icon: LayoutDashboard },
+    { name: "Analytics & BI", href: "/admin/analytics", icon: TrendingUp },
     { name: "Products", href: "/admin/products", icon: Package },
     { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
     { name: "Inventory", href: "/admin/inventory", icon: Layers },

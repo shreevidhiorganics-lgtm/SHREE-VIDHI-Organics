@@ -3,6 +3,7 @@ import { dataStore } from "@/lib/db/data-store";
 import { getPayUConfig, verifyPayUResponseHash, PayUCallbackParams } from "@/lib/payu";
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
 import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
+import { sendOrderConfirmationWhatsApp } from "@/lib/notifications/whatsapp";
 
 export async function POST(req: NextRequest) {
   try {
@@ -82,6 +83,7 @@ export async function POST(req: NextRequest) {
           Promise.allSettled([
             sendOrderConfirmationSMS(order.shippingAddress.phone, order.orderNumber, order.total),
             sendOrderConfirmationEmail(order),
+            sendOrderConfirmationWhatsApp(order),
           ]).catch(() => {});
         }
       }

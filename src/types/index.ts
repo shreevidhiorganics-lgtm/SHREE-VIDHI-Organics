@@ -99,6 +99,18 @@ export interface Product {
   metaDescription?: string;
   images: ProductImage[];
   variants: ProductVariant[];
+  // Trust, Transparency & Indian Regulatory Compliance
+  batchNumber?: string;
+  mfgDate?: string;
+  expiryDate?: string;
+  ayushLicense?: string;
+  fssaiLicense?: string;
+  originState?: string;
+  hsnCode?: string;
+  gstRate?: number;
+  // Retention & Subscriptions
+  isSubscriptionEligible?: boolean;
+  subscriptionDiscountPercentage?: number;
   createdAt: string;
 }
 
@@ -268,3 +280,179 @@ export interface SiteSettings {
   facebookUrl: string;
   youtubeUrl: string;
 }
+
+// ----------------------------------------------------
+// C. Customer Retention: Loyalty, Rewards & Membership
+// ----------------------------------------------------
+export type MembershipTier = "BRONZE" | "SILVER" | "GOLD" | "PLATINUM";
+
+export interface LoyaltyAccount {
+  userId: string;
+  pointsBalance: number;
+  lifetimePoints: number;
+  tier: MembershipTier;
+  referralCode: string;
+  referredBy?: string;
+  totalReferrals: number;
+}
+
+export interface LoyaltyTransaction {
+  id: string;
+  userId: string;
+  points: number; // Positive for earned, negative for redeemed
+  type: "ORDER_EARNED" | "POINTS_REDEEMED" | "REFERRAL_BONUS" | "SIGNUP_BONUS" | "TIER_BONUS";
+  description: string;
+  orderId?: string;
+  createdAt: string;
+}
+
+// ----------------------------------------------------
+// C. Product Bundles & Subscriptions
+// ----------------------------------------------------
+export interface ProductBundleItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+}
+
+export interface ProductBundle {
+  id: string;
+  slug: string;
+  name: string;
+  tagline: string;
+  description: string;
+  items: ProductBundleItem[];
+  mrpTotal: number;
+  bundlePrice: number;
+  savingsPercentage: number;
+  image: string;
+  isPopular?: boolean;
+}
+
+export type SubscriptionFrequency = "EVERY_30_DAYS" | "EVERY_60_DAYS" | "EVERY_90_DAYS";
+
+export interface SubscriptionItem {
+  id: string;
+  userId: string;
+  productId: string;
+  productName: string;
+  variantId?: string;
+  frequency: SubscriptionFrequency;
+  discountPercentage: number;
+  nextRenewalDate: string;
+  status: "ACTIVE" | "PAUSED" | "CANCELLED";
+  shippingAddress: Address;
+  createdAt: string;
+}
+
+// ----------------------------------------------------
+// D. Advanced Admin Analytics & BI
+// ----------------------------------------------------
+export interface DateRangeFilter {
+  start: string; // ISO date
+  end: string;
+  label: "today" | "last7days" | "last30days" | "thisYear" | "all";
+}
+
+export interface AdminAnalyticsSummary {
+  gmv: number; // Gross Merchandise Value
+  netRevenue: number;
+  totalOrders: number;
+  averageOrderValue: number;
+  conversionRate: number; // percentage
+  cartAbandonmentRate: number; // percentage
+  estimatedCAC: number; // Customer Acquisition Cost in INR
+  customerLifetimeValue: number; // LTV in INR
+  repeatPurchaseRate: number; // percentage
+  inventoryTurnoverRatio: number;
+  returnRate: number; // percentage
+  cancellationRate: number; // percentage
+  periodComparison: {
+    gmvGrowth: number;
+    ordersGrowth: number;
+    aovGrowth: number;
+  };
+  topSellingProducts: {
+    productId: string;
+    productName: string;
+    unitsSold: number;
+    revenue: number;
+    profitMargin: number; // percentage
+  }[];
+  salesTrend: {
+    date: string;
+    revenue: number;
+    orders: number;
+  }[];
+}
+
+// ----------------------------------------------------
+// I. Indian E-Commerce: GST Invoice Specification
+// ----------------------------------------------------
+export interface GSTTaxBreakdown {
+  taxableAmount: number;
+  hsnCode: string;
+  rate: number; // percentage e.g. 18
+  cgst: number;
+  sgst: number;
+  igst: number;
+  totalTax: number;
+}
+
+export interface GSTInvoice {
+  invoiceNumber: string;
+  invoiceDate: string;
+  orderNumber: string;
+  sellerDetails: {
+    legalName: string;
+    brandName: string;
+    gstin: string;
+    fssaiLicense: string;
+    ayushLicense: string;
+    address: string;
+    state: string;
+    stateCode: string;
+    contactEmail: string;
+  };
+  buyerDetails: {
+    name: string;
+    phone: string;
+    email?: string;
+    billingAddress: Address;
+    shippingAddress: Address;
+    state: string;
+    stateCode?: string;
+  };
+  items: {
+    description: string;
+    hsnCode: string;
+    quantity: number;
+    unitPrice: number;
+    discount: number;
+    taxableAmount: number;
+    taxRate: number;
+    cgst: number;
+    sgst: number;
+    igst: number;
+    total: number;
+  }[];
+  taxSummary: GSTTaxBreakdown[];
+  subtotal: number;
+  totalDiscount: number;
+  shippingFee: number;
+  totalTax: number;
+  grandTotal: number;
+  amountInWords: string;
+  isInterState: boolean;
+}
+
+// ----------------------------------------------------
+// E. Marketing & Privacy Preferences
+// ----------------------------------------------------
+export interface ConsentPreferences {
+  necessary: boolean;
+  analytics: boolean;
+  marketing: boolean;
+  updatedAt: string;
+}
+

@@ -43,8 +43,17 @@ export async function GET(req: NextRequest) {
         createdAt: order.createdAt,
         total: order.total,
         paymentMethod: order.paymentMethod,
-        shippingAddress: order.shippingAddress,
-        items: order.items,
+        // Privacy Defense: Mask personal address details in public tracking response
+        shippingAddress: {
+          city: order.shippingAddress.city,
+          state: order.shippingAddress.state,
+          pinCode: order.shippingAddress.pinCode ? `${order.shippingAddress.pinCode.slice(0, 3)}***` : "",
+        },
+        items: order.items.map((i) => ({
+          productName: i.productName,
+          quantity: i.quantity,
+          variantTitle: i.variantTitle,
+        })),
       },
     });
   } catch (error: any) {

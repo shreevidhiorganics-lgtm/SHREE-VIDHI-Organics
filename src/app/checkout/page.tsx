@@ -19,6 +19,7 @@ import { useCartStore } from "@/store/cart-store";
 import { useUIStore } from "@/store/ui-store";
 import { formatPrice } from "@/lib/utils";
 import { products as allCatalogProducts } from "@/lib/data/initial-data";
+import { lookupIndianPinCode } from "@/lib/shipping/pincode";
 
 const INDIAN_STATES = [
   "Uttar Pradesh",
@@ -124,8 +125,31 @@ export default function CheckoutPage() {
     );
   }
 
+  const [deliveryInfo, setDeliveryInfo] = useState<{ days?: number; text?: string } | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const updated = { ...formData, [name]: value };
+
+    if (name === "pinCode") {
+      const clean = value.replace(/[^0-9]/g, "");
+      updated.pinCode = clean;
+      if (clean.length === 6) {
+        const lookup = lookupIndianPinCode(clean);
+        if (lookup.city) updated.city = lookup.city;
+        if (lookup.state) updated.state = lookup.state;
+        if (lookup.serviceable) {
+          setDeliveryInfo({
+            days: lookup.estimatedDays,
+            text: `Estimated Express Delivery: ${lookup.estimatedDays}-${lookup.estimatedDays + 1} business days`,
+          });
+        }
+      } else {
+        setDeliveryInfo(null);
+      }
+    }
+
+    setFormData(updated);
   };
 
   const handleProceedToPayment = (e: React.FormEvent) => {
@@ -441,7 +465,26 @@ export default function CheckoutPage() {
                       placeholder="e.g. 221005"
                       className="w-full bg-[#FAF8F5] border border-[#EDE7DD] rounded-xl px-4 py-2.5 text-xs text-[#18231C] font-mono focus:outline-none focus:border-[#7D9980]"
                     />
+                    {deliveryInfo && (
+                      <p className="mt-1.5 text-[11px] text-emerald-800 font-medium flex items-center gap-1">
+                        <Truck className="w-3.5 h-3.5 shrink-0" />
+                        {deliveryInfo.text}
+                      </p>
+                    )}
                   </div>
+                </div>
+
+                {/* WhatsApp Order Tracking Consent */}
+                <div className="pt-2 flex items-center gap-2.5">
+                  <input
+                    type="checkbox"
+                    id="whatsappConsent"
+                    defaultChecked
+                    className="w-4 h-4 text-emerald-800 rounded border-stone-300 focus:ring-emerald-700"
+                  />
+                  <label htmlFor="whatsappConsent" className="text-xs text-stone-600 cursor-pointer">
+                    Receive live dispatch tracking and invoice receipts on WhatsApp
+                  </label>
                 </div>
 
                 <div className="pt-4 flex justify-end">

@@ -17,6 +17,9 @@ import {
   Edit2,
   Plus,
   Sparkles,
+  FileText,
+  Award,
+  Share2,
 } from "lucide-react";
 import { useWishlistStore } from "@/store/wishlist-store";
 import { useUIStore } from "@/store/ui-store";
@@ -38,6 +41,12 @@ export default function AccountPage() {
   });
   const [savedAddress, setSavedAddress] = useState<Address | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [loyalty, setLoyalty] = useState<{
+    pointsBalance: number;
+    tier: string;
+    perks: { label: string; discountBonus: number };
+    referralCode: string;
+  } | null>(null);
 
   useEffect(() => {
     fetch("/api/auth/me")
@@ -61,6 +70,15 @@ export default function AccountPage() {
       .then((data) => {
         if (data.orders && Array.isArray(data.orders)) {
           setOrders(data.orders);
+        }
+      })
+      .catch(() => {});
+
+    fetch("/api/retention/loyalty")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.loyalty) {
+          setLoyalty(data.loyalty);
         }
       })
       .catch(() => {});
@@ -94,6 +112,18 @@ export default function AccountPage() {
                 Namaste, {profile.name}
               </h1>
               <span className="text-xs text-[#6C766F] font-light">{profile.email}</span>
+
+              {loyalty && (
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-100 text-emerald-900 border border-emerald-300 px-2.5 py-0.5 rounded-full">
+                    <Award className="w-3.5 h-3.5 text-emerald-800" />
+                    {loyalty.perks.label} ({loyalty.pointsBalance} pts • ₹{loyalty.pointsBalance * 0.5} off)
+                  </span>
+                  <span className="text-[11px] bg-amber-100/80 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full font-mono">
+                    Referral: {loyalty.referralCode}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -197,10 +227,16 @@ export default function AccountPage() {
                         Payment Mode: <strong className="text-[#18231C] font-medium">{order.paymentMethod}</strong> ({order.paymentStatus})
                       </div>
 
-                      <div className="flex items-center gap-4">
-                        <span className="font-medium text-sm text-[#18231C]">
-                          Total: {formatPrice(order.total)}
-                        </span>
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={`/api/orders/${order.orderNumber}/invoice`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[11px] text-emerald-800 hover:text-emerald-950 font-medium underline flex items-center gap-1"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          <span>GST Invoice</span>
+                        </a>
                         <Link
                           href={`/track-order?orderNumber=${order.orderNumber}`}
                           className="bg-[#FAF8F5] hover:bg-[#F2ECE0] text-[#18231C] font-medium px-4 py-1.5 rounded-full border border-[#EDE7DD] transition-colors"

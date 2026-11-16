@@ -400,6 +400,10 @@ class DataStore {
     return this.orders.find((o) => o.id === id || o.orderNumber === id) || null;
   }
 
+  public getOrderByNumber(orderNumber: string): Order | null {
+    return this.orders.find((o) => o.orderNumber === orderNumber || o.id === orderNumber) || null;
+  }
+
   public createOrder(orderPayload: {
     userId?: string;
     guestEmail?: string;

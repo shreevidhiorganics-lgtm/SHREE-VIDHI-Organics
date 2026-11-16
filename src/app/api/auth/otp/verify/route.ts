@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { createSessionToken } from "@/lib/auth/auth";
+import { checkRateLimit, resetRateLimit } from "@/lib/security/rate-limit";
 import "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
@@ -15,6 +16,16 @@ export async function POST(req: NextRequest) {
     }
 
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+
+    // OWASP A04: Brute-Force Defense on OTP Verification (Max 5 attempts per 15 mins)
+    const rateLimit = checkRateLimit(`otp_verify:${cleanPhone}`, 5, 15 * 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: `Too many incorrect attempts. Please wait ${rateLimit.resetInSec} seconds before trying again.` },
+        { status: 429 }
+      );
+    }
+
     const isValidOtp = dataStore.verifyOtp(cleanPhone, otp);
 
     if (!isValidOtp) {
@@ -23,6 +34,9 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Reset rate limiter on successful verification
+    resetRateLimit(`otp_verify:${cleanPhone}`);
 
     // Name and Email required for registration
     if (!name || !email) {
