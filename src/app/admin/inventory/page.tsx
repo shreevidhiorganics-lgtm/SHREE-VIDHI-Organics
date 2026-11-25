@@ -1,20 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layers, AlertTriangle, CheckCircle2, Plus, Minus, Save } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { formatPrice } from "@/lib/utils";
+import { Product } from "@/types";
 import { useUIStore } from "@/store/ui-store";
 
 export default function AdminInventoryPage() {
   const { addToast } = useUIStore();
-  const [products, setProducts] = useState(dataStore.getProducts());
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const handleUpdateStock = (productId: string, newStock: number) => {
+  useEffect(() => {
+    fetch("/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.products)) setProducts(data.products);
+      })
+      .catch(() => addToast("Failed to load inventory.", "error"));
+  }, []);
+
+  const handleUpdateStock = async (productId: string, newStock: number) => {
     if (newStock < 0) return;
-    dataStore.updateProduct(productId, { stock: newStock });
-    setProducts([...dataStore.getProducts()]);
-    addToast("Stock level updated successfully.", "success");
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: productId, stock: newStock }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to update stock.", "error");
+        return;
+      }
+      setProducts(data.products || []);
+      addToast("Stock level updated successfully.", "success");
+    } catch {
+      addToast("Network error updating stock.", "error");
+    }
   };
 
   const lowStockCount = products.filter((p) => p.stock <= (p.lowStockAlert || 10)).length;

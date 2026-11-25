@@ -1,12 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Users, Mail, Phone, Calendar } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { formatDate } from "@/lib/utils";
+import { User } from "@/types";
 
 export default function AdminCustomersPage() {
-  const users = dataStore.getUsers();
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    fetch("/api/admin/customers")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.users)) setUsers(data.users);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="space-y-6 max-w-5xl">

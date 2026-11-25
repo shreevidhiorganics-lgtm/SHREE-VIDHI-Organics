@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, ShoppingBag, Truck, CheckCircle2, AlertCircle, Send, Loader2 } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { formatPrice, formatDate } from "@/lib/utils";
-import { OrderStatus } from "@/types";
+import { Order, OrderStatus } from "@/types";
 import { useUIStore } from "@/store/ui-store";
 
 const STATUS_OPTIONS: OrderStatus[] = [
@@ -21,10 +20,26 @@ const STATUS_OPTIONS: OrderStatus[] = [
 
 export default function AdminOrdersPage() {
   const { addToast } = useUIStore();
-  const [orders, setOrders] = useState(dataStore.getOrders());
+  const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [shippingOrderId, setShippingOrderId] = useState<string | null>(null);
+
+  const loadOrders = async () => {
+    try {
+      const res = await fetch("/api/admin/orders");
+      const data = await res.json();
+      if (res.ok && Array.isArray(data.orders)) {
+        setOrders(data.orders);
+      }
+    } catch {
+      addToast("Failed to load orders.", "error");
+    }
+  };
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
 
   const filtered = orders.filter((o) => {
     const matchesStatus = filterStatus === "ALL" || o.status === filterStatus;
@@ -37,10 +52,23 @@ export default function AdminOrdersPage() {
     return matchesStatus && matchesSearch;
   });
 
-  const handleUpdateStatus = (orderId: string, newStatus: OrderStatus) => {
-    dataStore.updateOrderStatus(orderId, newStatus);
-    setOrders([...dataStore.getOrders()]);
-    addToast(`Updated ${orderId} to status ${newStatus}.`, "success");
+  const handleUpdateStatus = async (orderId: string, newStatus: OrderStatus) => {
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, status: newStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to update order status.", "error");
+        return;
+      }
+      setOrders(data.orders || []);
+      addToast(`Updated ${orderId} to status ${newStatus}.`, "success");
+    } catch {
+      addToast("Network error updating order status.", "error");
+    }
   };
 
   const handleShiprocketDispatch = async (orderId: string) => {
@@ -56,7 +84,7 @@ export default function AdminOrdersPage() {
         addToast(data.error || "Shiprocket dispatch failed.", "error");
       } else {
         addToast(data.message || `Dispatched! AWB: ${data.trackingNumber}`, "success");
-        setOrders([...dataStore.getOrders()]);
+        await loadOrders();
       }
     } catch {
       addToast("Network error dispatching to Shiprocket.", "error");

@@ -62,6 +62,7 @@ export default function CheckoutPage() {
   const [step, setStep] = useState<1 | 2>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [deliveryInfo, setDeliveryInfo] = useState<{ days?: number; text?: string } | null>(null);
 
   // Contact & Address State
   const [formData, setFormData] = useState({
@@ -124,8 +125,6 @@ export default function CheckoutPage() {
       </div>
     );
   }
-
-  const [deliveryInfo, setDeliveryInfo] = useState<{ days?: number; text?: string } | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

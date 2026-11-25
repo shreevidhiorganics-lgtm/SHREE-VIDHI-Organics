@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
+import { getCurrentUser } from "@/lib/auth/auth";
 import { getPayUConfig, generatePayUHash, PayUInitiateParams } from "@/lib/payu";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const currentUser = await getCurrentUser();
     const {
       guestEmail,
       guestPhone,
@@ -22,8 +24,9 @@ export async function POST(req: NextRequest) {
 
     // 1. Create order in dataStore with status PENDING and paymentMethod PAYU
     const orderResult = dataStore.createOrder({
-      guestEmail,
-      guestPhone,
+      userId: currentUser?.userId,
+      guestEmail: guestEmail?.trim() || currentUser?.email,
+      guestPhone: guestPhone?.trim() || currentUser?.phone,
       shippingAddress,
       items,
       paymentMethod: "PAYU",

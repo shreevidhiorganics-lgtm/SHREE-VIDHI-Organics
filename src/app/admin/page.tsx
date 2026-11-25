@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   IndianRupee,
@@ -14,21 +14,59 @@ import {
   ExternalLink,
   ArrowRight,
 } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { formatPrice, formatDate } from "@/lib/utils";
-import { OrderStatus } from "@/types";
+import { Order, OrderStatus, Product } from "@/types";
 import { useUIStore } from "@/store/ui-store";
 
 export default function AdminDashboardPage() {
   const { addToast } = useUIStore();
-  const metrics = dataStore.getAdminMetrics();
-  const [orders, setOrders] = useState(dataStore.getOrders());
-  const products = dataStore.getProducts();
+  const [metrics, setMetrics] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    pendingOrders: 0,
+    totalProducts: 0,
+    lowStockProducts: 0,
+    averageOrderValue: 0,
+    totalCustomers: 0,
+  });
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
-  const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {
-    dataStore.updateOrderStatus(orderId, newStatus);
-    setOrders([...dataStore.getOrders()]);
-    addToast(`Updated order ${orderId} to ${newStatus}`, "success");
+  const loadOverview = async () => {
+    try {
+      const res = await fetch("/api/admin/overview");
+      const data = await res.json();
+      if (res.ok) {
+        if (data.metrics) setMetrics(data.metrics);
+        if (Array.isArray(data.orders)) setOrders(data.orders);
+        if (Array.isArray(data.products)) setProducts(data.products);
+      }
+    } catch {
+      addToast("Failed to load dashboard overview.", "error");
+    }
+  };
+
+  useEffect(() => {
+    loadOverview();
+  }, []);
+
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
+    try {
+      const res = await fetch("/api/admin/orders", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, status: newStatus }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to update order.", "error");
+        return;
+      }
+      setOrders(data.orders || []);
+      addToast(`Updated order ${orderId} to ${newStatus}`, "success");
+    } catch {
+      addToast("Network error updating order status.", "error");
+    }
   };
 
   return (

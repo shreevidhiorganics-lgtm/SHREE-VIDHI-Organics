@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { categories } from "@/lib/data/initial-data";
 import { useUIStore } from "@/store/ui-store";
 import { slugify } from "@/lib/utils";
@@ -29,44 +28,57 @@ export default function CreateProductPage() {
     imageUrl: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name) return;
 
     const selectedCategory = categories.find((c) => c.id === formData.categoryId);
 
-    const newProd = dataStore.createProduct({
-      name: formData.name,
-      slug: slugify(formData.name),
-      categoryId: formData.categoryId,
-      categoryName: selectedCategory?.name || "Herbal Powders",
-      shortDesc: formData.shortDesc,
-      description: formData.description,
-      ingredientsText: formData.ingredientsText,
-      howToUse: formData.howToUse,
-      mrp: Number(formData.mrp),
-      salePrice: Number(formData.salePrice),
-      stock: Number(formData.stock),
-      isFeatured: formData.isFeatured,
-      isBestseller: formData.isBestseller,
-      isNewArrival: formData.isNewArrival,
-      images: [
-        {
-          id: `img-${Date.now()}`,
-          url: formData.imageUrl,
-          alt: formData.name,
-          isPrimary: true,
-        },
-      ],
-      keyBenefits: [
-        "100% pure Ayurvedic single botanical formulation",
-        "Free from synthetic chemicals and artificial perfumes",
-        "Sustainably harvested and processed in Varanasi",
-      ],
-    });
+    try {
+      const res = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          slug: slugify(formData.name),
+          categoryId: formData.categoryId,
+          categoryName: selectedCategory?.name || "Herbal Powders",
+          shortDesc: formData.shortDesc,
+          description: formData.description,
+          ingredientsText: formData.ingredientsText,
+          howToUse: formData.howToUse,
+          mrp: Number(formData.mrp),
+          salePrice: Number(formData.salePrice),
+          stock: Number(formData.stock),
+          isFeatured: formData.isFeatured,
+          isBestseller: formData.isBestseller,
+          isNewArrival: formData.isNewArrival,
+          images: [
+            {
+              id: `img-${Date.now()}`,
+              url: formData.imageUrl,
+              alt: formData.name,
+              isPrimary: true,
+            },
+          ],
+          keyBenefits: [
+            "100% pure Ayurvedic single botanical formulation",
+            "Free from synthetic chemicals and artificial perfumes",
+            "Sustainably harvested and processed in Varanasi",
+          ],
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to create product.", "error");
+        return;
+      }
 
-    addToast(`Successfully created ${newProd.name}!`, "success");
-    router.push("/admin/products");
+      addToast(`Successfully created ${data.product.name}!`, "success");
+      router.push("/admin/products");
+    } catch {
+      addToast("Network error creating product.", "error");
+    }
   };
 
   return (

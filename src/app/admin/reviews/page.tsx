@@ -1,24 +1,43 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star, ShieldCheck, CheckCircle2, Trash2 } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { formatDate } from "@/lib/utils";
+import { Review } from "@/types";
 import { useUIStore } from "@/store/ui-store";
 
 export default function AdminReviewsPage() {
   const { addToast } = useUIStore();
-  const [reviews, setReviews] = useState(dataStore.getAllReviews());
+  const [reviews, setReviews] = useState<Review[]>([]);
 
-  const handleToggleApproval = (id: string) => {
-    const rev = reviews.find((r) => r.id === id);
-    if (rev) {
-      rev.isApproved = !rev.isApproved;
-      setReviews([...reviews]);
+  useEffect(() => {
+    fetch("/api/admin/reviews")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.reviews)) setReviews(data.reviews);
+      })
+      .catch(() => addToast("Failed to load reviews.", "error"));
+  }, []);
+
+  const handleToggleApproval = async (id: string) => {
+    try {
+      const res = await fetch("/api/admin/reviews", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviewId: id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to update review.", "error");
+        return;
+      }
+      setReviews(data.reviews || []);
       addToast(
-        rev.isApproved ? "Review published." : "Review hidden from public storefront.",
+        data.review.isApproved ? "Review published." : "Review hidden from public storefront.",
         "info"
       );
+    } catch {
+      addToast("Network error updating review.", "error");
     }
   };
 

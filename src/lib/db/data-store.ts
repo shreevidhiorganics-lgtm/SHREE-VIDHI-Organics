@@ -566,6 +566,26 @@ class DataStore {
     return this.coupons;
   }
 
+  public createCoupon(couponData: Omit<Coupon, "id" | "usedCount">): Coupon {
+    const newCoupon: Coupon = {
+      ...couponData,
+      id: `coup-${Date.now()}`,
+      code: couponData.code.trim().toUpperCase(),
+      usedCount: 0,
+    };
+    this.coupons.unshift(newCoupon);
+    this.persistSnapshot();
+    return newCoupon;
+  }
+
+  public toggleReviewApproval(reviewId: string): Review | null {
+    const review = this.reviews.find((r) => r.id === reviewId);
+    if (!review) return null;
+    review.isApproved = !review.isApproved;
+    this.persistSnapshot();
+    return review;
+  }
+
   // ---------------- REVIEWS ----------------
   public getReviewsForProduct(productId: string): Review[] {
     return this.reviews.filter((r) => r.productId === productId && r.isApproved);
@@ -693,8 +713,14 @@ class DataStore {
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
     const entry = this.otps.get(cleanPhone);
 
-    // Support standard 123456 testing fallback or real matching OTP
-    if (inputOtp === "123456") return true;
+    // Allow test OTP only outside production when explicitly enabled
+    if (
+      process.env.NODE_ENV !== "production" &&
+      process.env.ALLOW_TEST_OTP === "true" &&
+      inputOtp === "123456"
+    ) {
+      return true;
+    }
 
     if (!entry) return false;
     if (Date.now() > entry.expiresAt) {

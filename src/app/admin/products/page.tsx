@@ -1,16 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Search, Edit, Trash2, Eye, Star, Package } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { formatPrice } from "@/lib/utils";
+import { Product } from "@/types";
 import { useUIStore } from "@/store/ui-store";
 
 export default function AdminProductsPage() {
   const { addToast } = useUIStore();
-  const [products, setProducts] = useState(dataStore.getProducts());
+  const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetch("/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.products)) setProducts(data.products);
+      })
+      .catch(() => addToast("Failed to load products.", "error"));
+  }, []);
 
   const filtered = products.filter(
     (p) =>
@@ -18,11 +27,21 @@ export default function AdminProductsPage() {
       p.sku.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleDelete = (id: string, name: string) => {
-    if (confirm(`Are you sure you want to delete ${name}?`)) {
-      dataStore.deleteProduct(id);
-      setProducts(dataStore.getProducts());
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete ${name}?`)) return;
+    try {
+      const res = await fetch(`/api/admin/products?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to delete product.", "error");
+        return;
+      }
+      setProducts(data.products || []);
       addToast(`Deleted ${name}`, "info");
+    } catch {
+      addToast("Network error deleting product.", "error");
     }
   };
 

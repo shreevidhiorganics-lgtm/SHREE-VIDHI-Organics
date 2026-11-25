@@ -1,41 +1,56 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tag, Plus, CheckCircle2 } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { formatPrice } from "@/lib/utils";
+import { Coupon } from "@/types";
 import { useUIStore } from "@/store/ui-store";
 
 export default function AdminCouponsPage() {
   const { addToast } = useUIStore();
-  const [coupons, setCoupons] = useState(dataStore.getCoupons());
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
 
   const [newCode, setNewCode] = useState("");
   const [discountType, setDiscountType] = useState<"PERCENTAGE" | "FIXED">("PERCENTAGE");
   const [discountValue, setDiscountValue] = useState(10);
   const [minCartValue, setMinCartValue] = useState(399);
 
-  const handleCreateCoupon = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetch("/api/admin/coupons")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.coupons)) setCoupons(data.coupons);
+      })
+      .catch(() => addToast("Failed to load coupons.", "error"));
+  }, []);
+
+  const handleCreateCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCode.trim()) return;
 
-    const newCoupon = {
-      id: `coup-${Date.now()}`,
-      code: newCode.trim().toUpperCase(),
-      description: `${discountType === "PERCENTAGE" ? `${discountValue}% OFF` : `₹${discountValue} OFF`} above ₹${minCartValue}`,
-      discountType,
-      discountValue: Number(discountValue),
-      minCartValue: Number(minCartValue),
-      validFrom: new Date().toISOString(),
-      validUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-      usedCount: 0,
-      isActive: true,
-    };
+    try {
+      const res = await fetch("/api/admin/coupons", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: newCode.trim().toUpperCase(),
+          discountType,
+          discountValue: Number(discountValue),
+          minCartValue: Number(minCartValue),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to create coupon.", "error");
+        return;
+      }
 
-    coupons.unshift(newCoupon);
-    setCoupons([...coupons]);
-    setNewCode("");
-    addToast(`Coupon ${newCoupon.code} created!`, "success");
+      setCoupons(data.coupons || []);
+      setNewCode("");
+      addToast(`Coupon ${data.coupon.code} created!`, "success");
+    } catch {
+      addToast("Network error creating coupon.", "error");
+    }
   };
 
   return (

@@ -40,6 +40,18 @@ export async function getCurrentUser(): Promise<SessionData | null> {
   return parseSessionToken(sessionCookie.value);
 }
 
+export async function requireAdmin(): Promise<SessionData | null> {
+  const user = await getCurrentUser();
+  if (
+    !user ||
+    user.role !== "ADMIN" ||
+    user.email?.toLowerCase().trim() !== "shreevidhiorganics@gmail.com"
+  ) {
+    return null;
+  }
+  return user;
+}
+
 // Constant-time string equality to prevent timing attacks
 function constantTimeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
@@ -56,7 +68,14 @@ export async function authenticateUser(
 ): Promise<SessionData | null> {
   // Admin authentication - strictly only shreevidhiorganics@gmail.com
   const adminEmail = "shreevidhiorganics@gmail.com";
-  const configuredPassword = process.env.ADMIN_PASSWORD || "Admin@ShreeVidhi2026";
+  const configuredPassword =
+    process.env.ADMIN_PASSWORD ||
+    (process.env.NODE_ENV !== "production" ? "Admin@ShreeVidhi2026" : "");
+
+  if (!configuredPassword) {
+    console.error("[SECURITY] ADMIN_PASSWORD is not configured in production.");
+    return null;
+  }
 
   if (email.toLowerCase().trim() !== adminEmail) {
     return null;

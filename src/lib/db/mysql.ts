@@ -581,7 +581,13 @@ export async function dbVerifyOtp(phone: string, inputOtp: string): Promise<bool
   const p = getMySQLPool();
   if (!p) return false;
 
-  if (inputOtp === "123456") return true;
+  if (
+    process.env.NODE_ENV !== "production" &&
+    process.env.ALLOW_TEST_OTP === "true" &&
+    inputOtp === "123456"
+  ) {
+    return true;
+  }
 
   try {
     const [rows] = await p.query<RowDataPacket[]>(

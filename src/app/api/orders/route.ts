@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
 
     // Call dataStore createOrder which validates products, stock, coupons, and recalculates totals server-side
     const result = dataStore.createOrder({
+      userId: currentUser?.userId,
       guestEmail: guestEmail?.trim() || currentUser?.email,
       guestPhone: guestPhone?.trim() || currentUser?.phone,
       shippingAddress,

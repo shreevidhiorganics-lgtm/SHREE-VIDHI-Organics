@@ -45,13 +45,22 @@ export async function POST(req: NextRequest) {
     const config = getPayUConfig();
     const orderId = callbackParams.udf1 || "";
 
-    // Verify reverse hash if salt configured
-    if (config.salt && config.salt !== "LIVE_PAYU_SALT") {
+    // Verify reverse hash (fail closed in production if salt is missing)
+    const hasConfiguredSalt = Boolean(
+      config.salt &&
+        config.salt !== "LIVE_PAYU_SALT" &&
+        config.salt !== "your_payu_merchant_salt"
+    );
+
+    if (hasConfiguredSalt) {
       const isHashValid = verifyPayUResponseHash(callbackParams, config.salt);
       if (!isHashValid) {
         console.error("PayU Webhook Alert: Invalid hash received for txnid:", callbackParams.txnid);
         return NextResponse.json({ error: "Invalid hash verification" }, { status: 400 });
       }
+    } else if (process.env.NODE_ENV === "production") {
+      console.error("PayU Webhook Alert: PAYU_MERCHANT_SALT is not configured in production.");
+      return NextResponse.json({ error: "Payment verification not configured" }, { status: 500 });
     }
 
     if (orderId) {

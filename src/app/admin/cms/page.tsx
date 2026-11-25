@@ -1,30 +1,56 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sliders, Save, Sparkles, MessageSquare } from "lucide-react";
-import { dataStore } from "@/lib/db/data-store";
 import { useUIStore } from "@/store/ui-store";
 
 export default function AdminCmsPage() {
   const { addToast } = useUIStore();
-  const currentSettings = dataStore.getSettings();
 
   const [settings, setSettings] = useState({
-    announcementText: currentSettings.announcementText,
-    freeShippingThreshold: currentSettings.freeShippingThreshold,
-    supportPhone: currentSettings.supportPhone,
-    supportEmail: currentSettings.supportEmail,
+    announcementText: "",
+    freeShippingThreshold: 499,
+    supportPhone: "",
+    supportEmail: "",
   });
 
-  const handleSave = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetch("/api/admin/cms")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.settings) {
+          setSettings({
+            announcementText: data.settings.announcementText || "",
+            freeShippingThreshold: data.settings.freeShippingThreshold ?? 499,
+            supportPhone: data.settings.supportPhone || "",
+            supportEmail: data.settings.supportEmail || "",
+          });
+        }
+      })
+      .catch(() => addToast("Failed to load CMS settings.", "error"));
+  }, []);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    dataStore.updateSettings({
-      announcementText: settings.announcementText,
-      freeShippingThreshold: Number(settings.freeShippingThreshold),
-      supportPhone: settings.supportPhone,
-      supportEmail: settings.supportEmail,
-    });
-    addToast("Site announcement and CMS settings updated!", "success");
+    try {
+      const res = await fetch("/api/admin/cms", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          announcementText: settings.announcementText,
+          freeShippingThreshold: Number(settings.freeShippingThreshold),
+          supportPhone: settings.supportPhone,
+          supportEmail: settings.supportEmail,
+        }),
+      });
+      if (!res.ok) {
+        addToast("Failed to update CMS settings.", "error");
+        return;
+      }
+      addToast("Site announcement and CMS settings updated!", "success");
+    } catch {
+      addToast("Network error updating CMS settings.", "error");
+    }
   };
 
   return (

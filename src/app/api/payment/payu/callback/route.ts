@@ -44,11 +44,18 @@ export async function POST(req: NextRequest) {
     const orderId = callbackParams.udf1 || "";
     const isSuccess = callbackParams.status.toLowerCase() === "success";
 
-    // 1. Verify cryptographic reverse hash
-    // (If secret salt is not configured in environment, skip strict hash check so test flows work)
-    let isHashValid = true;
-    if (config.salt && config.salt !== "LIVE_PAYU_SALT") {
+    // 1. Verify cryptographic reverse hash (fail closed in production)
+    const hasConfiguredSalt = Boolean(
+      config.salt &&
+        config.salt !== "LIVE_PAYU_SALT" &&
+        config.salt !== "your_payu_merchant_salt"
+    );
+
+    let isHashValid = false;
+    if (hasConfiguredSalt) {
       isHashValid = verifyPayUResponseHash(callbackParams, config.salt);
+    } else if (process.env.NODE_ENV !== "production") {
+      isHashValid = true;
     }
 
     if (!isHashValid) {
