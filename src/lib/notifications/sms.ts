@@ -50,10 +50,37 @@ export async function sendOtpSMS(phone: string, otp: string): Promise<SMSRespons
       };
     }
 
-    console.error("[SMS:FAST2SMS] Dispatch error response:", data);
+    // Fallback to Fast2SMS Quick SMS route ("q") if OTP route is not yet enabled on the account
+    console.warn("[SMS:FAST2SMS] OTP route returned error, trying Quick SMS fallback:", data);
+    const quickRes = await fetch("https://www.fast2sms.com/dev/bulkV2", {
+      method: "POST",
+      headers: {
+        authorization: apiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: `Your Shree Vidhi Organics verification code is ${otp}. Valid for 10 minutes.`,
+        route: "q",
+        numbers: cleanPhone,
+      }),
+    });
+
+    const quickData = await quickRes.json().catch(() => ({}));
+    if (quickData.return === true) {
+      console.log(`[SMS:FAST2SMS] OTP dispatched via Quick SMS to +91 ${cleanPhone}. Request ID: ${quickData.request_id}`);
+      return {
+        success: true,
+        message: "OTP sent successfully via Fast2SMS.",
+        requestId: quickData.request_id,
+      };
+    }
+
+    console.error("[SMS:FAST2SMS] Dispatch error response:", quickData);
     return {
       success: false,
-      message: Array.isArray(data.message) ? data.message.join(", ") : data.message || "Failed to send SMS.",
+      message: Array.isArray(quickData.message)
+        ? quickData.message.join(", ")
+        : quickData.message || (Array.isArray(data.message) ? data.message.join(", ") : data.message) || "Failed to send SMS.",
     };
   } catch (err: any) {
     console.error("[SMS:FAST2SMS] Network error sending OTP:", err);

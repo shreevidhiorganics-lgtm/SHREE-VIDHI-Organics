@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getCurrentUser } from "@/lib/auth/auth";
+import { resolveOrderCustomer, attachSessionCookie } from "@/lib/auth/order-account";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createRazorpayOrder, getRazorpayConfig } from "@/lib/razorpay";
 import "@/lib/db/server-sync";
@@ -18,6 +19,13 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Please sign in to your account before proceeding to payment." },
+        { status: 401 }
+      );
+    }
     const {
       guestEmail,
       guestPhone,
@@ -33,9 +41,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. Create order in dataStore with status PENDING and paymentMethod RAZORPAY
+    // 1. Ensure customer has an account and auto-login new visitors
+    const { userId, sessionToken } = await resolveOrderCustomer({
+      currentUser,
+      guestEmail,
+      guestPhone,
+      shippingAddress,
+    });
+
+    // 2. Create order in dataStore with status PENDING and paymentMethod RAZORPAY
     const orderResult = dataStore.createOrder({
-      userId: currentUser?.userId,
+      userId,
       guestEmail: guestEmail?.trim() || currentUser?.email,
       guestPhone: guestPhone?.trim() || currentUser?.phone,
       shippingAddress,
@@ -71,7 +87,7 @@ export async function POST(req: NextRequest) {
       razorpayStatus: rzpOrder.status,
     });
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       keyId: config.keyId,
       orderId: order.id,
@@ -85,6 +101,8 @@ export async function POST(req: NextRequest) {
         contact: (guestPhone || shippingAddress.phone || "").replace(/\D/g, "").slice(-10),
       },
     });
+    attachSessionCookie(response, sessionToken);
+    return response;
   } catch (error: any) {
     console.error("Razorpay initiate error:", error);
     return NextResponse.json(

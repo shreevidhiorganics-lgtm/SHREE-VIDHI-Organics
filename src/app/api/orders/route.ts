@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getCurrentUser } from "@/lib/auth/auth";
+import { resolveOrderCustomer, attachSessionCookie } from "@/lib/auth/order-account";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
 import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
@@ -20,6 +21,13 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Please sign in to your account before placing an order." },
+        { status: 401 }
+      );
+    }
 
     const {
       guestEmail,
@@ -55,9 +63,17 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Ensure customer has an account and auto-login new visitors
+    const { userId, sessionToken } = await resolveOrderCustomer({
+      currentUser,
+      guestEmail,
+      guestPhone,
+      shippingAddress,
+    });
+
     // Call dataStore createOrder which validates products, stock, coupons, and recalculates totals server-side
     const result = dataStore.createOrder({
-      userId: currentUser?.userId,
+      userId,
       guestEmail: guestEmail?.trim() || currentUser?.email,
       guestPhone: guestPhone?.trim() || currentUser?.phone,
       shippingAddress,
@@ -86,11 +102,13 @@ export async function POST(req: NextRequest) {
       sendOrderConfirmationWhatsApp(createdOrder),
     ]).catch((err) => console.error("[Order Notification] Dispatch error:", err));
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       order: createdOrder,
       orderNumber: createdOrder.orderNumber,
     });
+    attachSessionCookie(response, sessionToken);
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { error: error?.message || "Internal server error creating order." },

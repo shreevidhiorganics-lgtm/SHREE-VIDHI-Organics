@@ -54,6 +54,13 @@ class DataStore {
   }
 
   public static getInstance(): DataStore {
+    const g = globalThis as typeof globalThis & { __svoDataStore?: DataStore };
+    if (typeof window === "undefined") {
+      if (!g.__svoDataStore) {
+        g.__svoDataStore = new DataStore();
+      }
+      return g.__svoDataStore;
+    }
     if (!DataStore.instance) {
       DataStore.instance = new DataStore();
     }
@@ -87,6 +94,14 @@ class DataStore {
       if (Array.isArray(data.addresses)) this.addresses = data.addresses;
       if (Array.isArray(data.coupons)) this.coupons = data.coupons;
       if (data.settings) this.settings = data.settings;
+      if (data.otps && typeof data.otps === "object") {
+        const now = Date.now();
+        for (const [phone, entry] of Object.entries<any>(data.otps)) {
+          if (entry?.otp && Number(entry.expiresAt) > now) {
+            this.otps.set(phone, { otp: String(entry.otp), expiresAt: Number(entry.expiresAt) });
+          }
+        }
+      }
       if (Array.isArray(data.products) && data.products.length > 0) {
         for (const savedProd of data.products) {
           const match = this.products.find((p) => p.id === savedProd.id);
@@ -123,6 +138,7 @@ class DataStore {
         addresses: this.addresses,
         coupons: this.coupons,
         settings: this.settings,
+        otps: Object.fromEntries(this.otps.entries()),
         products: this.products.map((p) => ({
           id: p.id,
           stock: p.stock,
@@ -700,6 +716,7 @@ class DataStore {
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     this.otps.set(cleanPhone, { otp: generatedOtp, expiresAt });
+    this.persistSnapshot();
     this.notifyMutation("saveOtp", { phone: cleanPhone, otp: generatedOtp, expiresAt });
 
     return {
@@ -711,6 +728,10 @@ class DataStore {
 
   public verifyOtp(phone: string, inputOtp: string): boolean {
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
+    // Reload latest snapshot in case another worker/module wrote the OTP
+    if (!this.otps.has(cleanPhone)) {
+      this.loadFromDisk();
+    }
     const entry = this.otps.get(cleanPhone);
 
     // Allow test OTP only outside production when explicitly enabled
@@ -725,11 +746,13 @@ class DataStore {
     if (!entry) return false;
     if (Date.now() > entry.expiresAt) {
       this.otps.delete(cleanPhone);
+      this.persistSnapshot();
       return false;
     }
 
     if (entry.otp === inputOtp.trim()) {
       this.otps.delete(cleanPhone);
+      this.persistSnapshot();
       return true;
     }
 

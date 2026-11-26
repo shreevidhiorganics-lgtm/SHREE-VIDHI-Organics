@@ -13,7 +13,13 @@ import {
 let isRegistered = false;
 
 export function initServerDatabaseSync() {
-  if (isRegistered || typeof window !== "undefined") return;
+  if (
+    isRegistered ||
+    typeof window !== "undefined" ||
+    process.env.NEXT_PHASE === "phase-production-build"
+  ) {
+    return;
+  }
   isRegistered = true;
 
   if (isMySQLConfigured()) {

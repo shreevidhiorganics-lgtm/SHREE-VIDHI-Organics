@@ -32,11 +32,12 @@ export default function AccountPage() {
   const wishlistItems = useWishlistStore((state) => state.items);
 
   const [activeTab, setActiveTab] = useState<"orders" | "addresses" | "profile" | "wishlist">("orders");
+  const [authStatus, setAuthStatus] = useState<"loading" | "authenticated" | "unauthenticated">("loading");
 
-  // Customer state
+  // Customer state (never populated with demo data)
   const [profile, setProfile] = useState({
-    name: "Seeker",
-    email: "customer@shreevidhiorganics.com",
+    name: "",
+    email: "",
     phone: "",
   });
   const [savedAddress, setSavedAddress] = useState<Address | null>(null);
@@ -49,40 +50,55 @@ export default function AccountPage() {
   } | null>(null);
 
   useEffect(() => {
+    let active = true;
     fetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => {
-        if (data.authenticated && data.user) {
-          setProfile({
-            name: data.user.name || "Seeker",
-            email: data.user.email || "",
-            phone: data.user.phone || "",
-          });
-          if (data.user.address) {
-            setSavedAddress(data.user.address);
-          }
+        if (!active) return;
+        if (!data?.authenticated || !data?.user) {
+          setAuthStatus("unauthenticated");
+          router.replace("/login?redirect=/account");
+          return;
         }
-      })
-      .catch(() => {});
 
-    fetch("/api/orders")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.orders && Array.isArray(data.orders)) {
-          setOrders(data.orders);
+        setAuthStatus("authenticated");
+        setProfile({
+          name: data.user.name || "",
+          email: data.user.email || "",
+          phone: data.user.phone || "",
+        });
+        if (data.user.address) {
+          setSavedAddress(data.user.address);
         }
-      })
-      .catch(() => {});
 
-    fetch("/api/retention/loyalty")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.loyalty) {
-          setLoyalty(data.loyalty);
-        }
+        fetch("/api/orders")
+          .then((res) => res.json())
+          .then((orderData) => {
+            if (active && orderData.orders && Array.isArray(orderData.orders)) {
+              setOrders(orderData.orders);
+            }
+          })
+          .catch(() => {});
+
+        fetch("/api/retention/loyalty")
+          .then((res) => res.json())
+          .then((loyaltyData) => {
+            if (active && loyaltyData.loyalty) {
+              setLoyalty(loyaltyData.loyalty);
+            }
+          })
+          .catch(() => {});
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => {
+        if (!active) return;
+        setAuthStatus("unauthenticated");
+        router.replace("/login?redirect=/account");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [router]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -95,6 +111,14 @@ export default function AccountPage() {
     addToast("Profile details updated successfully.", "success");
   };
 
+  if (authStatus !== "authenticated") {
+    return (
+      <div className="bg-[#FAF8F5] min-h-screen flex items-center justify-center p-6">
+        <p className="text-xs text-[#6C766F]">Verifying account session...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[#FAF8F5] min-h-screen py-10 sm:py-16">
       <div className="container mx-auto px-4 sm:px-6 max-w-5xl space-y-8">
@@ -102,7 +126,7 @@ export default function AccountPage() {
         <div className="bg-white/90 p-6 sm:p-10 rounded-3xl border border-[#EDE7DD] shadow-[0_4px_24px_-4px_rgba(28,37,30,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4 sm:gap-5">
             <div className="w-14 h-14 rounded-full bg-[#18231C] text-[#D8B980] flex items-center justify-center font-serif font-normal text-xl shadow-[0_0_15px_rgba(197,168,114,0.25)] border border-[#C5A872]/50">
-              {profile.name[0]}
+              {(profile.name[0] || "U").toUpperCase()}
             </div>
             <div>
               <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-[#8C6D32] block mb-0.5">

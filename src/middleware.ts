@@ -3,12 +3,14 @@ import { verifySignedToken } from "@/lib/auth/token";
 import { SessionData } from "@/lib/auth/auth";
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/account/:path*", "/checkout/:path*"],
 };
 
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const isApiRoute = pathname.startsWith("/api/admin");
+  const isCustomerProtectedRoute =
+    pathname.startsWith("/account") || pathname.startsWith("/checkout");
   const sessionCookie = request.cookies.get("svo_session_token");
 
   // Helper for unauthorized responses
@@ -30,9 +32,17 @@ export async function middleware(request: NextRequest) {
 
   const session = await verifySignedToken<SessionData>(sessionCookie.value);
 
+  if (!session) {
+    return handleUnauthorized();
+  }
+
+  // Account & Checkout routes allow any authenticated customer or admin
+  if (isCustomerProtectedRoute) {
+    return NextResponse.next();
+  }
+
   // OWASP A01: Broken Access Control & Privilege Escalation Defense
   if (
-    !session ||
     session.role !== "ADMIN" ||
     session.email?.toLowerCase().trim() !== "shreevidhiorganics@gmail.com"
   ) {

@@ -198,7 +198,7 @@ export default function LoginPage() {
               {notRegistered && (
                 <div className="pt-1">
                   <Link
-                    href={`/register?phone=${phone}`}
+                    href={`/register?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(redirectUrl)}`}
                     className="inline-flex items-center gap-1 font-semibold text-[#1C3F26] hover:underline"
                   >
                     <span>Register as First-Time Visitor →</span>
@@ -377,7 +377,7 @@ export default function LoginPage() {
                 Sign up with your Name, Mobile Number, OTP verification, and Delivery Address.
               </p>
               <Link
-                href="/register"
+                href={`/register?redirect=${encodeURIComponent(redirectUrl)}`}
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1C3F26] hover:underline"
               >
                 <span>First-Time Visitor Sign-In with OTP &amp; Address</span>

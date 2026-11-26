@@ -63,6 +63,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [deliveryInfo, setDeliveryInfo] = useState<{ days?: number; text?: string } | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   // Contact & Address State
   const [formData, setFormData] = useState({
@@ -79,33 +80,54 @@ export default function CheckoutPage() {
   });
 
   useEffect(() => {
+    let active = true;
     fetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => {
-        if (data.authenticated && data.user) {
-          const u = data.user;
-          const a = u.address;
-          setFormData((prev) => ({
-            ...prev,
-            fullName: u.name || prev.fullName,
-            email: u.email || prev.email,
-            phone: u.phone ? u.phone.replace("+91 ", "") : prev.phone,
-            houseFlat: a?.houseFlat || prev.houseFlat,
-            street: a?.street || prev.street,
-            landmark: a?.landmark || prev.landmark,
-            city: a?.city || prev.city,
-            state: a?.state || prev.state,
-            pinCode: a?.pinCode || prev.pinCode,
-          }));
+        if (!active) return;
+        if (!data?.authenticated || !data?.user) {
+          setIsAuthenticated(false);
+          router.replace("/login?redirect=/checkout");
+          return;
         }
+        setIsAuthenticated(true);
+        const u = data.user;
+        const a = u.address;
+        setFormData((prev) => ({
+          ...prev,
+          fullName: u.name || prev.fullName,
+          email: u.email || prev.email,
+          phone: u.phone ? u.phone.replace("+91 ", "") : prev.phone,
+          houseFlat: a?.houseFlat || prev.houseFlat,
+          street: a?.street || prev.street,
+          landmark: a?.landmark || prev.landmark,
+          city: a?.city || prev.city,
+          state: a?.state || prev.state,
+          pinCode: a?.pinCode || prev.pinCode,
+        }));
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => {
+        if (!active) return;
+        setIsAuthenticated(false);
+        router.replace("/login?redirect=/checkout");
+      });
+    return () => {
+      active = false;
+    };
+  }, [router]);
 
   const subtotal = getSubtotal();
   const discount = getDiscount();
   const shippingFee = getShippingFee();
   const total = getTotal();
+
+  if (isAuthenticated !== true) {
+    return (
+      <div className="bg-[#FAF8F5] min-h-screen py-24 flex items-center justify-center">
+        <p className="text-xs text-[#6C766F]">Verifying account before secure checkout...</p>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (

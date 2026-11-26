@@ -56,8 +56,16 @@ export async function POST(req: NextRequest) {
 
     const result = dataStore.sendOtp(cleanPhone);
 
-    // Dispatch real SMS via Fast2SMS (with safe mock fallback if key not yet provided)
-    await sendOtpSMS(cleanPhone, result.otp);
+    // Dispatch real SMS via Fast2SMS (with Quick SMS fallback)
+    const smsResult = await sendOtpSMS(cleanPhone, result.otp);
+
+    if (!smsResult.success) {
+      console.error(`[AUTH] Fast2SMS failed for +91 ${cleanPhone}:`, smsResult.message);
+      return NextResponse.json(
+        { error: smsResult.message || "Unable to send OTP SMS right now. Please try again." },
+        { status: 502 }
+      );
+    }
 
     console.log(`[AUTH] Verification code dispatched to +91 ${cleanPhone}.`);
 
