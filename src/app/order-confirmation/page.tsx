@@ -13,10 +13,10 @@ function OrderConfirmationContent() {
 
   const orderNumber = searchParams.get("orderNumber") || searchParams.get("orderId") || "";
   const status = searchParams.get("status") || "success";
-  const txnid = searchParams.get("txnid");
-  const payuid = searchParams.get("payuid");
+  const razorpayOrderId = searchParams.get("razorpay_order_id");
+  const razorpayPaymentId = searchParams.get("razorpay_payment_id");
   const errorMessage = searchParams.get("error");
-  const method = searchParams.get("method") || (txnid ? "PAYU" : "COD");
+  const method = searchParams.get("method") || (razorpayPaymentId ? "RAZORPAY" : "COD");
 
   const isFailed = status.toLowerCase() === "failed";
 
@@ -88,24 +88,24 @@ function OrderConfirmationContent() {
               <strong className="font-mono text-sm text-[#18231C] font-medium">{orderNumber}</strong>
             </div>
 
-            {txnid && (
+            {razorpayOrderId && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#6C766F] font-light">PayU Transaction ID:</span>
-                <span className="font-mono text-[11px] text-[#18231C]">{txnid}</span>
+                <span className="text-[#6C766F] font-light">Razorpay Order ID:</span>
+                <span className="font-mono text-[11px] text-[#18231C]">{razorpayOrderId}</span>
               </div>
             )}
 
-            {payuid && (
+            {razorpayPaymentId && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#6C766F] font-light">PayU Reference (MIHPAYID):</span>
-                <span className="font-mono text-[11px] text-[#18231C]">{payuid}</span>
+                <span className="text-[#6C766F] font-light">Razorpay Payment ID:</span>
+                <span className="font-mono text-[11px] text-[#18231C]">{razorpayPaymentId}</span>
               </div>
             )}
 
             <div className="flex items-center justify-between text-xs">
               <span className="text-[#6C766F] font-light">Payment Mode:</span>
               <span className="font-medium text-[#18231C]">
-                {method === "PAYU" ? "PayU Live Gateway (Verified)" : "Cash on Delivery (COD)"}
+                {method === "RAZORPAY" ? "Razorpay Online (Verified)" : "Cash on Delivery (COD)"}
               </span>
             </div>
 

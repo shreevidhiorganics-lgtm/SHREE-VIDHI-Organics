@@ -75,7 +75,7 @@ export default function CheckoutPage() {
     city: "",
     state: "Uttar Pradesh",
     pinCode: "",
-    paymentMethod: "PAYU" as "PAYU" | "COD",
+    paymentMethod: "RAZORPAY" as "RAZORPAY" | "COD",
   });
 
   useEffect(() => {
@@ -191,9 +191,27 @@ export default function CheckoutPage() {
         quantity: i.quantity,
       }));
 
-      // --- PAYU LIVE GATEWAY FLOW ---
-      if (formData.paymentMethod === "PAYU") {
-        const res = await fetch("/api/payment/payu/initiate", {
+      // --- RAZORPAY GATEWAY FLOW ---
+      if (formData.paymentMethod === "RAZORPAY") {
+        const loadRazorpayScript = () =>
+          new Promise<boolean>((resolve) => {
+            if (typeof window !== "undefined" && (window as any).Razorpay) {
+              resolve(true);
+              return;
+            }
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+          });
+
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          throw new Error("Unable to load Razorpay Checkout SDK. Please check your connection.");
+        }
+
+        const res = await fetch("/api/payment/razorpay/initiate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -208,31 +226,61 @@ export default function CheckoutPage() {
         const data = await res.json();
 
         if (!res.ok || !data.success) {
-          throw new Error(data.error || "Failed to initiate PayU payment. Please check your details.");
+          throw new Error(data.error || "Failed to initiate Razorpay payment. Please check your details.");
         }
 
-        addToast("Connecting to PayU Secure Payment Gateway...", "info");
+        const options = {
+          key: data.keyId,
+          amount: data.amount,
+          currency: data.currency || "INR",
+          name: "Shree Vidhi Organics",
+          description: `Order #${data.orderNumber}`,
+          order_id: data.razorpayOrderId,
+          prefill: data.prefill,
+          theme: { color: "#1C3F26" },
+          handler: async (response: {
+            razorpay_order_id: string;
+            razorpay_payment_id: string;
+            razorpay_signature: string;
+          }) => {
+            try {
+              const verifyRes = await fetch("/api/payment/razorpay/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orderId: data.orderId,
+                  ...response,
+                }),
+              });
+              const verifyData = await verifyRes.json();
+              if (!verifyRes.ok || !verifyData.success) {
+                throw new Error(verifyData.error || "Payment signature verification failed.");
+              }
+              clearCart();
+              addToast("Payment verified! Order confirmed.", "success");
+              router.push(
+                `/order-confirmation?orderNumber=${encodeURIComponent(data.orderNumber)}&orderId=${encodeURIComponent(data.orderId)}&status=success&razorpay_order_id=${encodeURIComponent(response.razorpay_order_id)}&razorpay_payment_id=${encodeURIComponent(response.razorpay_payment_id)}&method=RAZORPAY`
+              );
+            } catch (verifyErr: any) {
+              setErrorMessage(verifyErr?.message || "Payment verification failed.");
+              setIsSubmitting(false);
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              setIsSubmitting(false);
+              addToast("Payment popup closed. You can retry anytime.", "info");
+            },
+          },
+        };
 
-        // Clear cart now as order is initiated and tracking has begun
-        clearCart();
-
-        // Dynamically build and auto-submit hidden POST form directly to PayU
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = data.actionUrl;
-
-        for (const [key, value] of Object.entries(data.params)) {
-          if (value !== undefined && value !== null) {
-            const hiddenField = document.createElement("input");
-            hiddenField.type = "hidden";
-            hiddenField.name = key;
-            hiddenField.value = String(value);
-            form.appendChild(hiddenField);
-          }
-        }
-
-        document.body.appendChild(form);
-        form.submit();
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on("payment.failed", (resp: any) => {
+          const reason = resp?.error?.description || "Payment was unsuccessful.";
+          setErrorMessage(reason);
+          setIsSubmitting(false);
+        });
+        rzp.open();
         return;
       }
 
@@ -523,10 +571,10 @@ export default function CheckoutPage() {
 
                 {/* Payment Options */}
                 <div className="space-y-3">
-                  {/* PayU Live Option */}
+                  {/* Razorpay Online Option */}
                   <label
                     className={`p-5 rounded-2xl border flex items-start gap-3.5 cursor-pointer transition-all ${
-                      formData.paymentMethod === "PAYU"
+                      formData.paymentMethod === "RAZORPAY"
                         ? "border-[#1C3F26] bg-[#FAF8F5] shadow-sm"
                         : "border-[#EDE7DD] hover:border-[#D5CDC1] bg-white"
                     }`}
@@ -534,16 +582,16 @@ export default function CheckoutPage() {
                     <input
                       type="radio"
                       name="paymentMethod"
-                      value="PAYU"
-                      checked={formData.paymentMethod === "PAYU"}
-                      onChange={() => setFormData({ ...formData, paymentMethod: "PAYU" })}
+                      value="RAZORPAY"
+                      checked={formData.paymentMethod === "RAZORPAY"}
+                      onChange={() => setFormData({ ...formData, paymentMethod: "RAZORPAY" })}
                       className="mt-1 text-[#1C3F26] accent-[#1C3F26]"
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between flex-wrap gap-2">
                         <span className="font-medium text-sm text-[#18231C] flex items-center gap-2">
                           <CreditCard className="w-4 h-4 text-[#7D9980]" />
-                          <span>Pay Online with PayU (Instant UPI / Cards / Net Banking)</span>
+                          <span>Pay Online with Razorpay (Instant UPI / Cards / Net Banking)</span>
                         </span>
                         <div className="flex items-center gap-1.5">
                           <span className="text-[10px] font-semibold bg-[#EBF1EB] text-[#2D5A38] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -603,11 +651,11 @@ export default function CheckoutPage() {
                     className="bg-[#1C3F26] hover:bg-[#16331F] text-[#FAF8F5] font-medium py-3.5 px-8 rounded-full shadow-[0_8px_20px_-4px_rgba(28,63,38,0.25)] text-xs sm:text-sm flex items-center gap-2 transition-all disabled:opacity-50"
                   >
                     {isSubmitting ? (
-                      <span>Connecting to PayU Live Gateway...</span>
-                    ) : formData.paymentMethod === "PAYU" ? (
+                      <span>Opening Razorpay Secure Checkout...</span>
+                    ) : formData.paymentMethod === "RAZORPAY" ? (
                       <>
                         <ShieldCheck className="w-4 h-4 text-[#D8B980]" />
-                        <span>Pay {formatPrice(total)} with PayU →</span>
+                        <span>Pay {formatPrice(total)} with Razorpay →</span>
                       </>
                     ) : (
                       <>

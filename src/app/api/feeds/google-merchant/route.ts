@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { products } from "@/lib/data/initial-data";
+import { getSiteUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -7,7 +8,7 @@ export const dynamic = "force-dynamic";
  * Generates Google Merchant Center compliant RSS 2.0 XML Product Feed
  */
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://shreevidhiorganics.com";
+  const baseUrl = getSiteUrl();
 
   const xmlItems = products
     .filter((p) => p.status === "PUBLISHED" && p.stock > 0)

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { getSiteUrl } from "@/lib/utils";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -26,7 +27,7 @@ import CookieConsentBanner from "@/components/marketing/CookieConsentBanner";
 import MarketingScripts from "@/components/marketing/MarketingScripts";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://shreevidhiorganics.com"),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: "Shree Vidhi Organics | Pure Ayurvedic Rituals, Hair Care & Skincare",
     template: "%s | Shree Vidhi Organics",
@@ -69,6 +70,9 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: "/favicon.ico",
+  },
+  verification: {
+    google: "SS0a4Zefe-dscBs8SzT4BqLWAOIkGXKA5zUhxgbWkYE",
   },
 };
 

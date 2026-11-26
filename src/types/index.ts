@@ -141,7 +141,7 @@ export type OrderStatus =
   | "DELIVERED"
   | "CANCELLED";
 
-export type PaymentMethod = "COD" | "RAZORPAY" | "PAYU";
+export type PaymentMethod = "COD" | "RAZORPAY";
 export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED";
 
 export interface OrderItem {
@@ -178,9 +178,9 @@ export interface Order {
   shiprocketOrderId?: number | string;
   shiprocketShipmentId?: number | string;
   estimatedDelivery?: string;
-  payuTxnId?: string;
-  payuMihpayid?: string;
-  payuStatus?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpayStatus?: string;
   notes?: string;
   createdAt: string;
   updatedAt?: string;

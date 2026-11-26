@@ -35,3 +35,9 @@ export function formatDate(dateStr: string): string {
     return dateStr;
   }
 }
+
+export function getSiteUrl(): string {
+  const raw = (process.env.NEXT_PUBLIC_SITE_URL || "https://shreevidhiorganics.com").trim();
+  if (!raw) return "https://shreevidhiorganics.com";
+  return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+}

@@ -211,9 +211,9 @@ export async function initMySQLTables(): Promise<boolean> {
         items JSON NOT NULL,
         tracking_number VARCHAR(100),
         tracking_url VARCHAR(255),
-        payu_txn_id VARCHAR(100),
-        payu_mihpayid VARCHAR(100),
-        payu_status VARCHAR(50),
+        razorpay_order_id VARCHAR(100),
+        razorpay_payment_id VARCHAR(100),
+        razorpay_status VARCHAR(50),
         created_at VARCHAR(50) NOT NULL,
         updated_at VARCHAR(50),
         INDEX idx_user_id (user_id),
@@ -400,15 +400,15 @@ export async function dbSaveOrder(order: Order): Promise<boolean> {
         id, order_number, user_id, guest_email, guest_phone, status,
         payment_method, payment_status, subtotal, discount, shipping_fee, total,
         coupon_code, shipping_address, items, tracking_number, tracking_url,
-        payu_txn_id, payu_mihpayid, payu_status, created_at, updated_at
+        razorpay_order_id, razorpay_payment_id, razorpay_status, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
         status = VALUES(status),
         payment_status = VALUES(payment_status),
         tracking_number = VALUES(tracking_number),
-        payu_txn_id = VALUES(payu_txn_id),
-        payu_mihpayid = VALUES(payu_mihpayid),
-        payu_status = VALUES(payu_status),
+        razorpay_order_id = VALUES(razorpay_order_id),
+        razorpay_payment_id = VALUES(razorpay_payment_id),
+        razorpay_status = VALUES(razorpay_status),
         updated_at = VALUES(updated_at)`,
       [
         order.id,
@@ -428,9 +428,9 @@ export async function dbSaveOrder(order: Order): Promise<boolean> {
         JSON.stringify(order.items),
         order.trackingNumber || null,
         order.trackingUrl || null,
-        order.payuTxnId || null,
-        order.payuMihpayid || null,
-        order.payuStatus || null,
+        order.razorpayOrderId || null,
+        order.razorpayPaymentId || null,
+        order.razorpayStatus || null,
         order.createdAt,
         order.updatedAt || new Date().toISOString(),
       ]
@@ -474,9 +474,9 @@ export async function dbGetOrders(userId?: string): Promise<Order[]> {
       items: safeJsonParse(r.items, []),
       trackingNumber: r.tracking_number || undefined,
       trackingUrl: r.tracking_url || undefined,
-      payuTxnId: r.payu_txn_id || undefined,
-      payuMihpayid: r.payu_mihpayid || undefined,
-      payuStatus: r.payu_status || undefined,
+      razorpayOrderId: r.razorpay_order_id || undefined,
+      razorpayPaymentId: r.razorpay_payment_id || undefined,
+      razorpayStatus: r.razorpay_status || undefined,
       createdAt: r.created_at,
       updatedAt: r.updated_at || undefined,
     }));

@@ -410,7 +410,7 @@ class DataStore {
     guestPhone?: string;
     shippingAddress: Order["shippingAddress"];
     items: { productId: string; variantId?: string; quantity: number }[];
-    paymentMethod: "COD" | "RAZORPAY" | "PAYU";
+    paymentMethod: "COD" | "RAZORPAY";
     couponCode?: string;
   }): { success: boolean; order?: Order; error?: string } {
     // 1. Server-side validation of products and recalculation of total
@@ -488,7 +488,7 @@ class DataStore {
       guestPhone: orderPayload.guestPhone,
       status: "PLACED",
       paymentMethod: orderPayload.paymentMethod,
-      paymentStatus: (orderPayload.paymentMethod === "COD" || orderPayload.paymentMethod === "PAYU") ? "PENDING" : "PAID",
+      paymentStatus: (orderPayload.paymentMethod === "COD" || orderPayload.paymentMethod === "RAZORPAY") ? "PENDING" : "PAID",
       subtotal,
       discount,
       shippingFee,
@@ -533,9 +533,9 @@ class DataStore {
     details: {
       status?: OrderStatus;
       paymentStatus: PaymentStatus;
-      payuTxnId?: string;
-      payuMihpayid?: string;
-      payuStatus?: string;
+      razorpayOrderId?: string;
+      razorpayPaymentId?: string;
+      razorpayStatus?: string;
     }
   ): Order | null {
     const order = this.getOrderById(orderId);
@@ -543,9 +543,9 @@ class DataStore {
 
     if (details.status) order.status = details.status;
     order.paymentStatus = details.paymentStatus;
-    if (details.payuTxnId) order.payuTxnId = details.payuTxnId;
-    if (details.payuMihpayid) order.payuMihpayid = details.payuMihpayid;
-    if (details.payuStatus) order.payuStatus = details.payuStatus;
+    if (details.razorpayOrderId) order.razorpayOrderId = details.razorpayOrderId;
+    if (details.razorpayPaymentId) order.razorpayPaymentId = details.razorpayPaymentId;
+    if (details.razorpayStatus) order.razorpayStatus = details.razorpayStatus;
     order.updatedAt = new Date().toISOString();
     this.persistSnapshot();
     this.notifyMutation("saveOrder", order);

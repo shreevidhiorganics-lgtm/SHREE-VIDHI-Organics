@@ -40,7 +40,7 @@ export function logEvent(
   return entry;
 }
 
-export function logPaymentFailure(gateway: "PAYU" | "RAZORPAY", orderId: string, error: string, details?: any) {
+export function logPaymentFailure(gateway: "RAZORPAY", orderId: string, error: string, details?: any) {
   return logEvent("error", `PaymentGateway:${gateway}`, `Payment failed for order ${orderId}`, {
     orderId,
     gateway,
