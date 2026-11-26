@@ -10,14 +10,28 @@ export default function ExitIntentModal() {
   const { items } = useCartStore();
 
   useEffect(() => {
-    const hasSeen = sessionStorage.getItem("svo_exit_intent_seen");
-    if (hasSeen) return;
+    const STORAGE_KEY = "svo_exit_intent_dismissed_at";
+    const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+    try {
+      const dismissedAt = Number(localStorage.getItem(STORAGE_KEY) || "0");
+      if (dismissedAt && Date.now() - dismissedAt < COOLDOWN_MS) {
+        return;
+      }
+    } catch {
+      return;
+    }
+
+    const mountTime = Date.now();
     const handleMouseLeave = (e: MouseEvent) => {
-      // Trigger when mouse moves towards top URL bar / exit
+      // Only trigger after 5s on site, and only once per 7 days
+      if (Date.now() - mountTime < 5000) return;
       if (e.clientY <= 0) {
         setIsOpen(true);
-        sessionStorage.setItem("svo_exit_intent_seen", "true");
+        try {
+          localStorage.setItem(STORAGE_KEY, String(Date.now()));
+        } catch {}
+        document.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
 
