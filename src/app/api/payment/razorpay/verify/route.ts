@@ -50,6 +50,21 @@ export async function POST(req: NextRequest) {
     }
 
     const order = dataStore.getOrderById(orderId);
+    if (!order) {
+      return NextResponse.json(
+        { error: "Order not found." },
+        { status: 404 }
+      );
+    }
+
+    if (order.razorpayOrderId !== razorpay_order_id) {
+      console.error("Razorpay Security Alert: Order ID mismatch for order:", orderId);
+      return NextResponse.json(
+        { error: "Razorpay order mismatch." },
+        { status: 400 }
+      );
+    }
+
     dataStore.updateOrderPaymentDetails(orderId, {
       status: "CONFIRMED",
       paymentStatus: "PAID",

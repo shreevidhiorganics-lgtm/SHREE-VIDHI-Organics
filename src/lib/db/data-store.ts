@@ -752,18 +752,26 @@ class DataStore {
     const cleanPhone = payload.phone.replace(/\D/g, "").slice(-10);
     const normalizedEmail = payload.email.toLowerCase().trim();
 
-    // Check if user already exists
+    if (normalizedEmail === "shreevidhiorganics@gmail.com") {
+      throw new Error("Reserved administrator email cannot be used for customer registration.");
+    }
+
+    // Match strictly by verified phone number (never allow unverified email to hijack another account)
     let user = this.users.find(
-      (u) =>
-        u.email.toLowerCase() === normalizedEmail ||
-        (u.phone && u.phone.replace(/\D/g, "").slice(-10) === cleanPhone)
+      (u) => u.role !== "ADMIN" && u.phone && u.phone.replace(/\D/g, "").slice(-10) === cleanPhone
     );
 
     if (user) {
-      user.name = payload.name;
+      user.name = payload.name.trim();
       user.email = normalizedEmail;
       user.phone = `+91 ${cleanPhone}`;
     } else {
+      const emailOwner = this.users.find(
+        (u) => u.email.toLowerCase() === normalizedEmail
+      );
+      if (emailOwner) {
+        throw new Error("An account with this email already exists under a different mobile number.");
+      }
       user = {
         id: `usr-cust-${Date.now()}`,
         name: payload.name.trim(),

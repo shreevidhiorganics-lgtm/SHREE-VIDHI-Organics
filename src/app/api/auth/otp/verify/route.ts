@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     if (!name || !email) {
       // If logging in with just phone & OTP, check if user exists
       const existingUser = dataStore.getUserByPhone(cleanPhone);
-      if (!existingUser) {
+      if (!existingUser || existingUser.role === "ADMIN") {
         return NextResponse.json(
           { error: "First-time visitor. Please provide your full name and email to complete registration." },
           { status: 400 }
@@ -74,6 +74,13 @@ export async function POST(req: NextRequest) {
       });
 
       return response;
+    }
+
+    if (String(email).toLowerCase().trim() === "shreevidhiorganics@gmail.com") {
+      return NextResponse.json(
+        { error: "This email is reserved. Please use a customer email address." },
+        { status: 403 }
+      );
     }
 
     // Full customer registration with Address

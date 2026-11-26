@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { trackShiprocketOrder } from "@/lib/shipping/shiprocket";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 
 export async function GET(req: NextRequest) {
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+    const rateLimit = checkRateLimit(`track_lookup:${clientIp}`, 20, 5 * 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many tracking requests. Please wait a moment." },
+        { status: 429 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const orderNumber = searchParams.get("orderNumber")?.trim();
     const awb = searchParams.get("awb")?.trim();

@@ -20,8 +20,8 @@ import { MobileMenu } from "@/components/layout/MobileMenu";
 import { ToastContainer } from "@/components/common/ToastContainer";
 import { ScrollProgressBar } from "@/components/common/ScrollProgressBar";
 import { AmbientGlow } from "@/components/common/AmbientGlow";
-import AIAssistantWidget from "@/components/common/AIAssistantWidget";
-import WhatsAppButton from "@/components/common/WhatsAppButton";
+// import AIAssistantWidget from "@/components/common/AIAssistantWidget";
+// import WhatsAppButton from "@/components/common/WhatsAppButton";
 import ExitIntentModal from "@/components/common/ExitIntentModal";
 import CookieConsentBanner from "@/components/marketing/CookieConsentBanner";
 import MarketingScripts from "@/components/marketing/MarketingScripts";
@@ -138,9 +138,9 @@ export default function RootLayout({
         <MobileMenu />
         <ToastContainer />
 
-        {/* 2026 Advanced Features: AI Assistant, WhatsApp, Marketing & Exit-Intent */}
-        <AIAssistantWidget />
-        <WhatsAppButton />
+        {/* 2026 Advanced Features: Marketing & Exit-Intent (AI Assistant & WhatsApp paused from UI) */}
+        {/* <AIAssistantWidget /> */}
+        {/* <WhatsAppButton /> */}
         <ExitIntentModal />
         <CookieConsentBanner />
         <MarketingScripts />

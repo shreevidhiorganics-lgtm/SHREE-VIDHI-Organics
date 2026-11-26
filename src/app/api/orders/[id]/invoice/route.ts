@@ -6,6 +6,15 @@ import { getCurrentUser } from "@/lib/auth/auth";
 
 export const dynamic = "force-dynamic";
 
+function escapeHtml(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
@@ -34,9 +43,9 @@ export async function GET(
     const isAdmin = currentUser && currentUser.role === "ADMIN" && currentUser.email?.toLowerCase().trim() === "shreevidhiorganics@gmail.com";
     const isPhoneVerified = verifyPhone && order.shippingAddress.phone.replace(/\D/g, "").slice(-10) === verifyPhone;
 
-    // Block unauthorized third-party attempts to inspect invoices of registered users
-    if (order.userId && !isOwner && !isAdmin && !isPhoneVerified) {
-      return new NextResponse("Access restricted. Please sign in to view this invoice.", { status: 403 });
+    // Block unauthorized third-party attempts to inspect any order invoice (registered or guest)
+    if (!isOwner && !isAdmin && !isPhoneVerified) {
+      return new NextResponse("Access restricted. Please sign in or verify your order mobile number.", { status: 403 });
     }
 
     const inv = generateGSTInvoice(order);
@@ -104,17 +113,17 @@ export async function GET(
     <div class="meta-box">
       <div class="meta-col">
         <h4>Billed / Shipped To:</h4>
-        <strong>${inv.buyerDetails.name}</strong><br>
-        ${inv.buyerDetails.shippingAddress.houseFlat}, ${inv.buyerDetails.shippingAddress.street}<br>
-        ${inv.buyerDetails.shippingAddress.city}, ${inv.buyerDetails.shippingAddress.state} - ${inv.buyerDetails.shippingAddress.pinCode}<br>
-        Phone: ${inv.buyerDetails.phone}
+        <strong>${escapeHtml(inv.buyerDetails.name)}</strong><br>
+        ${escapeHtml(inv.buyerDetails.shippingAddress.houseFlat)}, ${escapeHtml(inv.buyerDetails.shippingAddress.street)}<br>
+        ${escapeHtml(inv.buyerDetails.shippingAddress.city)}, ${escapeHtml(inv.buyerDetails.shippingAddress.state)} - ${escapeHtml(inv.buyerDetails.shippingAddress.pinCode)}<br>
+        Phone: ${escapeHtml(inv.buyerDetails.phone)}
       </div>
       <div class="meta-col">
         <h4>Tax Registration & Compliance:</h4>
-        Place of Supply: <strong>${inv.buyerDetails.state}</strong><br>
+        Place of Supply: <strong>${escapeHtml(inv.buyerDetails.state)}</strong><br>
         Reverse Charge: <strong>No</strong><br>
         Tax Category: <strong>18% GST on Herbal Preparations</strong><br>
-        Payment Status: <strong>${order.paymentStatus} (${order.paymentMethod})</strong>
+        Payment Status: <strong>${escapeHtml(order.paymentStatus)} (${escapeHtml(order.paymentMethod)})</strong>
       </div>
     </div>
 
@@ -137,8 +146,8 @@ export async function GET(
             (it, i) => `
           <tr>
             <td>${i + 1}</td>
-            <td><strong>${it.description}</strong></td>
-            <td>${it.hsnCode}</td>
+            <td><strong>${escapeHtml(it.description)}</strong></td>
+            <td>${escapeHtml(it.hsnCode)}</td>
             <td class="text-right">${it.quantity}</td>
             <td class="text-right">${formatPrice(it.unitPrice)}</td>
             <td class="text-right">${formatPrice(it.taxableAmount)}</td>

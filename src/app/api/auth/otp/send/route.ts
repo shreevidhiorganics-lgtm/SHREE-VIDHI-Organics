@@ -27,13 +27,14 @@ export async function POST(req: NextRequest) {
 
     // OWASP A04 Rate Limiting: Max 3 OTP requests per phone number per 10 minutes
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
-    const rateLimitKey = `otp_send:${clientIp}:${cleanPhone}`;
-    const rateLimit = checkRateLimit(rateLimitKey, 3, 10 * 60 * 1000);
+    const phoneRateLimit = checkRateLimit(`otp_send_phone:${cleanPhone}`, 3, 10 * 60 * 1000);
+    const ipRateLimit = checkRateLimit(`otp_send_ip:${clientIp}`, 10, 10 * 60 * 1000);
 
-    if (!rateLimit.allowed) {
+    if (!phoneRateLimit.allowed || !ipRateLimit.allowed) {
+      const waitSec = !phoneRateLimit.allowed ? phoneRateLimit.resetInSec : ipRateLimit.resetInSec;
       return NextResponse.json(
         {
-          error: `Too many verification requests. Please wait ${rateLimit.resetInSec} seconds before requesting a new code.`,
+          error: `Too many verification requests. Please wait ${waitSec} seconds before requesting a new code.`,
         },
         { status: 429 }
       );

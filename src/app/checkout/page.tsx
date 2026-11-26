@@ -521,8 +521,8 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* WhatsApp Order Tracking Consent */}
-                <div className="pt-2 flex items-center gap-2.5">
+                {/* WhatsApp Order Tracking Consent (paused from UI) */}
+                {/* <div className="pt-2 flex items-center gap-2.5">
                   <input
                     type="checkbox"
                     id="whatsappConsent"
@@ -532,7 +532,7 @@ export default function CheckoutPage() {
                   <label htmlFor="whatsappConsent" className="text-xs text-stone-600 cursor-pointer">
                     Receive live dispatch tracking and invoice receipts on WhatsApp
                   </label>
-                </div>
+                </div> */}
 
                 <div className="pt-4 flex justify-end">
                   <button

@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getCurrentUser } from "@/lib/auth/auth";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createRazorpayOrder, getRazorpayConfig } from "@/lib/razorpay";
 import "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+    const rateLimit = checkRateLimit(`rzp_init:${clientIp}`, 10, 10 * 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many payment attempts. Please wait a moment." },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const currentUser = await getCurrentUser();
     const {
