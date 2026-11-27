@@ -95,15 +95,23 @@ export async function createShiprocketOrder(order: Order): Promise<{
 
   try {
     const cleanPhone = order.shippingAddress.phone.replace(/\D/g, "").slice(-10);
-    const pickupLocation = process.env.SHIPROCKET_PICKUP_LOCATION || "Primary";
+    const pickupLocation = process.env.SHIPROCKET_PICKUP_LOCATION || "origin";
+    const fullName = (order.shippingAddress.fullName || "Valued Customer").trim();
+    const nameParts = fullName.split(/\s+/);
+    const firstName = nameParts[0] || "Valued";
+    const lastName = nameParts.slice(1).join(" ") || "";
+    const billingAddress = [order.shippingAddress.houseFlat, order.shippingAddress.street]
+      .map((s) => (s || "").trim())
+      .filter(Boolean)
+      .join(", ");
 
     const payload = {
       order_id: order.orderNumber,
       order_date: new Date(order.createdAt).toISOString().replace("T", " ").substring(0, 19),
       pickup_location: pickupLocation,
-      billing_customer_name: order.shippingAddress.fullName || "Valued Customer",
-      billing_last_name: "",
-      billing_address: `${order.shippingAddress.houseFlat}, ${order.shippingAddress.street}`,
+      billing_customer_name: firstName,
+      billing_last_name: lastName,
+      billing_address: billingAddress || order.shippingAddress.city,
       billing_address_2: order.shippingAddress.landmark || "",
       billing_city: order.shippingAddress.city,
       billing_pincode: order.shippingAddress.pinCode,
@@ -121,8 +129,9 @@ export async function createShiprocketOrder(order: Order): Promise<{
         tax: 0,
       })),
       payment_method: order.paymentMethod === "COD" ? "COD" : "Prepaid",
-      shipping_charges: order.shippingFee,
-      sub_total: order.total,
+      shipping_charges: order.shippingFee || 0,
+      total_discount: order.discount || 0,
+      sub_total: order.subtotal,
       length: 15,
       breadth: 10,
       height: 6,
@@ -144,22 +153,47 @@ export async function createShiprocketOrder(order: Order): Promise<{
       console.error("[Shiprocket] Order creation error:", data);
       return {
         success: false,
-        error: data.message || "Failed to create order on Shiprocket.",
+        error: data.message || JSON.stringify(data.errors || data) || "Failed to create order on Shiprocket.",
       };
     }
 
     const orderId = data.order_id;
     const shipmentId = data.shipment_id;
-    const awbCode = data.awb_code || `SR-${shipmentId}`;
-    const courierName = data.courier_name || "Shiprocket Express Partner";
-    const trackingUrl = `https://shiprocket.co/tracking/${awbCode}`;
+    let awbCode = data.awb_code || "";
+    let courierName = data.courier_name || "";
+
+    // Attempt automatic AWB assignment when shipment_id is returned without awb_code
+    if (!awbCode && shipmentId) {
+      try {
+        const awbRes = await fetch(`${SHIPROCKET_BASE_URL}/courier/assign/awb`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ shipment_id: shipmentId }),
+        });
+        const awbData = await awbRes.json().catch(() => ({}));
+        const assigned = awbData?.response?.data;
+        if (assigned?.awb_code) {
+          awbCode = assigned.awb_code;
+          courierName = assigned.courier_name || courierName;
+        }
+      } catch (awbErr) {
+        console.warn("[Shiprocket] Auto AWB assignment skipped:", awbErr);
+      }
+    }
+
+    const finalAwb = awbCode || `SR-${shipmentId}`;
+    const finalCourier = courierName || "Shiprocket Express Partner";
+    const trackingUrl = `https://shiprocket.co/tracking/${finalAwb}`;
 
     return {
       success: true,
       orderId,
       shipmentId,
-      awbCode,
-      courierName,
+      awbCode: finalAwb,
+      courierName: finalCourier,
       trackingUrl,
     };
   } catch (error: any) {

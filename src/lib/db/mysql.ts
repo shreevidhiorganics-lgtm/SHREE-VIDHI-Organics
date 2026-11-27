@@ -6,6 +6,9 @@ import {
   PaymentStatus,
   User,
   Address,
+  Product,
+  Coupon,
+  SiteSettings,
 } from "@/types";
 import {
   products as initialProducts,
@@ -211,6 +214,9 @@ export async function initMySQLTables(): Promise<boolean> {
         items JSON NOT NULL,
         tracking_number VARCHAR(100),
         tracking_url VARCHAR(255),
+        courier_name VARCHAR(100),
+        shiprocket_order_id VARCHAR(100),
+        shiprocket_shipment_id VARCHAR(100),
         razorpay_order_id VARCHAR(100),
         razorpay_payment_id VARCHAR(100),
         razorpay_status VARCHAR(50),
@@ -220,6 +226,19 @@ export async function initMySQLTables(): Promise<boolean> {
         INDEX idx_order_number (order_number)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+
+    // Ensure Shiprocket columns exist on pre-existing tables
+    for (const colDef of [
+      "courier_name VARCHAR(100)",
+      "shiprocket_order_id VARCHAR(100)",
+      "shiprocket_shipment_id VARCHAR(100)",
+    ]) {
+      try {
+        await p.query(`ALTER TABLE orders ADD COLUMN ${colDef}`);
+      } catch {
+        // Column already exists
+      }
+    }
 
     // 5. Reviews table
     await p.query(`
@@ -400,12 +419,17 @@ export async function dbSaveOrder(order: Order): Promise<boolean> {
         id, order_number, user_id, guest_email, guest_phone, status,
         payment_method, payment_status, subtotal, discount, shipping_fee, total,
         coupon_code, shipping_address, items, tracking_number, tracking_url,
+        courier_name, shiprocket_order_id, shiprocket_shipment_id,
         razorpay_order_id, razorpay_payment_id, razorpay_status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
         status = VALUES(status),
         payment_status = VALUES(payment_status),
         tracking_number = VALUES(tracking_number),
+        tracking_url = VALUES(tracking_url),
+        courier_name = VALUES(courier_name),
+        shiprocket_order_id = VALUES(shiprocket_order_id),
+        shiprocket_shipment_id = VALUES(shiprocket_shipment_id),
         razorpay_order_id = VALUES(razorpay_order_id),
         razorpay_payment_id = VALUES(razorpay_payment_id),
         razorpay_status = VALUES(razorpay_status),
@@ -428,6 +452,9 @@ export async function dbSaveOrder(order: Order): Promise<boolean> {
         JSON.stringify(order.items),
         order.trackingNumber || null,
         order.trackingUrl || null,
+        order.courierName || null,
+        order.shiprocketOrderId ? String(order.shiprocketOrderId) : null,
+        order.shiprocketShipmentId ? String(order.shiprocketShipmentId) : null,
         order.razorpayOrderId || null,
         order.razorpayPaymentId || null,
         order.razorpayStatus || null,
@@ -474,6 +501,9 @@ export async function dbGetOrders(userId?: string): Promise<Order[]> {
       items: safeJsonParse(r.items, []),
       trackingNumber: r.tracking_number || undefined,
       trackingUrl: r.tracking_url || undefined,
+      courierName: r.courier_name || undefined,
+      shiprocketOrderId: r.shiprocket_order_id || undefined,
+      shiprocketShipmentId: r.shiprocket_shipment_id || undefined,
       razorpayOrderId: r.razorpay_order_id || undefined,
       razorpayPaymentId: r.razorpay_payment_id || undefined,
       razorpayStatus: r.razorpay_status || undefined,
@@ -659,6 +689,275 @@ export async function dbSaveReview(review: Review): Promise<boolean> {
   } catch (err) {
     console.error("[MySQL] Error saving review:", err);
     return false;
+  }
+}
+
+export async function dbSaveProduct(prod: Product): Promise<boolean> {
+  const p = getMySQLPool();
+  if (!p) return false;
+
+  try {
+    await p.query(
+      `INSERT INTO products (
+        id, name, slug, sku, category_id, category_name, short_desc, description,
+        key_benefits, ingredients_text, how_to_use, who_it_is_for, mrp, sale_price,
+        stock, is_featured, is_bestseller, is_new_arrival, rating, review_count,
+        status, images, variants, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        name = VALUES(name),
+        slug = VALUES(slug),
+        category_id = VALUES(category_id),
+        category_name = VALUES(category_name),
+        short_desc = VALUES(short_desc),
+        description = VALUES(description),
+        mrp = VALUES(mrp),
+        sale_price = VALUES(sale_price),
+        stock = VALUES(stock),
+        is_featured = VALUES(is_featured),
+        is_bestseller = VALUES(is_bestseller),
+        is_new_arrival = VALUES(is_new_arrival),
+        rating = VALUES(rating),
+        review_count = VALUES(review_count),
+        status = VALUES(status),
+        images = VALUES(images),
+        variants = VALUES(variants)`,
+      [
+        prod.id,
+        prod.name,
+        prod.slug,
+        prod.sku,
+        prod.categoryId,
+        prod.categoryName || "Herbal Powders",
+        prod.shortDesc || "",
+        prod.description || "",
+        JSON.stringify(prod.keyBenefits || []),
+        prod.ingredientsText || "",
+        prod.howToUse || "",
+        prod.whoItIsFor || "",
+        prod.mrp,
+        prod.salePrice,
+        prod.stock,
+        prod.isFeatured ? 1 : 0,
+        prod.isBestseller ? 1 : 0,
+        prod.isNewArrival ? 1 : 0,
+        prod.rating,
+        prod.reviewCount,
+        prod.status,
+        JSON.stringify(prod.images || []),
+        JSON.stringify(prod.variants || []),
+        prod.createdAt || new Date().toISOString(),
+      ]
+    );
+    return true;
+  } catch (err) {
+    console.error("[MySQL] Error saving product:", err);
+    return false;
+  }
+}
+
+export async function dbDeleteProduct(productId: string): Promise<boolean> {
+  const p = getMySQLPool();
+  if (!p) return false;
+
+  try {
+    await p.query("DELETE FROM products WHERE id = ?", [productId]);
+    return true;
+  } catch (err) {
+    console.error("[MySQL] Error deleting product:", err);
+    return false;
+  }
+}
+
+export async function dbSaveCoupon(c: Coupon): Promise<boolean> {
+  const p = getMySQLPool();
+  if (!p) return false;
+
+  try {
+    await p.query(
+      `INSERT INTO coupons (
+        id, code, description, discount_type, discount_value, min_cart_value,
+        max_discount, is_active, used_count
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        description = VALUES(description),
+        discount_type = VALUES(discount_type),
+        discount_value = VALUES(discount_value),
+        min_cart_value = VALUES(min_cart_value),
+        max_discount = VALUES(max_discount),
+        is_active = VALUES(is_active),
+        used_count = VALUES(used_count)`,
+      [
+        c.id,
+        c.code,
+        c.description || "",
+        c.discountType,
+        c.discountValue,
+        c.minCartValue || 0,
+        c.maxDiscount || null,
+        c.isActive ? 1 : 0,
+        c.usedCount || 0,
+      ]
+    );
+    return true;
+  } catch (err) {
+    console.error("[MySQL] Error saving coupon:", err);
+    return false;
+  }
+}
+
+export async function dbDeleteCoupon(couponId: string): Promise<boolean> {
+  const p = getMySQLPool();
+  if (!p) return false;
+
+  try {
+    await p.query("DELETE FROM coupons WHERE id = ?", [couponId]);
+    return true;
+  } catch (err) {
+    console.error("[MySQL] Error deleting coupon:", err);
+    return false;
+  }
+}
+
+export async function dbUpdateReviewApproval(reviewId: string, isApproved: boolean): Promise<boolean> {
+  const p = getMySQLPool();
+  if (!p) return false;
+
+  try {
+    await p.query("UPDATE reviews SET is_approved = ? WHERE id = ?", [isApproved ? 1 : 0, reviewId]);
+    return true;
+  } catch (err) {
+    console.error("[MySQL] Error updating review approval:", err);
+    return false;
+  }
+}
+
+export async function dbSaveSiteSettings(settings: SiteSettings): Promise<boolean> {
+  const p = getMySQLPool();
+  if (!p) return false;
+
+  try {
+    await p.query(
+      `INSERT INTO site_settings (id, data) VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE data = VALUES(data)`,
+      ["default", JSON.stringify(settings)]
+    );
+    return true;
+  } catch (err) {
+    console.error("[MySQL] Error saving site settings:", err);
+    return false;
+  }
+}
+
+export async function dbLoadAllState(): Promise<{
+  orders: Order[];
+  users: User[];
+  addresses: Address[];
+  products: Product[];
+  reviews: Review[];
+  coupons: Coupon[];
+  settings: SiteSettings | null;
+} | null> {
+  const p = getMySQLPool();
+  if (!p) return null;
+
+  try {
+    const orders = await dbGetOrders();
+
+    const [userRows] = await p.query<RowDataPacket[]>("SELECT * FROM users");
+    const [addrRows] = await p.query<RowDataPacket[]>("SELECT * FROM addresses");
+    const [prodRows] = await p.query<RowDataPacket[]>("SELECT * FROM products");
+    const [revRows] = await p.query<RowDataPacket[]>("SELECT * FROM reviews ORDER BY created_at DESC");
+    const [coupRows] = await p.query<RowDataPacket[]>("SELECT * FROM coupons");
+    const [setRows] = await p.query<RowDataPacket[]>("SELECT data FROM site_settings WHERE id = 'default'");
+
+    const addresses: Address[] = addrRows.map((a) => ({
+      id: a.id,
+      userId: a.user_id,
+      fullName: a.full_name,
+      phone: a.phone,
+      houseFlat: a.house_flat,
+      street: a.street,
+      landmark: a.landmark || "",
+      city: a.city,
+      state: a.state,
+      pinCode: a.pin_code,
+      isDefault: Boolean(a.is_default),
+    }));
+
+    const users: User[] = userRows.map((u) => ({
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      phone: u.phone || undefined,
+      role: (u.role as User["role"]) || "USER",
+      createdAt: u.created_at,
+      address: addresses.find((a) => a.userId === u.id),
+    }));
+
+    const products: Product[] = prodRows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      slug: r.slug,
+      sku: r.sku,
+      categoryId: r.category_id,
+      categoryName: r.category_name,
+      shortDesc: r.short_desc || "",
+      description: r.description || "",
+      keyBenefits: safeJsonParse(r.key_benefits, []),
+      ingredientsText: r.ingredients_text || "",
+      howToUse: r.how_to_use || "",
+      whoItIsFor: r.who_it_is_for || "",
+      mrp: parseFloat(r.mrp),
+      salePrice: parseFloat(r.sale_price),
+      stock: Number(r.stock),
+      isFeatured: Boolean(r.is_featured),
+      isBestseller: Boolean(r.is_bestseller),
+      isNewArrival: Boolean(r.is_new_arrival),
+      rating: parseFloat(r.rating || 5),
+      reviewCount: Number(r.review_count || 0),
+      status: (r.status as Product["status"]) || "PUBLISHED",
+      images: safeJsonParse(r.images, []),
+      variants: safeJsonParse(r.variants, []),
+      createdAt: r.created_at,
+    }));
+
+    const reviews: Review[] = revRows.map((r) => ({
+      id: r.id,
+      productId: r.product_id,
+      productName: r.product_name,
+      userName: r.user_name,
+      userEmail: r.user_email,
+      rating: Number(r.rating),
+      title: r.title,
+      comment: r.comment,
+      isVerifiedPurchase: Boolean(r.is_verified_purchase),
+      isApproved: Boolean(r.is_approved),
+      createdAt: r.created_at,
+    }));
+
+    const coupons: Coupon[] = coupRows.map((c) => ({
+      id: c.id,
+      code: c.code,
+      description: c.description || "",
+      discountType: (c.discount_type as Coupon["discountType"]) || "PERCENTAGE",
+      discountValue: parseFloat(c.discount_value),
+      minCartValue: parseFloat(c.min_cart_value || 0),
+      maxDiscount: c.max_discount ? parseFloat(c.max_discount) : undefined,
+      validFrom: "2026-01-01T00:00:00Z",
+      validUntil: "2027-12-31T23:59:59Z",
+      usedCount: Number(c.used_count || 0),
+      isActive: Boolean(c.is_active),
+    }));
+
+    const settings = setRows[0]?.data
+      ? safeJsonParse<SiteSettings | null>(setRows[0].data, null)
+      : null;
+
+    return { orders, users, addresses, products, reviews, coupons, settings };
+  } catch (err) {
+    console.error("[MySQL] Error loading state:", err);
+    return null;
   }
 }
 

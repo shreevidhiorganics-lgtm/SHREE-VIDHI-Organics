@@ -194,7 +194,7 @@ function generateOrderEmailHtml(order: Order): string {
           }
           <div style="display: flex; justify-content: space-between; color: #6C766F;">
             <span>Express Delivery:</span>
-            <span>${order.shippingFee === 0 ? "Free" : formatPrice(order.shippingFee)}</span>
+            <span>${formatPrice(order.shippingFee)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: bold; color: #1C3F26; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #EDE7DD;">
             <span>Total Paid (${order.paymentMethod}):</span>

@@ -389,7 +389,7 @@ export default function ProductDetailPage() {
                 <div className="w-7 h-7 rounded-full bg-[#18231C] border border-[#C5A872]/40 flex items-center justify-center text-[#D8B980] shadow-[0_0_10px_rgba(197,168,114,0.15)] shrink-0">
                   <Truck className="w-3.5 h-3.5" />
                 </div>
-                <span>Free Express Shipping above ₹499</span>
+                <span>Pan-India Express Delivery (₹49)</span>
               </div>
             </div>
 

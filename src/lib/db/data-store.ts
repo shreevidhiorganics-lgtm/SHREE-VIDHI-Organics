@@ -103,13 +103,18 @@ class DataStore {
         }
       }
       if (Array.isArray(data.products) && data.products.length > 0) {
-        for (const savedProd of data.products) {
-          const match = this.products.find((p) => p.id === savedProd.id);
-          if (match) {
-            match.stock = savedProd.stock;
-            match.rating = savedProd.rating;
-            match.reviewCount = savedProd.reviewCount;
-            if (savedProd.variants) match.variants = savedProd.variants;
+        const hasFullProducts = data.products.every((p: any) => p?.slug && p?.name);
+        if (hasFullProducts) {
+          this.products = data.products;
+        } else {
+          for (const savedProd of data.products) {
+            const match = this.products.find((p) => p.id === savedProd.id);
+            if (match) {
+              if (savedProd.stock !== undefined) match.stock = savedProd.stock;
+              if (savedProd.rating !== undefined) match.rating = savedProd.rating;
+              if (savedProd.reviewCount !== undefined) match.reviewCount = savedProd.reviewCount;
+              if (savedProd.variants) match.variants = savedProd.variants;
+            }
           }
         }
       }
@@ -139,13 +144,7 @@ class DataStore {
         coupons: this.coupons,
         settings: this.settings,
         otps: Object.fromEntries(this.otps.entries()),
-        products: this.products.map((p) => ({
-          id: p.id,
-          stock: p.stock,
-          rating: p.rating,
-          reviewCount: p.reviewCount,
-          variants: p.variants,
-        })),
+        products: this.products,
         updatedAt: new Date().toISOString(),
       };
 
@@ -364,6 +363,7 @@ class DataStore {
 
     this.products.unshift(newProduct);
     this.persistSnapshot();
+    this.notifyMutation("saveProduct", newProduct);
     return newProduct;
   }
 
@@ -376,14 +376,19 @@ class DataStore {
       ...productData,
     };
     this.persistSnapshot();
+    this.notifyMutation("saveProduct", this.products[index]);
     return this.products[index];
   }
 
   public deleteProduct(id: string): boolean {
     const initialLen = this.products.length;
     this.products = this.products.filter((p) => p.id !== id);
-    this.persistSnapshot();
-    return this.products.length < initialLen;
+    if (this.products.length < initialLen) {
+      this.persistSnapshot();
+      this.notifyMutation("deleteProduct", id);
+      return true;
+    }
+    return false;
   }
 
   // ---------------- CATEGORIES ----------------
@@ -490,10 +495,11 @@ class DataStore {
           discount = Math.min(appliedCoupon.discountValue, subtotal);
         }
         appliedCoupon.usedCount += 1;
+        this.notifyMutation("saveCoupon", appliedCoupon);
       }
     }
 
-    const shippingFee = subtotal >= this.settings.freeShippingThreshold ? 0 : 49;
+    const shippingFee = subtotal > 0 ? 49 : 0;
     const total = Math.max(0, subtotal - discount + shippingFee);
 
     const newOrder: Order = {
@@ -591,7 +597,19 @@ class DataStore {
     };
     this.coupons.unshift(newCoupon);
     this.persistSnapshot();
+    this.notifyMutation("saveCoupon", newCoupon);
     return newCoupon;
+  }
+
+  public deleteCoupon(id: string): boolean {
+    const initialLen = this.coupons.length;
+    this.coupons = this.coupons.filter((c) => c.id !== id);
+    if (this.coupons.length < initialLen) {
+      this.persistSnapshot();
+      this.notifyMutation("deleteCoupon", id);
+      return true;
+    }
+    return false;
   }
 
   public toggleReviewApproval(reviewId: string): Review | null {
@@ -599,6 +617,10 @@ class DataStore {
     if (!review) return null;
     review.isApproved = !review.isApproved;
     this.persistSnapshot();
+    this.notifyMutation("updateReviewApproval", {
+      reviewId: review.id,
+      isApproved: review.isApproved,
+    });
     return review;
   }
 
@@ -674,7 +696,41 @@ class DataStore {
   public updateSettings(settings: Partial<SiteSettings>): SiteSettings {
     this.settings = { ...this.settings, ...settings };
     this.persistSnapshot();
+    this.notifyMutation("saveSettings", this.settings);
     return this.settings;
+  }
+
+  public hydrateFromDatabase(dbState: {
+    orders?: Order[];
+    users?: User[];
+    addresses?: Address[];
+    products?: Product[];
+    reviews?: Review[];
+    coupons?: Coupon[];
+    settings?: SiteSettings | null;
+  }) {
+    if (Array.isArray(dbState.orders) && dbState.orders.length > 0) {
+      this.orders = dbState.orders;
+    }
+    if (Array.isArray(dbState.users) && dbState.users.length > 0) {
+      this.users = dbState.users;
+    }
+    if (Array.isArray(dbState.addresses) && dbState.addresses.length > 0) {
+      this.addresses = dbState.addresses;
+    }
+    if (Array.isArray(dbState.products) && dbState.products.length > 0) {
+      this.products = dbState.products;
+    }
+    if (Array.isArray(dbState.reviews) && dbState.reviews.length > 0) {
+      this.reviews = dbState.reviews;
+    }
+    if (Array.isArray(dbState.coupons) && dbState.coupons.length > 0) {
+      this.coupons = dbState.coupons;
+    }
+    if (dbState.settings) {
+      this.settings = dbState.settings;
+    }
+    this.persistSnapshot();
   }
 
   // ---------------- ADMIN METRICS ----------------

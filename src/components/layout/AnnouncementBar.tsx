@@ -7,7 +7,7 @@ import { Sparkles, Phone, ShieldCheck, Truck, ChevronRight } from "lucide-react"
 const announcements = [
   {
     icon: Truck,
-    text: "Free Express Shipping on all orders above ₹499 across India",
+    text: "Flat ₹49 Express Pan-India Shipping • Dispatched Within 24 Hours",
     linkText: "Shop Now",
     href: "/shop",
   },
@@ -27,15 +27,36 @@ const announcements = [
 
 export function AnnouncementBar() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [items, setItems] = useState(announcements);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        const text = data?.settings?.announcementText?.trim();
+        if (text) {
+          setItems([
+            {
+              icon: Truck,
+              text,
+              linkText: "Shop Now",
+              href: "/shop",
+            },
+            ...announcements.slice(1),
+          ]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % announcements.length);
+      setCurrentIndex((prev) => (prev + 1) % items.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, []);
+  }, [items.length]);
 
-  const current = announcements[currentIndex];
+  const current = items[currentIndex] || items[0];
   const IconComponent = current.icon;
 
   return (

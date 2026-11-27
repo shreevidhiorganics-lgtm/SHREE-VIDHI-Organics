@@ -19,7 +19,7 @@ const faqs = [
   },
   {
     q: "What are the shipping charges and delivery timelines?",
-    a: "We offer FREE Shipping across India on all orders of ₹499 or more. For smaller orders, a standard fee of ₹49 applies. All orders are packed fresh in Varanasi and dispatched within 24 hours, usually reaching your doorstep within 3–5 business days.",
+    a: "We charge a flat standard shipping fee of ₹49 across India. All orders are packed fresh in Varanasi and dispatched within 24 hours, usually reaching your doorstep within 3–5 business days.",
   },
   {
     q: "Do you offer Cash on Delivery (COD)?",

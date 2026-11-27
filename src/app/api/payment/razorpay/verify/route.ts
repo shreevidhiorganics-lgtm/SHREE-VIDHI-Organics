@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getRazorpayConfig, verifyRazorpayPaymentSignature } from "@/lib/razorpay";
+import { createShiprocketOrder, isShiprocketConfigured } from "@/lib/shipping/shiprocket";
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
 import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
 import { sendOrderConfirmationWhatsApp } from "@/lib/notifications/whatsapp";
@@ -72,6 +73,23 @@ export async function POST(req: NextRequest) {
       razorpayPaymentId: razorpay_payment_id,
       razorpayStatus: "CAPTURED",
     });
+
+    if (isShiprocketConfigured()) {
+      createShiprocketOrder(order)
+        .then((shipRes) => {
+          if (shipRes.success) {
+            order.trackingNumber = shipRes.awbCode || order.trackingNumber;
+            order.trackingUrl = shipRes.trackingUrl || order.trackingUrl;
+            order.courierName = shipRes.courierName;
+            order.shiprocketOrderId = shipRes.orderId;
+            order.shiprocketShipmentId = shipRes.shipmentId;
+            dataStore.updateOrderStatus(order.id, order.status, undefined, order.trackingNumber);
+          } else {
+            console.error("[Shiprocket] Auto-create prepaid order failed:", shipRes.error);
+          }
+        })
+        .catch((err) => console.error("[Shiprocket] Auto-create prepaid error:", err));
+    }
 
     if (order) {
       Promise.allSettled([

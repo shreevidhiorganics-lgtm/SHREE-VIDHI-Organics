@@ -784,7 +784,7 @@ export default function CheckoutPage() {
               )}
               <div className="flex justify-between font-light">
                 <span className="text-[#6C766F]">Express Delivery</span>
-                <span>{shippingFee === 0 ? <strong className="text-[#2D5A38] font-medium">FREE</strong> : formatPrice(shippingFee)}</span>
+                <span>{formatPrice(shippingFee)}</span>
               </div>
               <div className="pt-3.5 border-t border-[#EDE7DD] flex justify-between items-baseline text-base font-normal text-[#18231C]">
                 <span>Total Due</span>

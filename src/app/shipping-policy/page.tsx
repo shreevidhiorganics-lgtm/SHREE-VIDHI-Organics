@@ -4,7 +4,7 @@ import { Truck, ShieldCheck, MapPin, Sparkles } from "lucide-react";
 
 export const metadata = {
   title: "Shipping & Delivery Policy | Shree Vidhi Organics",
-  description: "Express shipping timelines, complimentary delivery threshold, and courier tracking details for Shree Vidhi Organics.",
+  description: "Express shipping timelines, standard shipping fee, and courier tracking details for Shree Vidhi Organics.",
 };
 
 export default function ShippingPolicyPage() {
@@ -26,13 +26,10 @@ export default function ShippingPolicyPage() {
         <div className="space-y-8 text-xs sm:text-sm text-[#4A544E] leading-relaxed font-light">
           <section className="space-y-3">
             <h2 className="font-serif font-normal text-lg sm:text-xl text-[#18231C]">
-              1. Complimentary Delivery Threshold
+              1. Standard Shipping Fee
             </h2>
             <p>
-              We provide <strong className="font-medium text-[#18231C]">Complimentary Express Courier Shipping</strong> on all domestic prepaid and Cash on Delivery orders above <strong className="font-medium text-[#18231C]">₹499</strong> across all serviceable pin codes in India.
-            </p>
-            <p>
-              For orders below ₹499, a nominal standard handling and transit fee of ₹49 is applied at checkout.
+              We apply a nominal flat <strong className="font-medium text-[#18231C]">₹49 Express Courier Shipping</strong> fee on all domestic prepaid and Cash on Delivery orders across all serviceable pin codes in India.
             </p>
           </section>
 

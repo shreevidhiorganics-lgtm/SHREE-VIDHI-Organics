@@ -44,3 +44,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: err?.message || "Failed to create coupon." }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "Coupon id is required." }, { status: 400 });
+    }
+
+    const deleted = dataStore.deleteCoupon(id);
+    if (!deleted) {
+      return NextResponse.json({ error: "Coupon not found." }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, coupons: dataStore.getCoupons() });
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message || "Failed to delete coupon." }, { status: 500 });
+  }
+}

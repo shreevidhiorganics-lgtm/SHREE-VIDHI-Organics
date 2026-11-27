@@ -161,6 +161,9 @@ async function main() {
         items JSON NOT NULL,
         tracking_number VARCHAR(100),
         tracking_url VARCHAR(255),
+        courier_name VARCHAR(100),
+        shiprocket_order_id VARCHAR(100),
+        shiprocket_shipment_id VARCHAR(100),
         razorpay_order_id VARCHAR(100),
         razorpay_payment_id VARCHAR(100),
         razorpay_status VARCHAR(50),
@@ -170,6 +173,18 @@ async function main() {
         INDEX idx_order_number (order_number)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `);
+
+    for (const colDef of [
+      "courier_name VARCHAR(100)",
+      "shiprocket_order_id VARCHAR(100)",
+      "shiprocket_shipment_id VARCHAR(100)",
+    ]) {
+      try {
+        await connection.query(`ALTER TABLE orders ADD COLUMN ${colDef}`);
+      } catch {
+        // Column already exists
+      }
+    }
 
     // 5. Reviews
     await connection.query(`

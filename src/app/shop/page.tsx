@@ -13,12 +13,25 @@ import {
   Sparkles,
 } from "lucide-react";
 import { ProductCard } from "@/components/products/ProductCard";
-import { categories, products as allProducts } from "@/lib/data/initial-data";
+import { categories, products as initialProducts } from "@/lib/data/initial-data";
+import { Product } from "@/types";
 import { formatPrice } from "@/lib/utils";
 
 function ShopContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [allProducts, setAllProducts] = useState<Product[]>(initialProducts);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data.products) && data.products.length > 0) {
+          setAllProducts(data.products);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Read URL search params
   const activeCategory = searchParams.get("category") || "all";

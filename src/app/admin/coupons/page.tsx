@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Tag, Plus, CheckCircle2 } from "lucide-react";
+import { Tag, Plus, CheckCircle2, Trash2 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { Coupon } from "@/types";
 import { useUIStore } from "@/store/ui-store";
@@ -50,6 +50,24 @@ export default function AdminCouponsPage() {
       addToast(`Coupon ${data.coupon.code} created!`, "success");
     } catch {
       addToast("Network error creating coupon.", "error");
+    }
+  };
+
+  const handleDeleteCoupon = async (id: string, code: string) => {
+    if (!confirm(`Are you sure you want to delete coupon ${code}?`)) return;
+    try {
+      const res = await fetch(`/api/admin/coupons?id=${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast(data.error || "Failed to delete coupon.", "error");
+        return;
+      }
+      setCoupons(data.coupons || []);
+      addToast(`Deleted coupon ${code}.`, "info");
+    } catch {
+      addToast("Network error deleting coupon.", "error");
     }
   };
 
@@ -152,6 +170,7 @@ export default function AdminCouponsPage() {
                 <th className="py-3 px-4 font-semibold">Min Subtotal</th>
                 <th className="py-3 px-4 font-semibold">Total Redemptions</th>
                 <th className="py-3 px-4 font-semibold">Status</th>
+                <th className="py-3 px-4 font-semibold text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -173,6 +192,16 @@ export default function AdminCouponsPage() {
                     <span className="bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full text-[10px]">
                       ACTIVE
                     </span>
+                  </td>
+                  <td className="py-3.5 px-4 text-right">
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCoupon(c.id, c.code)}
+                      className="p-1.5 text-gray-400 hover:text-red-600 transition-colors"
+                      title={`Delete ${c.code}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </td>
                 </tr>
               ))}

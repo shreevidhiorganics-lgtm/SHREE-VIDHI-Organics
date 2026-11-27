@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -42,6 +42,18 @@ export function CartDrawer() {
 
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState("");
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState(499);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.settings?.freeShippingThreshold) {
+          setFreeShippingThreshold(Number(data.settings.freeShippingThreshold));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const seaBuckthornProduct = allCatalogProducts.find(
     (p) => p.id === "prod-seabuckthorn-pulp" || p.slug.includes("sea-buckthorn")
@@ -67,57 +79,35 @@ export function CartDrawer() {
   const shippingFee = getShippingFee();
   const total = getTotal();
 
-  const freeShippingThreshold = 499;
   const progressPercent = Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100));
   const amountNeeded = Math.max(0, freeShippingThreshold - subtotal);
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     setCouponError("");
     if (!couponInput.trim()) return;
 
-    const code = couponInput.trim().toUpperCase();
-    if (code === "VIDHI15") {
-      const res = applyCoupon({
-        id: "coup-1",
-        code: "VIDHI15",
-        description: "15% OFF above ₹499",
-        discountType: "PERCENTAGE",
-        discountValue: 15,
-        minCartValue: 499,
-        maxDiscount: 150,
-        validFrom: "",
-        validUntil: "",
-        usedCount: 0,
-        isActive: true,
+    try {
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponInput.trim(), subtotal }),
       });
+      const data = await response.json();
+      if (!response.ok || !data.valid || !data.coupon) {
+        setCouponError(data.error || "Invalid or expired coupon code.");
+        return;
+      }
+
+      const res = applyCoupon(data.coupon);
       if (res.success) {
         addToast(res.message, "success");
         setCouponInput("");
       } else {
         setCouponError(res.message);
       }
-    } else if (code === "AYURVEDA50") {
-      const res = applyCoupon({
-        id: "coup-2",
-        code: "AYURVEDA50",
-        description: "Flat ₹50 OFF above ₹299",
-        discountType: "FIXED",
-        discountValue: 50,
-        minCartValue: 299,
-        validFrom: "",
-        validUntil: "",
-        usedCount: 0,
-        isActive: true,
-      });
-      if (res.success) {
-        addToast(res.message, "success");
-        setCouponInput("");
-      } else {
-        setCouponError(res.message);
-      }
-    } else {
-      setCouponError("Invalid coupon code. Try VIDHI15 or AYURVEDA50");
+    } catch {
+      setCouponError("Unable to validate coupon right now.");
     }
   };
 
@@ -156,26 +146,13 @@ export function CartDrawer() {
           </button>
         </div>
 
-        {/* Free Shipping Progress Bar */}
+        {/* Standard Shipping Info Bar */}
         <div className="px-5 py-3 bg-[#F7F4EE] border-b border-[#EDE7DD] text-xs">
-          <div className="flex items-center gap-2 mb-1.5 font-normal text-forest-900">
+          <div className="flex items-center gap-2 font-normal text-forest-900">
             <Truck className="w-3.5 h-3.5 text-[#8C6D32] shrink-0" />
-            {amountNeeded > 0 ? (
-              <span className="text-[11px]">
-                Add <strong className="font-semibold text-forest-950">{formatPrice(amountNeeded)}</strong> more to unlock <strong>FREE Express Shipping</strong>!
-              </span>
-            ) : (
-              <span className="text-forest-900 font-medium flex items-center gap-1 text-[11px]">
-                <CheckCircle2 className="w-3.5 h-3.5 text-[#55755A]" />
-                You unlocked FREE Express Shipping across India!
-              </span>
-            )}
-          </div>
-          <div className="w-full bg-[#E5DFD4] rounded-full h-1.5 overflow-hidden">
-            <div
-              className="bg-[#2A5C38] h-1.5 rounded-full transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
-            />
+            <span className="text-[11px]">
+              Flat ₹49 Express Shipping across India • Dispatched within 24 hours
+            </span>
           </div>
         </div>
 
@@ -396,7 +373,7 @@ export function CartDrawer() {
               )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
-                <span>{shippingFee === 0 ? <strong className="text-[#2A5C38] font-semibold">FREE</strong> : formatPrice(shippingFee)}</span>
+                <span>{formatPrice(shippingFee)}</span>
               </div>
               <div className="pt-2 border-t border-[#E8E2D6] flex justify-between items-baseline text-sm font-bold text-forest-950">
                 <span>Estimated Total</span>

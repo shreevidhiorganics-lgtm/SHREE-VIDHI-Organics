@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -42,6 +42,18 @@ export default function CartPage() {
 
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState("");
+  const [freeShippingThreshold, setFreeShippingThreshold] = useState(499);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.settings?.freeShippingThreshold) {
+          setFreeShippingThreshold(Number(data.settings.freeShippingThreshold));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const seaBuckthornProduct = allCatalogProducts.find(
     (p) => p.id === "prod-seabuckthorn-pulp" || p.slug.includes("sea-buckthorn")
@@ -64,57 +76,35 @@ export default function CartPage() {
   const shippingFee = getShippingFee();
   const total = getTotal();
 
-  const freeShippingThreshold = 499;
   const amountNeeded = Math.max(0, freeShippingThreshold - subtotal);
   const progressPercent = Math.min(100, Math.round((subtotal / freeShippingThreshold) * 100));
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     setCouponError("");
     if (!couponInput.trim()) return;
 
-    const code = couponInput.trim().toUpperCase();
-    if (code === "VIDHI15") {
-      const res = applyCoupon({
-        id: "coup-1",
-        code: "VIDHI15",
-        description: "15% OFF above ₹499",
-        discountType: "PERCENTAGE",
-        discountValue: 15,
-        minCartValue: 499,
-        maxDiscount: 150,
-        validFrom: "",
-        validUntil: "",
-        usedCount: 0,
-        isActive: true,
+    try {
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponInput.trim(), subtotal }),
       });
+      const data = await response.json();
+      if (!response.ok || !data.valid || !data.coupon) {
+        setCouponError(data.error || "Invalid or expired coupon code.");
+        return;
+      }
+
+      const res = applyCoupon(data.coupon);
       if (res.success) {
         addToast(res.message, "success");
         setCouponInput("");
       } else {
         setCouponError(res.message);
       }
-    } else if (code === "AYURVEDA50") {
-      const res = applyCoupon({
-        id: "coup-2",
-        code: "AYURVEDA50",
-        description: "Flat ₹50 OFF above ₹299",
-        discountType: "FIXED",
-        discountValue: 50,
-        minCartValue: 299,
-        validFrom: "",
-        validUntil: "",
-        usedCount: 0,
-        isActive: true,
-      });
-      if (res.success) {
-        addToast(res.message, "success");
-        setCouponInput("");
-      } else {
-        setCouponError(res.message);
-      }
-    } else {
-      setCouponError("Invalid coupon code. Try VIDHI15 or AYURVEDA50");
+    } catch {
+      setCouponError("Unable to validate coupon right now.");
     }
   };
 
@@ -164,28 +154,10 @@ export default function CartPage() {
           </p>
         </div>
 
-        {/* Free Shipping Alert Banner */}
-        <div className="p-4 bg-white rounded-2xl border border-forest-900/10 shadow-subtle mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 text-xs font-semibold text-forest-900">
-            <Truck className="w-4 h-4 text-forest-700 shrink-0" />
-            {amountNeeded > 0 ? (
-              <span>
-                Add <strong>{formatPrice(amountNeeded)}</strong> more to unlock <strong>FREE Express Shipping</strong>!
-              </span>
-            ) : (
-              <span className="text-forest-700 font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-sage-600" />
-                You qualify for FREE Express Shipping nationwide! 🎉
-              </span>
-            )}
-          </div>
-
-          <div className="w-full sm:w-48 bg-gray-100 rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-forest-700 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
+        {/* Shipping Info Banner */}
+        <div className="p-4 bg-white rounded-2xl border border-forest-900/10 shadow-subtle mb-8 flex items-center gap-2.5 text-xs font-semibold text-forest-900">
+          <Truck className="w-4 h-4 text-forest-700 shrink-0" />
+          <span>Flat ₹49 Express Pan-India Shipping • Dispatched within 24 hours from Varanasi</span>
         </div>
 
         {/* 2 Column Layout: Items List & Order Summary */}

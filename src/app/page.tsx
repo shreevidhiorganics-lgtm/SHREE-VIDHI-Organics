@@ -17,7 +17,7 @@ export const revalidate = 60; // ISR cache revalidation
 export default function HomePage() {
   const allProducts = dataStore.getProducts();
   const seaBuckthornProduct = allProducts.find(
-    (p) => p.id === "prod-seabuckthorn-pulp" || p.slug.includes("sea-buckthorn")
+    (p) => p.id === "prod-seabuckthorn-pulp" || p.slug?.includes("sea-buckthorn")
   );
 
   return (

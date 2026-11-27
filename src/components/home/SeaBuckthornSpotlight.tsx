@@ -169,7 +169,7 @@ export function SeaBuckthornSpotlight({ product }: SeaBuckthornSpotlightProps) {
                     </span>
                   </div>
                   <span className="text-[11px] text-[#6C766F] font-light mt-0.5">
-                    Inclusive of all taxes • Free express shipping nationwide
+                    Inclusive of all taxes • Express shipping across India
                   </span>
                 </div>
 

@@ -3,6 +3,7 @@ import { dataStore } from "@/lib/db/data-store";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { resolveOrderCustomer, attachSessionCookie } from "@/lib/auth/order-account";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { createShiprocketOrder, isShiprocketConfigured } from "@/lib/shipping/shiprocket";
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
 import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
 import { sendOrderConfirmationWhatsApp } from "@/lib/notifications/whatsapp";
@@ -90,6 +91,24 @@ export async function POST(req: NextRequest) {
     }
 
     const createdOrder = result.order;
+
+    // Automatically push order to Shiprocket when configured
+    if (isShiprocketConfigured()) {
+      createShiprocketOrder(createdOrder)
+        .then((shipRes) => {
+          if (shipRes.success) {
+            createdOrder.trackingNumber = shipRes.awbCode || createdOrder.trackingNumber;
+            createdOrder.trackingUrl = shipRes.trackingUrl || createdOrder.trackingUrl;
+            createdOrder.courierName = shipRes.courierName;
+            createdOrder.shiprocketOrderId = shipRes.orderId;
+            createdOrder.shiprocketShipmentId = shipRes.shipmentId;
+            dataStore.updateOrderStatus(createdOrder.id, createdOrder.status, undefined, createdOrder.trackingNumber);
+          } else {
+            console.error("[Shiprocket] Auto-create order failed:", shipRes.error);
+          }
+        })
+        .catch((err) => console.error("[Shiprocket] Auto-create error:", err));
+    }
 
     // Asynchronously dispatch Order Confirmation SMS, Email, and WhatsApp
     Promise.allSettled([

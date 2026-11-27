@@ -107,7 +107,7 @@ export default function ExitIntentModal() {
           <ArrowRight className="w-4 h-4" />
         </button>
 
-        <p className="text-[10px] text-stone-400 mt-3">Valid on orders above ₹499 • Free Pan-India Delivery</p>
+        <p className="text-[10px] text-stone-400 mt-3">Valid on orders above ₹499 • Pan-India Express Delivery</p>
       </div>
     </div>
   );
