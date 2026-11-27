@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
+import { getCurrentUser } from "@/lib/auth/auth";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import { getRazorpayConfig, verifyRazorpayPaymentSignature } from "@/lib/razorpay";
 import { createShiprocketOrder, isShiprocketConfigured } from "@/lib/shipping/shiprocket";
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
@@ -9,6 +11,23 @@ import "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+    const rateLimit = checkRateLimit(`rzp_verify:${clientIp}`, 15, 10 * 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many payment verification attempts. Please wait a moment." },
+        { status: 429 }
+      );
+    }
+
+    const currentUser = await getCurrentUser();
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Authentication required to verify payment." },
+        { status: 401 }
+      );
+    }
+
     const {
       orderId,
       razorpay_order_id,
@@ -21,6 +40,48 @@ export async function POST(req: NextRequest) {
         { error: "Missing Razorpay payment verification parameters." },
         { status: 400 }
       );
+    }
+
+    const order = dataStore.getOrderById(String(orderId));
+    if (!order) {
+      return NextResponse.json(
+        { error: "Order not found." },
+        { status: 404 }
+      );
+    }
+
+    const isAdmin =
+      currentUser.role === "ADMIN" &&
+      currentUser.email?.toLowerCase().trim() === "shreevidhiorganics@gmail.com";
+    const isOwner =
+      currentUser.userId === order.userId ||
+      (currentUser.email &&
+        order.guestEmail &&
+        currentUser.email.toLowerCase() === order.guestEmail.toLowerCase());
+
+    if (!isOwner && !isAdmin) {
+      return NextResponse.json(
+        { error: "Unauthorized to verify payment for this order." },
+        { status: 403 }
+      );
+    }
+
+    if (order.razorpayOrderId !== razorpay_order_id) {
+      console.error("Razorpay Security Alert: Order ID mismatch for order:", orderId);
+      return NextResponse.json(
+        { error: "Razorpay order mismatch." },
+        { status: 400 }
+      );
+    }
+
+    if (order.paymentStatus === "PAID") {
+      return NextResponse.json({
+        success: true,
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        razorpayOrderId: order.razorpayOrderId,
+        razorpayPaymentId: order.razorpayPaymentId,
+      });
     }
 
     const config = getRazorpayConfig();
@@ -38,30 +99,13 @@ export async function POST(req: NextRequest) {
 
     if (!isValid) {
       console.error("Razorpay Security Alert: Signature mismatch for order:", orderId);
-      dataStore.updateOrderPaymentDetails(orderId, {
+      dataStore.updateOrderPaymentDetails(order.id, {
         paymentStatus: "FAILED",
-        razorpayOrderId: razorpay_order_id,
         razorpayPaymentId: razorpay_payment_id,
         razorpayStatus: "SIGNATURE_VERIFICATION_FAILED",
       });
       return NextResponse.json(
         { error: "Payment signature verification failed." },
-        { status: 400 }
-      );
-    }
-
-    const order = dataStore.getOrderById(orderId);
-    if (!order) {
-      return NextResponse.json(
-        { error: "Order not found." },
-        { status: 404 }
-      );
-    }
-
-    if (order.razorpayOrderId !== razorpay_order_id) {
-      console.error("Razorpay Security Alert: Order ID mismatch for order:", orderId);
-      return NextResponse.json(
-        { error: "Razorpay order mismatch." },
         { status: 400 }
       );
     }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
+import { requireAdmin } from "@/lib/auth/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -13,8 +14,18 @@ export async function GET() {
     const productCount = dataStore.getProducts().length;
     dbLatencyMs = Date.now() - t0;
     if (productCount === 0) dbStatus = "EMPTY_CATALOG";
-  } catch (err: any) {
-    dbStatus = `ERROR: ${err?.message}`;
+  } catch {
+    dbStatus = "ERROR";
+  }
+
+  const healthStatus = dbStatus === "OK" ? "HEALTHY" : "DEGRADED";
+  const admin = await requireAdmin();
+
+  if (!admin) {
+    return NextResponse.json({
+      status: healthStatus,
+      timestamp: new Date().toISOString(),
+    });
   }
 
   const memoryUsage = process.memoryUsage();

@@ -17,24 +17,6 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    // OWASP A07: Webhook Signature / Secret Verification (fail closed in production)
-    const configuredSecret = process.env.SHIPROCKET_WEBHOOK_SECRET?.trim();
-    if (!configuredSecret && process.env.NODE_ENV === "production") {
-      console.error("[SECURITY] SHIPROCKET_WEBHOOK_SECRET is not configured in production.");
-      return NextResponse.json({ error: "Webhook authentication not configured." }, { status: 401 });
-    }
-    if (configuredSecret) {
-      const incomingSecret =
-        req.headers.get("x-api-key") ||
-        req.headers.get("x-shiprocket-token") ||
-        req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-
-      if (!incomingSecret || incomingSecret !== configuredSecret) {
-        console.warn("[SECURITY] Blocked unauthenticated Shiprocket webhook request.");
-        return NextResponse.json({ error: "Invalid webhook secret." }, { status: 401 });
-      }
-    }
-
     const rawBody = await req.text();
     if (!rawBody || !rawBody.trim()) {
       return NextResponse.json({ success: true, message: "Webhook test ping acknowledged." });
@@ -67,6 +49,24 @@ export async function POST(req: NextRequest) {
         ignored: true,
         message: `Order ${orderNumber} not found in local store; webhook acknowledged.`,
       });
+    }
+
+    // Verify webhook secret on real order updates (fail closed in production)
+    const configuredSecret = process.env.SHIPROCKET_WEBHOOK_SECRET?.trim();
+    if (!configuredSecret && process.env.NODE_ENV === "production") {
+      console.error("[SECURITY] SHIPROCKET_WEBHOOK_SECRET is not configured in production.");
+      return NextResponse.json({ error: "Webhook authentication not configured." }, { status: 401 });
+    }
+    if (configuredSecret) {
+      const incomingSecret =
+        req.headers.get("x-api-key") ||
+        req.headers.get("x-shiprocket-token") ||
+        req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+
+      if (!incomingSecret || incomingSecret !== configuredSecret) {
+        console.warn("[SECURITY] Blocked unauthenticated Shiprocket webhook request.");
+        return NextResponse.json({ error: "Invalid webhook secret." }, { status: 401 });
+      }
     }
 
     // Map Shiprocket Status string to internal OrderStatus

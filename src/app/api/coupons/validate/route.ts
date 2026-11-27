@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+    const rateLimit = checkRateLimit(`coupon_val:${clientIp}`, 15, 5 * 60 * 1000);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many coupon attempts. Please wait a moment." },
+        { status: 429 }
+      );
+    }
+
     const { code, subtotal } = await req.json();
     if (!code || typeof code !== "string") {
       return NextResponse.json({ error: "Coupon code is required." }, { status: 400 });
@@ -12,6 +22,9 @@ export async function POST(req: NextRequest) {
 
     const cleanCode = code.trim().toUpperCase();
     const numericSubtotal = Number(subtotal || 0);
+    if (!Number.isFinite(numericSubtotal) || numericSubtotal < 0) {
+      return NextResponse.json({ error: "Invalid cart subtotal." }, { status: 400 });
+    }
     const coupon = dataStore.validateCoupon(cleanCode, numericSubtotal);
 
     if (!coupon) {
@@ -30,7 +43,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ valid: true, coupon });
+    return NextResponse.json({
+      valid: true,
+      coupon: {
+        id: coupon.id,
+        code: coupon.code,
+        description: coupon.description,
+        discountType: coupon.discountType,
+        discountValue: coupon.discountValue,
+        maxDiscount: coupon.maxDiscount,
+        minCartValue: coupon.minCartValue,
+      },
+    });
   } catch {
     return NextResponse.json({ error: "Failed to validate coupon." }, { status: 500 });
   }

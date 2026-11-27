@@ -54,14 +54,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate item structure and quantities
+    // Validate item structure and quantities (strict integers 1-100)
     for (const item of items) {
-      if (!item.productId || typeof item.quantity !== "number" || item.quantity <= 0) {
+      if (
+        !item?.productId ||
+        typeof item.productId !== "string" ||
+        !Number.isInteger(item.quantity) ||
+        item.quantity < 1 ||
+        item.quantity > 100
+      ) {
         return NextResponse.json(
           { error: "Invalid item quantity or product ID in cart." },
           { status: 400 }
         );
       }
+    }
+
+    if (paymentMethod && paymentMethod !== "COD") {
+      return NextResponse.json(
+        { error: "Online payments must be initiated through the payment gateway endpoint." },
+        { status: 400 }
+      );
     }
 
     // Ensure customer has an account and auto-login new visitors
@@ -75,11 +88,11 @@ export async function POST(req: NextRequest) {
     // Call dataStore createOrder which validates products, stock, coupons, and recalculates totals server-side
     const result = dataStore.createOrder({
       userId,
-      guestEmail: guestEmail?.trim() || currentUser?.email,
-      guestPhone: guestPhone?.trim() || currentUser?.phone,
+      guestEmail: currentUser.email || guestEmail?.trim(),
+      guestPhone: currentUser.phone || guestPhone?.trim(),
       shippingAddress,
       items,
-      paymentMethod: paymentMethod || "COD",
+      paymentMethod: "COD",
       couponCode: couponCode ? String(couponCode).trim() : undefined,
     });
 

@@ -434,19 +434,37 @@ class DataStore {
     paymentMethod: "COD" | "RAZORPAY";
     couponCode?: string;
   }): { success: boolean; order?: Order; error?: string } {
-    // 1. Server-side validation of products and recalculation of total
+    if (
+      !orderPayload.shippingAddress ||
+      !orderPayload.shippingAddress.fullName?.trim() ||
+      !orderPayload.shippingAddress.phone?.trim() ||
+      !orderPayload.shippingAddress.city?.trim() ||
+      !orderPayload.shippingAddress.pinCode?.trim()
+    ) {
+      return { success: false, error: "Complete shipping address (name, phone, city, PIN code) is required." };
+    }
+
+    // 1. Validate ALL items & stock up front before mutating inventory
     let subtotal = 0;
     const validatedItems: Order["items"] = [];
+    const pendingDecrements: { product: Product; variant?: Product["variants"][number]; quantity: number }[] = [];
 
     for (const item of orderPayload.items) {
+      if (!item || typeof item.productId !== "string" || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 100) {
+        return { success: false, error: "Invalid product or item quantity (must be integer 1–100)." };
+      }
+
       const product = this.getProductById(item.productId);
-      if (!product) {
-        return { success: false, error: `Product not found: ${item.productId}` };
+      if (!product || product.status !== "PUBLISHED") {
+        return { success: false, error: `Product not available: ${item.productId}` };
       }
 
       const variant = item.variantId
         ? product.variants.find((v) => v.id === item.variantId)
         : product.variants[0];
+      if (item.variantId && !variant) {
+        return { success: false, error: `Invalid product variant selected for ${product.name}.` };
+      }
 
       const availableStock = variant ? variant.stock : product.stock;
       if (item.quantity > availableStock) {
@@ -458,6 +476,10 @@ class DataStore {
 
       const unitPrice = variant ? variant.price : product.salePrice;
       const unitMrp = variant ? variant.mrp : product.mrp;
+      if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+        return { success: false, error: `Invalid price configuration for ${product.name}.` };
+      }
+
       const itemTotal = unitPrice * item.quantity;
       subtotal += itemTotal;
 
@@ -473,11 +495,15 @@ class DataStore {
         total: itemTotal,
       });
 
-      // 2. Decrement inventory atomically
-      if (variant) {
-        variant.stock -= item.quantity;
+      pendingDecrements.push({ product, variant, quantity: item.quantity });
+    }
+
+    // 2. Decrement inventory atomically after all items succeed validation
+    for (const entry of pendingDecrements) {
+      if (entry.variant) {
+        entry.variant.stock -= entry.quantity;
       }
-      product.stock -= item.quantity;
+      entry.product.stock -= entry.quantity;
     }
 
     // 3. Server-side coupon verification

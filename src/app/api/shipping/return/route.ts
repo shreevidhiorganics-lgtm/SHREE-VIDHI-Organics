@@ -35,11 +35,18 @@ export async function POST(req: NextRequest) {
     const cleanRequesterPhone = phone ? String(phone).replace(/\D/g, "").slice(-10) : "";
     const cleanOrderPhone = order.shippingAddress.phone.replace(/\D/g, "").slice(-10);
 
-    const isOwner = currentUser && (
-      currentUser.userId === order.userId || 
-      (currentUser.email && order.guestEmail && currentUser.email.toLowerCase() === order.guestEmail.toLowerCase())
+    const isOwner = Boolean(
+      currentUser &&
+        (currentUser.userId === order.userId ||
+          (currentUser.email &&
+            order.guestEmail &&
+            currentUser.email.toLowerCase() === order.guestEmail.toLowerCase()))
     );
-    const isPhoneMatched = cleanRequesterPhone && cleanRequesterPhone === cleanOrderPhone;
+    const isPhoneMatched = Boolean(
+      cleanRequesterPhone.length === 10 &&
+        cleanOrderPhone.length === 10 &&
+        cleanRequesterPhone === cleanOrderPhone
+    );
 
     if (!isOwner && !isPhoneMatched) {
       return NextResponse.json(

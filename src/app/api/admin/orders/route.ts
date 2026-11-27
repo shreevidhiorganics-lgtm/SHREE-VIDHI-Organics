@@ -15,6 +15,17 @@ export async function GET() {
   return NextResponse.json({ orders: dataStore.getOrders() });
 }
 
+const VALID_ORDER_STATUSES: ReadonlySet<OrderStatus> = new Set([
+  "PLACED",
+  "CONFIRMED",
+  "PROCESSING",
+  "PACKED",
+  "SHIPPED",
+  "OUT_FOR_DELIVERY",
+  "DELIVERED",
+  "CANCELLED",
+]);
+
 export async function PATCH(req: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) {
@@ -25,6 +36,9 @@ export async function PATCH(req: NextRequest) {
     const { orderId, status } = await req.json();
     if (!orderId || !status) {
       return NextResponse.json({ error: "orderId and status are required." }, { status: 400 });
+    }
+    if (!VALID_ORDER_STATUSES.has(status as OrderStatus)) {
+      return NextResponse.json({ error: "Invalid order status value." }, { status: 400 });
     }
 
     const updated = dataStore.updateOrderStatus(orderId, status as OrderStatus);

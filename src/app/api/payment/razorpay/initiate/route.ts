@@ -34,11 +34,26 @@ export async function POST(req: NextRequest) {
       couponCode,
     } = body;
 
-    if (!shippingAddress || !items || !Array.isArray(items) || items.length === 0) {
+    if (!shippingAddress || typeof shippingAddress !== "object" || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { error: "Invalid checkout details. Shipping address and items are required." },
         { status: 400 }
       );
+    }
+
+    for (const item of items) {
+      if (
+        !item?.productId ||
+        typeof item.productId !== "string" ||
+        !Number.isInteger(item.quantity) ||
+        item.quantity < 1 ||
+        item.quantity > 100
+      ) {
+        return NextResponse.json(
+          { error: "Invalid item quantity or product ID in cart." },
+          { status: 400 }
+        );
+      }
     }
 
     // 1. Ensure customer has an account and auto-login new visitors
@@ -52,8 +67,8 @@ export async function POST(req: NextRequest) {
     // 2. Create order in dataStore with status PENDING and paymentMethod RAZORPAY
     const orderResult = dataStore.createOrder({
       userId,
-      guestEmail: guestEmail?.trim() || currentUser?.email,
-      guestPhone: guestPhone?.trim() || currentUser?.phone,
+      guestEmail: currentUser.email || guestEmail?.trim(),
+      guestPhone: currentUser.phone || guestPhone?.trim(),
       shippingAddress,
       items,
       paymentMethod: "RAZORPAY",

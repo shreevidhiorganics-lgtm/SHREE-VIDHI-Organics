@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth/auth";
+import { requireAdmin } from "@/lib/auth/auth";
 import { dataStore } from "@/lib/db/data-store";
 import { createShiprocketOrder } from "@/lib/shipping/shiprocket";
 import { sendOrderDispatchedSMS } from "@/lib/notifications/sms";
@@ -9,10 +9,10 @@ import "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await getCurrentUser();
+    const admin = await requireAdmin();
 
     // Restricted strictly to Admin
-    if (!user || user.role !== "ADMIN" || user.email?.toLowerCase().trim() !== "shreevidhiorganics@gmail.com") {
+    if (!admin) {
       return NextResponse.json({ error: "Unauthorized access." }, { status: 403 });
     }
 

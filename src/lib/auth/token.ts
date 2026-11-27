@@ -4,7 +4,16 @@ const decoder = new TextDecoder();
 const DEFAULT_SECRET = "shree_vidhi_super_secret_jwt_key_2026_at_least_32_chars_long";
 
 export function getAuthSecret(): string {
-  return process.env.AUTH_SECRET || DEFAULT_SECRET;
+  const configuredSecret = process.env.AUTH_SECRET?.trim();
+  if (process.env.NODE_ENV === "production") {
+    if (!configuredSecret || configuredSecret.length < 32) {
+      throw new Error(
+        "[SECURITY] AUTH_SECRET environment variable must be configured with at least 32 characters in production."
+      );
+    }
+    return configuredSecret;
+  }
+  return configuredSecret || DEFAULT_SECRET;
 }
 
 function base64urlEncode(buf: Uint8Array): string {

@@ -55,6 +55,15 @@ export async function POST(req: NextRequest) {
 
     if (targetOrder) {
       if (eventType === "payment.captured" || eventType === "order.paid") {
+        const paidPaise = Number(paymentEntity?.amount || orderEntity?.amount_paid || 0);
+        const expectedPaise = Math.round(targetOrder.total * 100);
+        if (paidPaise > 0 && Math.abs(paidPaise - expectedPaise) > 100) {
+          console.error(
+            `[SECURITY] Razorpay webhook amount mismatch for order ${targetOrder.orderNumber}: paid=${paidPaise}, expected=${expectedPaise}`
+          );
+          return NextResponse.json({ error: "Amount mismatch." }, { status: 400 });
+        }
+
         dataStore.updateOrderPaymentDetails(targetOrder.id, {
           status: "CONFIRMED",
           paymentStatus: "PAID",
@@ -62,7 +71,7 @@ export async function POST(req: NextRequest) {
           razorpayPaymentId: rzpPaymentId,
           razorpayStatus: "CAPTURED",
         });
-      } else if (eventType === "payment.failed") {
+      } else if (eventType === "payment.failed" && targetOrder.paymentStatus !== "PAID") {
         dataStore.updateOrderPaymentDetails(targetOrder.id, {
           paymentStatus: "FAILED",
           razorpayOrderId: rzpOrderId,

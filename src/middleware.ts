@@ -7,6 +7,11 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
+  // Defense-in-depth against CVE-2025-29927 x-middleware-subrequest header spoofing
+  if (request.headers.has("x-middleware-subrequest")) {
+    return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+  }
+
   const { pathname, search } = request.nextUrl;
   const isApiRoute = pathname.startsWith("/api/admin");
   const isCustomerProtectedRoute =

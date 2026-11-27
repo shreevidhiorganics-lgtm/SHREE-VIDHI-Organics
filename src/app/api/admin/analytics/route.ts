@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/lib/auth/auth";
+import { requireAdmin } from "@/lib/auth/auth";
 import { computeAdminAnalytics } from "@/lib/analytics/bi";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await getCurrentUser();
-    if (!user || user.role !== "ADMIN" || user.email?.toLowerCase().trim() !== "shreevidhiorganics@gmail.com") {
+    const admin = await requireAdmin();
+    if (!admin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 

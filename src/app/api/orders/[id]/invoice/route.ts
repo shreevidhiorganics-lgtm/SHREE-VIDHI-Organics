@@ -3,6 +3,7 @@ import { dataStore } from "@/lib/db/data-store";
 import { generateGSTInvoice } from "@/lib/invoicing/gst-invoice";
 import { formatPrice } from "@/lib/utils";
 import { getCurrentUser } from "@/lib/auth/auth";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,12 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+    const ipLimit = checkRateLimit(`invoice_lookup:${clientIp}`, 20, 10 * 60 * 1000);
+    if (!ipLimit.allowed) {
+      return new NextResponse("Too many invoice requests. Please try again later.", { status: 429 });
+    }
+
     const orderId = params.id;
     let order = dataStore.getOrderById(orderId);
 
@@ -34,14 +41,32 @@ export async function GET(
     // OWASP A01: IDOR & Personal Data Protection on Tax Invoices
     const currentUser = await getCurrentUser();
     const { searchParams } = new URL(req.url);
-    const verifyPhone = searchParams.get("phone")?.replace(/\D/g, "").slice(-10);
+    const verifyPhone = (searchParams.get("phone") || "").replace(/\D/g, "").slice(-10);
+    const orderPhone = (order.shippingAddress.phone || "").replace(/\D/g, "").slice(-10);
 
-    const isOwner = currentUser && (
-      currentUser.userId === order.userId || 
-      (currentUser.email && order.guestEmail && currentUser.email.toLowerCase() === order.guestEmail.toLowerCase())
+    const isOwner = Boolean(
+      currentUser &&
+        (currentUser.userId === order.userId ||
+          (currentUser.email &&
+            order.guestEmail &&
+            currentUser.email.toLowerCase() === order.guestEmail.toLowerCase()))
     );
-    const isAdmin = currentUser && currentUser.role === "ADMIN" && currentUser.email?.toLowerCase().trim() === "shreevidhiorganics@gmail.com";
-    const isPhoneVerified = verifyPhone && order.shippingAddress.phone.replace(/\D/g, "").slice(-10) === verifyPhone;
+    const isAdmin = Boolean(
+      currentUser &&
+        currentUser.role === "ADMIN" &&
+        currentUser.email?.toLowerCase().trim() === "shreevidhiorganics@gmail.com"
+    );
+
+    if (!isOwner && !isAdmin && verifyPhone) {
+      const phoneProbeLimit = checkRateLimit(`invoice_phone:${order.id}:${clientIp}`, 5, 15 * 60 * 1000);
+      if (!phoneProbeLimit.allowed) {
+        return new NextResponse("Too many verification attempts. Please sign in to view your invoice.", { status: 429 });
+      }
+    }
+
+    const isPhoneVerified = Boolean(
+      verifyPhone.length === 10 && orderPhone.length === 10 && verifyPhone === orderPhone
+    );
 
     // Block unauthorized third-party attempts to inspect any order invoice (registered or guest)
     if (!isOwner && !isAdmin && !isPhoneVerified) {
@@ -94,17 +119,17 @@ export async function GET(
         <h1 class="brand-title">SHREE VIDHI ORGANICS</h1>
         <div class="brand-subtitle">Varanasi Vedic Ayurvedic Formulation</div>
         <div style="font-size: 11px; color: #57534e; margin-top: 4px;">
-          GSTIN: <strong>${inv.sellerDetails.gstin}</strong> | AYUSH: ${inv.sellerDetails.ayushLicense}<br>
-          FSSAI Lic: ${inv.sellerDetails.fssaiLicense}<br>
-          ${inv.sellerDetails.address}
+          GSTIN: <strong>${escapeHtml(inv.sellerDetails.gstin)}</strong> | AYUSH: ${escapeHtml(inv.sellerDetails.ayushLicense)}<br>
+          FSSAI Lic: ${escapeHtml(inv.sellerDetails.fssaiLicense)}<br>
+          ${escapeHtml(inv.sellerDetails.address)}
         </div>
       </div>
       <div>
         <h2 class="inv-title">TAX INVOICE</h2>
         <div style="text-align: right; font-size: 11px; color: #57534e; margin-top: 4px;">
-          Invoice No: <strong>${inv.invoiceNumber}</strong><br>
-          Invoice Date: ${inv.invoiceDate}<br>
-          Order No: <strong>${inv.orderNumber}</strong><br>
+          Invoice No: <strong>${escapeHtml(inv.invoiceNumber)}</strong><br>
+          Invoice Date: ${escapeHtml(inv.invoiceDate)}<br>
+          Order No: <strong>${escapeHtml(inv.orderNumber)}</strong><br>
           State of Supply: ${inv.isInterState ? "Inter-State (IGST)" : "Intra-State (CGST+SGST)"}
         </div>
       </div>
@@ -188,7 +213,7 @@ export async function GET(
     </div>
 
     <div style="font-size: 11px; margin-top: 10px;">
-      <strong>Amount in Words:</strong> ${inv.amountInWords}
+      <strong>Amount in Words:</strong> ${escapeHtml(inv.amountInWords)}
     </div>
 
     <div class="legal-footer">
@@ -204,7 +229,7 @@ export async function GET(
         "Content-Type": "text/html; charset=utf-8",
       },
     });
-  } catch (err: any) {
-    return new NextResponse(`Invoice generation error: ${err?.message}`, { status: 500 });
+  } catch {
+    return new NextResponse("Invoice generation error.", { status: 500 });
   }
 }
