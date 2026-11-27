@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { createSessionToken } from "@/lib/auth/auth";
 import { checkRateLimit, resetRateLimit } from "@/lib/security/rate-limit";
-import "@/lib/db/server-sync";
+import { dbVerifyOtp, isMySQLConfigured } from "@/lib/db/mysql";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDatabaseHydrated({ force: true });
     const { phone, otp, name, email, address } = await req.json();
 
     if (!phone || !otp) {
@@ -26,7 +28,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isValidOtp = dataStore.verifyOtp(cleanPhone, otp);
+    let isValidOtp = dataStore.verifyOtp(cleanPhone, otp);
+    if (!isValidOtp && isMySQLConfigured()) {
+      isValidOtp = await dbVerifyOtp(cleanPhone, otp);
+    }
 
     if (!isValidOtp) {
       return NextResponse.json(
@@ -90,6 +95,7 @@ export async function POST(req: NextRequest) {
       phone: cleanPhone,
       address,
     });
+    await flushDatabaseSync();
 
     const token = await createSessionToken({
       userId: user.id,

@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { authenticateUser, createSessionToken } from "@/lib/auth/auth";
 import { dataStore } from "@/lib/db/data-store";
 import { checkRateLimit, resetRateLimit } from "@/lib/security/rate-limit";
-import "@/lib/db/server-sync";
+import { dbVerifyOtp, isMySQLConfigured } from "@/lib/db/mysql";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDatabaseHydrated({ force: true });
     const body = await req.json();
     const { email, password, phone, otp } = body;
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
@@ -23,7 +25,10 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const isValid = dataStore.verifyOtp(cleanPhone, otp);
+      let isValid = dataStore.verifyOtp(cleanPhone, otp);
+      if (!isValid && isMySQLConfigured()) {
+        isValid = await dbVerifyOtp(cleanPhone, otp);
+      }
       if (!isValid) {
         return NextResponse.json(
           { error: "Invalid or expired verification code." },

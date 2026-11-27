@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/auth";
 import { dataStore } from "@/lib/db/data-store";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -11,5 +11,6 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  await ensureDatabaseHydrated({ force: true });
   return NextResponse.json({ users: dataStore.getUsers() });
 }

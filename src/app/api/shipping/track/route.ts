@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { trackShiprocketOrder } from "@/lib/shipping/shiprocket";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export async function GET(req: NextRequest) {
   try {
@@ -13,6 +14,8 @@ export async function GET(req: NextRequest) {
         { status: 429 }
       );
     }
+
+    await ensureDatabaseHydrated({ force: true });
 
     const { searchParams } = new URL(req.url);
     const orderNumber = searchParams.get("orderNumber")?.trim();

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { OrderStatus } from "@/types";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 /**
  * Shiprocket Webhook Receiver
@@ -42,6 +42,8 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    await ensureDatabaseHydrated({ force: true });
+
     const order = dataStore.getOrderById(String(orderNumber));
     if (!order) {
       return NextResponse.json({
@@ -81,17 +83,14 @@ export async function POST(req: NextRequest) {
       targetStatus = "CANCELLED";
     }
 
-    if (targetStatus) {
-      dataStore.updateOrderStatus(order.id, targetStatus, undefined, awb || order.trackingNumber);
-    }
-
-    if (courierName) {
-      order.courierName = courierName;
-    }
-    if (awb) {
-      order.trackingNumber = awb;
-      order.trackingUrl = `https://shiprocket.co/tracking/${awb}`;
-    }
+    const updatedAwb = awb ? String(awb).trim() : undefined;
+    dataStore.updateOrderShippingDetails(order.id, {
+      status: targetStatus || undefined,
+      trackingNumber: updatedAwb,
+      trackingUrl: updatedAwb ? `https://shiprocket.co/tracking/${updatedAwb}` : undefined,
+      courierName: courierName ? String(courierName).trim() : undefined,
+    });
+    await flushDatabaseSync();
 
     return NextResponse.json({
       success: true,

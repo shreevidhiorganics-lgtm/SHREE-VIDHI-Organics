@@ -7,10 +7,11 @@ import { createShiprocketOrder, isShiprocketConfigured } from "@/lib/shipping/sh
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
 import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
 import { sendOrderConfirmationWhatsApp } from "@/lib/notifications/whatsapp";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDatabaseHydrated({ force: true });
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
     const rateLimit = checkRateLimit(`order_create:${clientIp}`, 10, 10 * 60 * 1000);
     if (!rateLimit.allowed) {
@@ -105,26 +106,28 @@ export async function POST(req: NextRequest) {
 
     const createdOrder = result.order;
 
-    // Automatically push order to Shiprocket when configured
+    // Automatically push order to Shiprocket when configured (awaited for serverless reliability)
     if (isShiprocketConfigured()) {
-      createShiprocketOrder(createdOrder)
-        .then((shipRes) => {
-          if (shipRes.success) {
-            createdOrder.trackingNumber = shipRes.awbCode || createdOrder.trackingNumber;
-            createdOrder.trackingUrl = shipRes.trackingUrl || createdOrder.trackingUrl;
-            createdOrder.courierName = shipRes.courierName;
-            createdOrder.shiprocketOrderId = shipRes.orderId;
-            createdOrder.shiprocketShipmentId = shipRes.shipmentId;
-            dataStore.updateOrderStatus(createdOrder.id, createdOrder.status, undefined, createdOrder.trackingNumber);
-          } else {
-            console.error("[Shiprocket] Auto-create order failed:", shipRes.error);
-          }
-        })
-        .catch((err) => console.error("[Shiprocket] Auto-create error:", err));
+      try {
+        const shipRes = await createShiprocketOrder(createdOrder);
+        if (shipRes.success) {
+          dataStore.updateOrderShippingDetails(createdOrder.id, {
+            trackingNumber: shipRes.awbCode || createdOrder.trackingNumber,
+            trackingUrl: shipRes.trackingUrl || createdOrder.trackingUrl,
+            courierName: shipRes.courierName,
+            shiprocketOrderId: shipRes.orderId,
+            shiprocketShipmentId: shipRes.shipmentId,
+          });
+        } else {
+          console.error("[Shiprocket] Auto-create order failed:", shipRes.error);
+        }
+      } catch (err) {
+        console.error("[Shiprocket] Auto-create error:", err);
+      }
     }
 
-    // Asynchronously dispatch Order Confirmation SMS, Email, and WhatsApp
-    Promise.allSettled([
+    // Dispatch Order Confirmation SMS, Email, and WhatsApp before response closes
+    await Promise.allSettled([
       sendOrderConfirmationSMS(
         createdOrder.shippingAddress.phone,
         createdOrder.orderNumber,
@@ -132,7 +135,9 @@ export async function POST(req: NextRequest) {
       ),
       sendOrderConfirmationEmail(createdOrder),
       sendOrderConfirmationWhatsApp(createdOrder),
-    ]).catch((err) => console.error("[Order Notification] Dispatch error:", err));
+    ]);
+
+    await flushDatabaseSync();
 
     const response = NextResponse.json({
       success: true,
@@ -152,6 +157,7 @@ export async function POST(req: NextRequest) {
 // OWASP A01: Broken Access Control & IDOR Protection on Order Retrieval
 export async function GET(req: NextRequest) {
   try {
+    await ensureDatabaseHydrated({ force: true });
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {

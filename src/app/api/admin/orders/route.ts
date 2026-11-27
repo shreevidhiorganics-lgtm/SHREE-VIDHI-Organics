@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/auth";
 import { dataStore } from "@/lib/db/data-store";
 import { OrderStatus } from "@/types";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  await ensureDatabaseHydrated({ force: true });
   return NextResponse.json({ orders: dataStore.getOrders() });
 }
 
@@ -33,6 +34,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
+    await ensureDatabaseHydrated({ force: true });
     const { orderId, status } = await req.json();
     if (!orderId || !status) {
       return NextResponse.json({ error: "orderId and status are required." }, { status: 400 });
@@ -46,6 +48,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
 
+    await flushDatabaseSync();
     return NextResponse.json({ success: true, order: updated, orders: dataStore.getOrders() });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to update order." }, { status: 500 });

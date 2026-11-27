@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,8 @@ export async function POST(req: NextRequest) {
         { status: 429 }
       );
     }
+
+    await ensureDatabaseHydrated({ force: true });
 
     const { orderNumber, phone, reason, items, pickupAddress } = await req.json();
 

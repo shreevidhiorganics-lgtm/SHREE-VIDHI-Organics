@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { sendOtpSMS } from "@/lib/notifications/sms";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDatabaseHydrated({ force: true });
     const { phone, checkExisting } = await req.json();
 
     if (!phone) {
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
     }
 
     const result = dataStore.sendOtp(cleanPhone);
+    await flushDatabaseSync();
 
     // Dispatch real SMS via Fast2SMS (with Quick SMS fallback)
     const smsResult = await sendOtpSMS(cleanPhone, result.otp);

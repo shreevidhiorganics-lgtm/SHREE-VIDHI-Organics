@@ -5,7 +5,7 @@ import { createShiprocketOrder } from "@/lib/shipping/shiprocket";
 import { sendOrderDispatchedSMS } from "@/lib/notifications/sms";
 import { sendShippingDispatchedEmail } from "@/lib/notifications/email";
 import { sendOrderDispatchedWhatsApp } from "@/lib/notifications/whatsapp";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,6 +15,8 @@ export async function POST(req: NextRequest) {
     if (!admin) {
       return NextResponse.json({ error: "Unauthorized access." }, { status: 403 });
     }
+
+    await ensureDatabaseHydrated({ force: true });
 
     const { orderId } = await req.json();
     if (!orderId) {
@@ -36,17 +38,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Update internal order with shipping metadata
-    order.trackingNumber = shipResult.awbCode || order.trackingNumber;
-    order.trackingUrl = shipResult.trackingUrl || order.trackingUrl;
-    order.courierName = shipResult.courierName;
-    order.shiprocketOrderId = shipResult.orderId;
-    order.shiprocketShipmentId = shipResult.shipmentId;
+    // Update internal order with shipping metadata and persist to MySQL before closing
+    dataStore.updateOrderShippingDetails(order.id, {
+      status: "SHIPPED",
+      trackingNumber: shipResult.awbCode || order.trackingNumber,
+      trackingUrl: shipResult.trackingUrl || order.trackingUrl,
+      courierName: shipResult.courierName,
+      shiprocketOrderId: shipResult.orderId,
+      shiprocketShipmentId: shipResult.shipmentId,
+    });
 
-    dataStore.updateOrderStatus(order.id, "SHIPPED", undefined, order.trackingNumber);
-
-    // Asynchronously dispatch Dispatch SMS, Email & WhatsApp notifications to customer
-    Promise.allSettled([
+    // Dispatch Dispatch SMS, Email & WhatsApp notifications to customer
+    await Promise.allSettled([
       sendOrderDispatchedSMS(
         order.shippingAddress.phone,
         order.orderNumber,
@@ -59,7 +62,9 @@ export async function POST(req: NextRequest) {
         order.trackingNumber || shipResult.awbCode || "",
         order.trackingUrl || ""
       ),
-    ]).catch((err) => console.error("[Dispatch Notification] Error sending alerts:", err));
+    ]);
+
+    await flushDatabaseSync();
 
     return NextResponse.json({
       success: true,

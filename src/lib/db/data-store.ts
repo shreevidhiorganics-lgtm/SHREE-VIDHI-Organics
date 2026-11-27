@@ -600,6 +600,32 @@ class DataStore {
     return order;
   }
 
+  public updateOrderShippingDetails(
+    orderId: string,
+    details: {
+      status?: OrderStatus;
+      trackingNumber?: string;
+      trackingUrl?: string;
+      courierName?: string;
+      shiprocketOrderId?: number | string;
+      shiprocketShipmentId?: number | string;
+    }
+  ): Order | null {
+    const order = this.getOrderById(orderId);
+    if (!order) return null;
+
+    if (details.status) order.status = details.status;
+    if (details.trackingNumber) order.trackingNumber = details.trackingNumber;
+    if (details.trackingUrl) order.trackingUrl = details.trackingUrl;
+    if (details.courierName) order.courierName = details.courierName;
+    if (details.shiprocketOrderId !== undefined) order.shiprocketOrderId = details.shiprocketOrderId;
+    if (details.shiprocketShipmentId !== undefined) order.shiprocketShipmentId = details.shiprocketShipmentId;
+    order.updatedAt = new Date().toISOString();
+    this.persistSnapshot();
+    this.notifyMutation("saveOrder", order);
+    return order;
+  }
+
   // ---------------- COUPONS ----------------
   public validateCoupon(code: string, cartSubtotal: number): Coupon | null {
     const coupon = this.coupons.find(
@@ -735,22 +761,22 @@ class DataStore {
     coupons?: Coupon[];
     settings?: SiteSettings | null;
   }) {
-    if (Array.isArray(dbState.orders) && dbState.orders.length > 0) {
+    if (Array.isArray(dbState.orders)) {
       this.orders = dbState.orders;
     }
     if (Array.isArray(dbState.users) && dbState.users.length > 0) {
       this.users = dbState.users;
     }
-    if (Array.isArray(dbState.addresses) && dbState.addresses.length > 0) {
+    if (Array.isArray(dbState.addresses)) {
       this.addresses = dbState.addresses;
     }
     if (Array.isArray(dbState.products) && dbState.products.length > 0) {
       this.products = dbState.products;
     }
-    if (Array.isArray(dbState.reviews) && dbState.reviews.length > 0) {
+    if (Array.isArray(dbState.reviews)) {
       this.reviews = dbState.reviews;
     }
-    if (Array.isArray(dbState.coupons) && dbState.coupons.length > 0) {
+    if (Array.isArray(dbState.coupons)) {
       this.coupons = dbState.coupons;
     }
     if (dbState.settings) {

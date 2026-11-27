@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,8 @@ export async function POST(req: NextRequest) {
         { status: 429 }
       );
     }
+
+    await ensureDatabaseHydrated();
 
     const { code, subtotal } = await req.json();
     if (!code || typeof code !== "string") {

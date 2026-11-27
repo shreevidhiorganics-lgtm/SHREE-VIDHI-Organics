@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { getRazorpayConfig, verifyRazorpayWebhookSignature } from "@/lib/razorpay";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 /**
  * Razorpay Server-to-Server Webhook
@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       paymentEntity?.notes?.orderId || orderEntity?.notes?.orderId;
 
     // Locate internal order by note orderId or matching razorpayOrderId
+    await ensureDatabaseHydrated({ force: true });
     let targetOrder = internalOrderId ? dataStore.getOrderById(internalOrderId) : null;
     if (!targetOrder && rzpOrderId) {
       targetOrder =
@@ -79,6 +80,7 @@ export async function POST(req: NextRequest) {
           razorpayStatus: "FAILED",
         });
       }
+      await flushDatabaseSync();
     }
 
     return NextResponse.json({ status: "acknowledged", received: true });

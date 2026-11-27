@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { dataStore } from "@/lib/db/data-store";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,8 @@ export async function GET(_req: NextRequest) {
     if (!session) {
       return NextResponse.json({ authenticated: false, user: null });
     }
+
+    await ensureDatabaseHydrated();
 
     const fullUser = dataStore.getUserById(session.userId);
 

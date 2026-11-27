@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/auth";
 import { dataStore } from "@/lib/db/data-store";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  await ensureDatabaseHydrated({ force: true });
   return NextResponse.json({ coupons: dataStore.getCoupons() });
 }
 
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    await ensureDatabaseHydrated({ force: true });
     const body = await req.json();
     if (!body?.code || !body?.discountType || body?.discountValue === undefined) {
       return NextResponse.json({ error: "Coupon code, type, and value are required." }, { status: 400 });
@@ -39,6 +41,7 @@ export async function POST(req: NextRequest) {
       isActive: body.isActive ?? true,
     });
 
+    await flushDatabaseSync();
     return NextResponse.json({ success: true, coupon: created, coupons: dataStore.getCoupons() }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to create coupon." }, { status: 500 });
@@ -52,6 +55,7 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
+    await ensureDatabaseHydrated({ force: true });
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     if (!id) {
@@ -63,6 +67,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Coupon not found." }, { status: 404 });
     }
 
+    await flushDatabaseSync();
     return NextResponse.json({ success: true, coupons: dataStore.getCoupons() });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to delete coupon." }, { status: 500 });

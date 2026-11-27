@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/auth";
 import { dataStore } from "@/lib/db/data-store";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  await ensureDatabaseHydrated({ force: true });
   return NextResponse.json({ products: dataStore.getProducts() });
 }
 
@@ -21,12 +22,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    await ensureDatabaseHydrated({ force: true });
     const body = await req.json();
     if (!body?.name) {
       return NextResponse.json({ error: "Product name is required." }, { status: 400 });
     }
 
     const created = dataStore.createProduct(body);
+    await flushDatabaseSync();
     return NextResponse.json({ success: true, product: created }, { status: 201 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to create product." }, { status: 500 });
@@ -40,6 +43,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
+    await ensureDatabaseHydrated({ force: true });
     const { id, ...updates } = await req.json();
     if (!id) {
       return NextResponse.json({ error: "Product id is required." }, { status: 400 });
@@ -50,6 +54,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Product not found." }, { status: 404 });
     }
 
+    await flushDatabaseSync();
     return NextResponse.json({ success: true, product: updated, products: dataStore.getProducts() });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to update product." }, { status: 500 });
@@ -63,6 +68,7 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
+    await ensureDatabaseHydrated({ force: true });
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     if (!id) {
@@ -74,6 +80,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Product not found." }, { status: 404 });
     }
 
+    await flushDatabaseSync();
     return NextResponse.json({ success: true, products: dataStore.getProducts() });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message || "Failed to delete product." }, { status: 500 });

@@ -4,6 +4,7 @@ import { generateGSTInvoice } from "@/lib/invoicing/gst-invoice";
 import { formatPrice } from "@/lib/utils";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,7 @@ export async function GET(
       return new NextResponse("Too many invoice requests. Please try again later.", { status: 429 });
     }
 
+    await ensureDatabaseHydrated({ force: true });
     const orderId = params.id;
     let order = dataStore.getOrderById(orderId);
 

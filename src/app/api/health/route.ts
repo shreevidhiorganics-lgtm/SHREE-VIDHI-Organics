@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { dataStore } from "@/lib/db/data-store";
 import { requireAdmin } from "@/lib/auth/auth";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export async function GET() {
 
   try {
     const t0 = Date.now();
+    await ensureDatabaseHydrated();
     const productCount = dataStore.getProducts().length;
     dbLatencyMs = Date.now() - t0;
     if (productCount === 0) dbStatus = "EMPTY_CATALOG";

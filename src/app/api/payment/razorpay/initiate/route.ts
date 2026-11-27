@@ -4,10 +4,11 @@ import { getCurrentUser } from "@/lib/auth/auth";
 import { resolveOrderCustomer, attachSessionCookie } from "@/lib/auth/order-account";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createRazorpayOrder, getRazorpayConfig } from "@/lib/razorpay";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDatabaseHydrated({ force: true });
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
     const rateLimit = checkRateLimit(`rzp_init:${clientIp}`, 10, 10 * 60 * 1000);
     if (!rateLimit.allowed) {
@@ -101,6 +102,7 @@ export async function POST(req: NextRequest) {
       razorpayOrderId: rzpOrder.id,
       razorpayStatus: rzpOrder.status,
     });
+    await flushDatabaseSync();
 
     const response = NextResponse.json({
       success: true,

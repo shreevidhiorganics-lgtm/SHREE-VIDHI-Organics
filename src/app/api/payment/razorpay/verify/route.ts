@@ -7,10 +7,11 @@ import { createShiprocketOrder, isShiprocketConfigured } from "@/lib/shipping/sh
 import { sendOrderConfirmationSMS } from "@/lib/notifications/sms";
 import { sendOrderConfirmationEmail } from "@/lib/notifications/email";
 import { sendOrderConfirmationWhatsApp } from "@/lib/notifications/whatsapp";
-import "@/lib/db/server-sync";
+import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDatabaseHydrated({ force: true });
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
     const rateLimit = checkRateLimit(`rzp_verify:${clientIp}`, 15, 10 * 60 * 1000);
     if (!rateLimit.allowed) {
@@ -104,13 +105,14 @@ export async function POST(req: NextRequest) {
         razorpayPaymentId: razorpay_payment_id,
         razorpayStatus: "SIGNATURE_VERIFICATION_FAILED",
       });
+      await flushDatabaseSync();
       return NextResponse.json(
         { error: "Payment signature verification failed." },
         { status: 400 }
       );
     }
 
-    dataStore.updateOrderPaymentDetails(orderId, {
+    dataStore.updateOrderPaymentDetails(order.id, {
       status: "CONFIRMED",
       paymentStatus: "PAID",
       razorpayOrderId: razorpay_order_id,
@@ -119,29 +121,31 @@ export async function POST(req: NextRequest) {
     });
 
     if (isShiprocketConfigured()) {
-      createShiprocketOrder(order)
-        .then((shipRes) => {
-          if (shipRes.success) {
-            order.trackingNumber = shipRes.awbCode || order.trackingNumber;
-            order.trackingUrl = shipRes.trackingUrl || order.trackingUrl;
-            order.courierName = shipRes.courierName;
-            order.shiprocketOrderId = shipRes.orderId;
-            order.shiprocketShipmentId = shipRes.shipmentId;
-            dataStore.updateOrderStatus(order.id, order.status, undefined, order.trackingNumber);
-          } else {
-            console.error("[Shiprocket] Auto-create prepaid order failed:", shipRes.error);
-          }
-        })
-        .catch((err) => console.error("[Shiprocket] Auto-create prepaid error:", err));
+      try {
+        const shipRes = await createShiprocketOrder(order);
+        if (shipRes.success) {
+          dataStore.updateOrderShippingDetails(order.id, {
+            trackingNumber: shipRes.awbCode || order.trackingNumber,
+            trackingUrl: shipRes.trackingUrl || order.trackingUrl,
+            courierName: shipRes.courierName,
+            shiprocketOrderId: shipRes.orderId,
+            shiprocketShipmentId: shipRes.shipmentId,
+          });
+        } else {
+          console.error("[Shiprocket] Auto-create prepaid order failed:", shipRes.error);
+        }
+      } catch (err) {
+        console.error("[Shiprocket] Auto-create prepaid error:", err);
+      }
     }
 
-    if (order) {
-      Promise.allSettled([
-        sendOrderConfirmationSMS(order.shippingAddress.phone, order.orderNumber, order.total),
-        sendOrderConfirmationEmail(order),
-        sendOrderConfirmationWhatsApp(order),
-      ]).catch(() => {});
-    }
+    await Promise.allSettled([
+      sendOrderConfirmationSMS(order.shippingAddress.phone, order.orderNumber, order.total),
+      sendOrderConfirmationEmail(order),
+      sendOrderConfirmationWhatsApp(order),
+    ]);
+
+    await flushDatabaseSync();
 
     return NextResponse.json({
       success: true,

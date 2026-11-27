@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/auth";
 import { calculateTier, getTierPerks, generateReferralCode } from "@/lib/retention/loyalty";
 import { dataStore } from "@/lib/db/data-store";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,8 @@ export async function GET(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    await ensureDatabaseHydrated({ force: true });
 
     // Calculate customer lifetime points based on confirmed/delivered orders
     const orders = dataStore.getOrders(user.userId);
