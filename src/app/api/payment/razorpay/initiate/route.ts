@@ -4,7 +4,8 @@ import { getCurrentUser } from "@/lib/auth/auth";
 import { resolveOrderCustomer, attachSessionCookie } from "@/lib/auth/order-account";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import { createRazorpayOrder, getRazorpayConfig } from "@/lib/razorpay";
-import { ensureDatabaseHydrated, flushDatabaseSync } from "@/lib/db/server-sync";
+import { createSignedToken } from "@/lib/auth/token";
+import { ensureDatabaseHydrated } from "@/lib/db/server-sync";
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,7 +58,21 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 1. Ensure customer has an account and auto-login new visitors
+    // 1. Validate cart & compute server-side total WITHOUT creating an order yet
+    // Order is only created in /api/payment/razorpay/verify after payment is PAID
+    const quote = dataStore.quoteOrder({
+      shippingAddress,
+      items,
+      couponCode,
+    });
+
+    if (!quote.success) {
+      return NextResponse.json(
+        { error: quote.error || "Invalid checkout items or shipping address." },
+        { status: 400 }
+      );
+    }
+
     const { userId, sessionToken } = await resolveOrderCustomer({
       currentUser,
       guestEmail,
@@ -65,56 +80,43 @@ export async function POST(req: NextRequest) {
       shippingAddress,
     });
 
-    // 2. Create order in dataStore with status PENDING and paymentMethod RAZORPAY
-    const orderResult = dataStore.createOrder({
-      userId,
-      guestEmail: currentUser.email || guestEmail?.trim(),
-      guestPhone: currentUser.phone || guestPhone?.trim(),
-      shippingAddress,
-      items,
-      paymentMethod: "RAZORPAY",
-      couponCode,
-    });
-
-    if (!orderResult.success || !orderResult.order) {
-      return NextResponse.json(
-        { error: orderResult.error || "Failed to create order for Razorpay payment." },
-        { status: 400 }
-      );
-    }
-
-    const order = orderResult.order;
     const config = getRazorpayConfig();
+    const pendingReceipt = `SVO-PRE-${Date.now().toString().slice(-8)}`;
 
     // 2. Create Razorpay Order via REST API
     const rzpOrder = await createRazorpayOrder({
-      amountInRupees: order.total,
-      receipt: order.orderNumber,
+      amountInRupees: quote.total,
+      receipt: pendingReceipt,
       notes: {
-        orderId: order.id,
-        orderNumber: order.orderNumber,
+        userId: userId || currentUser.userId,
+        guestEmail: (currentUser.email || guestEmail || "").trim(),
       },
     });
 
-    // 3. Save Razorpay Order ID on internal order
-    dataStore.updateOrderPaymentDetails(order.id, {
-      paymentStatus: "PENDING",
-      razorpayOrderId: rzpOrder.id,
-      razorpayStatus: rzpOrder.status,
-    });
-    await flushDatabaseSync();
+    // 3. Sign checkout payload so /verify creates the order only after payment is captured
+    const checkoutToken = await createSignedToken(
+      {
+        userId: userId || currentUser.userId,
+        guestEmail: currentUser.email || guestEmail?.trim(),
+        guestPhone: currentUser.phone || guestPhone?.trim(),
+        shippingAddress,
+        items,
+        couponCode: quote.couponCode,
+        razorpayOrderId: rzpOrder.id,
+      },
+      60 * 60 * 1000
+    );
 
     const response = NextResponse.json({
       success: true,
       keyId: config.keyId,
-      orderId: order.id,
-      orderNumber: order.orderNumber,
       razorpayOrderId: rzpOrder.id,
       amount: rzpOrder.amount,
       currency: rzpOrder.currency,
+      checkoutToken,
       prefill: {
         name: shippingAddress.fullName || "Customer",
-        email: (guestEmail || shippingAddress.email || "customer@shreevidhiorganics.com").trim(),
+        email: (guestEmail || shippingAddress.email || currentUser.email || "customer@shreevidhiorganics.com").trim(),
         contact: (guestPhone || shippingAddress.phone || "").replace(/\D/g, "").slice(-10),
       },
     });

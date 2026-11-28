@@ -256,7 +256,7 @@ export default function CheckoutPage() {
           amount: data.amount,
           currency: data.currency || "INR",
           name: "Shree Vidhi Organics",
-          description: `Order #${data.orderNumber}`,
+          description: "Ayurvedic Formulation Order",
           order_id: data.razorpayOrderId,
           prefill: data.prefill,
           theme: { color: "#1C3F26" },
@@ -270,7 +270,7 @@ export default function CheckoutPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  orderId: data.orderId,
+                  checkoutToken: data.checkoutToken,
                   ...response,
                 }),
               });
@@ -281,7 +281,7 @@ export default function CheckoutPage() {
               clearCart();
               addToast("Payment verified! Order confirmed.", "success");
               router.push(
-                `/order-confirmation?orderNumber=${encodeURIComponent(data.orderNumber)}&orderId=${encodeURIComponent(data.orderId)}&status=success&razorpay_order_id=${encodeURIComponent(response.razorpay_order_id)}&razorpay_payment_id=${encodeURIComponent(response.razorpay_payment_id)}&method=RAZORPAY`
+                `/order-confirmation?orderNumber=${encodeURIComponent(verifyData.orderNumber)}&orderId=${encodeURIComponent(verifyData.orderId)}&status=success&razorpay_order_id=${encodeURIComponent(response.razorpay_order_id)}&razorpay_payment_id=${encodeURIComponent(response.razorpay_payment_id)}&method=RAZORPAY`
               );
             } catch (verifyErr: any) {
               setErrorMessage(verifyErr?.message || "Payment verification failed.");

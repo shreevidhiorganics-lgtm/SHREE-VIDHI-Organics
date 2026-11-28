@@ -75,6 +75,13 @@ export async function createShiprocketOrder(order: Order): Promise<{
   trackingUrl?: string;
   error?: string;
 }> {
+  if (order.paymentMethod === "RAZORPAY" && order.paymentStatus !== "PAID") {
+    return {
+      success: false,
+      error: "Cannot create Shiprocket shipment for an unpaid Razorpay order.",
+    };
+  }
+
   const token = await getShiprocketAuthToken();
 
   // If live credentials not configured, provide simulated tracking details

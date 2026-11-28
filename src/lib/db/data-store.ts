@@ -425,15 +425,31 @@ class DataStore {
     return this.orders.find((o) => o.orderNumber === orderNumber || o.id === orderNumber) || null;
   }
 
-  public createOrder(orderPayload: {
-    userId?: string;
-    guestEmail?: string;
-    guestPhone?: string;
+  private validateAndPriceOrder(orderPayload: {
     shippingAddress: Order["shippingAddress"];
     items: { productId: string; variantId?: string; quantity: number }[];
-    paymentMethod: "COD" | "RAZORPAY";
     couponCode?: string;
-  }): { success: boolean; order?: Order; error?: string } {
+  }): {
+    success: boolean;
+    error?: string;
+    subtotal: number;
+    discount: number;
+    shippingFee: number;
+    total: number;
+    appliedCoupon: Coupon | null;
+    validatedItems: Order["items"];
+    pendingDecrements: { product: Product; variant?: Product["variants"][number]; quantity: number }[];
+  } {
+    const empty = {
+      subtotal: 0,
+      discount: 0,
+      shippingFee: 0,
+      total: 0,
+      appliedCoupon: null,
+      validatedItems: [],
+      pendingDecrements: [],
+    };
+
     if (
       !orderPayload.shippingAddress ||
       !orderPayload.shippingAddress.fullName?.trim() ||
@@ -441,34 +457,48 @@ class DataStore {
       !orderPayload.shippingAddress.city?.trim() ||
       !orderPayload.shippingAddress.pinCode?.trim()
     ) {
-      return { success: false, error: "Complete shipping address (name, phone, city, PIN code) is required." };
+      return {
+        ...empty,
+        success: false,
+        error: "Complete shipping address (name, phone, city, PIN code) is required.",
+      };
     }
 
-    // 1. Validate ALL items & stock up front before mutating inventory
     let subtotal = 0;
     const validatedItems: Order["items"] = [];
     const pendingDecrements: { product: Product; variant?: Product["variants"][number]; quantity: number }[] = [];
 
     for (const item of orderPayload.items) {
-      if (!item || typeof item.productId !== "string" || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 100) {
-        return { success: false, error: "Invalid product or item quantity (must be integer 1–100)." };
+      if (
+        !item ||
+        typeof item.productId !== "string" ||
+        !Number.isInteger(item.quantity) ||
+        item.quantity < 1 ||
+        item.quantity > 100
+      ) {
+        return {
+          ...empty,
+          success: false,
+          error: "Invalid product or item quantity (must be integer 1–100).",
+        };
       }
 
       const product = this.getProductById(item.productId);
       if (!product || product.status !== "PUBLISHED") {
-        return { success: false, error: `Product not available: ${item.productId}` };
+        return { ...empty, success: false, error: `Product not available: ${item.productId}` };
       }
 
       const variant = item.variantId
         ? product.variants.find((v) => v.id === item.variantId)
         : product.variants[0];
       if (item.variantId && !variant) {
-        return { success: false, error: `Invalid product variant selected for ${product.name}.` };
+        return { ...empty, success: false, error: `Invalid product variant selected for ${product.name}.` };
       }
 
       const availableStock = variant ? variant.stock : product.stock;
       if (item.quantity > availableStock) {
         return {
+          ...empty,
           success: false,
           error: `Insufficient stock for ${product.name}. Available: ${availableStock}`,
         };
@@ -477,7 +507,7 @@ class DataStore {
       const unitPrice = variant ? variant.price : product.salePrice;
       const unitMrp = variant ? variant.mrp : product.mrp;
       if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
-        return { success: false, error: `Invalid price configuration for ${product.name}.` };
+        return { ...empty, success: false, error: `Invalid price configuration for ${product.name}.` };
       }
 
       const itemTotal = unitPrice * item.quantity;
@@ -498,15 +528,6 @@ class DataStore {
       pendingDecrements.push({ product, variant, quantity: item.quantity });
     }
 
-    // 2. Decrement inventory atomically after all items succeed validation
-    for (const entry of pendingDecrements) {
-      if (entry.variant) {
-        entry.variant.stock -= entry.quantity;
-      }
-      entry.product.stock -= entry.quantity;
-    }
-
-    // 3. Server-side coupon verification
     let discount = 0;
     let appliedCoupon: Coupon | null = null;
     if (orderPayload.couponCode) {
@@ -520,13 +541,78 @@ class DataStore {
         } else {
           discount = Math.min(appliedCoupon.discountValue, subtotal);
         }
-        appliedCoupon.usedCount += 1;
-        this.notifyMutation("saveCoupon", appliedCoupon);
       }
     }
 
     const shippingFee = subtotal > 0 ? 49 : 0;
     const total = Math.max(0, subtotal - discount + shippingFee);
+
+    return {
+      success: true,
+      subtotal,
+      discount,
+      shippingFee,
+      total,
+      appliedCoupon,
+      validatedItems,
+      pendingDecrements,
+    };
+  }
+
+  public quoteOrder(orderPayload: {
+    shippingAddress: Order["shippingAddress"];
+    items: { productId: string; variantId?: string; quantity: number }[];
+    couponCode?: string;
+  }): {
+    success: boolean;
+    error?: string;
+    subtotal: number;
+    discount: number;
+    shippingFee: number;
+    total: number;
+    couponCode?: string;
+  } {
+    const priced = this.validateAndPriceOrder(orderPayload);
+    return {
+      success: priced.success,
+      error: priced.error,
+      subtotal: priced.subtotal,
+      discount: priced.discount,
+      shippingFee: priced.shippingFee,
+      total: priced.total,
+      couponCode: priced.appliedCoupon?.code,
+    };
+  }
+
+  public createOrder(orderPayload: {
+    userId?: string;
+    guestEmail?: string;
+    guestPhone?: string;
+    shippingAddress: Order["shippingAddress"];
+    items: { productId: string; variantId?: string; quantity: number }[];
+    paymentMethod: "COD" | "RAZORPAY";
+    couponCode?: string;
+  }): { success: boolean; order?: Order; error?: string } {
+    const priced = this.validateAndPriceOrder(orderPayload);
+    if (!priced.success) {
+      return { success: false, error: priced.error };
+    }
+
+    const { subtotal, discount, shippingFee, total, appliedCoupon, validatedItems, pendingDecrements } = priced;
+
+    // 2. Decrement inventory atomically after all items succeed validation
+    for (const entry of pendingDecrements) {
+      if (entry.variant) {
+        entry.variant.stock -= entry.quantity;
+      }
+      entry.product.stock -= entry.quantity;
+    }
+
+    // 3. Increment coupon usage if applied
+    if (appliedCoupon) {
+      appliedCoupon.usedCount += 1;
+      this.notifyMutation("saveCoupon", appliedCoupon);
+    }
 
     const newOrder: Order = {
       id: `ord-${Date.now()}`,

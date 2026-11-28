@@ -28,6 +28,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
 
+    if (order.paymentMethod === "RAZORPAY" && order.paymentStatus !== "PAID") {
+      return NextResponse.json(
+        { error: "Cannot push an unpaid Razorpay order to Shiprocket. Payment status must be PAID." },
+        { status: 400 }
+      );
+    }
+
     // Call Shiprocket order dispatch
     const shipResult = await createShiprocketOrder(order);
 
